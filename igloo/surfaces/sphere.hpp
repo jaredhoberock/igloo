@@ -1,6 +1,6 @@
 #pragma once
 
-#include <tuple>
+#include <igloo/geometry/point.hpp>
 
 namespace igloo
 {
@@ -13,7 +13,7 @@ class sphere
      *  \param c The coordinates of the center of the sphere.
      *  \param r The radius of the sphere.
      */
-    sphere(const std::tuple<float,float,float> &c, float r);
+    sphere(const point &c, float r);
 
     /*! Creates a new sphere.
      *  \param cx The x-coordinate of the center of the sphere.
@@ -25,7 +25,7 @@ class sphere
 
     /*! \return The center of the sphere.
      */
-    inline const std::tuple<float,float,float> &center() const
+    inline const point &center() const
     {
       return m_center;
     } // end sphere::center()
@@ -38,7 +38,7 @@ class sphere
     } // end sphere::radius()
 
   private:
-    std::tuple<float,float,float> m_center;
+    point m_center;
     float m_radius;
 }; // end sphere
 

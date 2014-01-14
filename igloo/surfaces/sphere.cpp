@@ -4,13 +4,13 @@ namespace igloo
 {
 
 
-sphere::sphere(const std::tuple<float,float,float> &c, float r)
+sphere::sphere(const point &c, float r)
   : m_center(c), m_radius(r)
 {} // end sphere::sphere()
 
 
 sphere::sphere(float cx, float cy, float cz, float r)
-  : sphere(std::make_tuple(cx,cy,cz), r)
+  : sphere(point(cx,cy,cz), r)
 {} // end sphere::sphere()
 
 

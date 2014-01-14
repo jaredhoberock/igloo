@@ -15,9 +15,7 @@ test_viewer::test_viewer(const sphere &s, const float4x4 &modelview)
 
 void draw_sphere(const sphere &s)
 {
-  typedef float point_type[3];
-  point_type c;
-  std::tie(c[0],c[1],c[2]) = s.center();
+  const point &c = s.center();
 
   glPushAttrib(GL_POLYGON_BIT);
   glEnable(GL_CULL_FACE);
@@ -41,7 +39,7 @@ void draw_sphere(const sphere &s)
     float u = 0;
     for(size_t i = 0; i != vDivisions; ++i, u += uDel)
     {
-      point_type p;
+      point p;
       UnitSquareToSphere::evaluate(u, v, p);
 
       glNormal3fv(p);
