@@ -97,6 +97,11 @@ template<typename Derived, typename T, std::size_t N>
       return begin();
     }
 
+    inline operator const value_type * () const
+    {
+      return begin();
+    }
+
     inline reference operator[](size_type i)
     {
       return begin()[i];
