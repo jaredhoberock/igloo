@@ -72,15 +72,39 @@ static point transform_point(const float4x4 &m, const point &p)
 } // end transform_point()
 
 
+static normal transform_normal(const float4x4 &inv, const normal &n)
+{
+  float x = inv(0,0)*n.x + inv(1,0)*n.y + inv(2,0)*n.z;
+  float y = inv(0,1)*n.x + inv(1,1)*n.y + inv(2,1)*n.z;
+  float z = inv(0,2)*n.x + inv(1,2)*n.y + inv(2,2)*n.z;
+
+  return normal(x,y,z);
+} // end transform_normal()
+
+
 point transform::operator()(const point &p) const
 {
   return transform_point(m_xfrm, p);
 } // end transform::operator()()
 
 
+normal transform::operator()(const normal &n) const
+{
+  // note we send the inverse of the transform
+  return transform_normal(m_inv, n);
+} // end transform::operator()()
+
+
 point transform::inverse_transform(const point &p) const
 {
   return transform_point(m_inv, p);
+} // end transform::inverse_transform()
+
+
+normal transform::inverse_transform(const normal &n) const
+{
+  // note we send the transform itself, not its inverse
+  return transform_normal(m_xfrm, n);
 } // end transform::inverse_transform()
 
 

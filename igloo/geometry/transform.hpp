@@ -3,6 +3,7 @@
 #include <igloo/geometry/matrix.hpp>
 #include <igloo/geometry/vector.hpp>
 #include <igloo/geometry/point.hpp>
+#include <igloo/geometry/normal.hpp>
 
 namespace igloo
 {
@@ -53,11 +54,23 @@ class transform
      */
     point operator()(const point &p) const;
 
+    /*! Transforms a normal by applying this transform.
+     *  \param n The normal to transform.
+     *  \return n transformed by *this.
+     */
+    normal operator()(const normal &n) const;
+
     /*! Transforms a point by applying this transform's inverse.
      *  \param p The point to transform.
      *  \return p transformed by this transform's inverse.
      */
     point inverse_transform(const point &p) const;
+
+    /*! Transforms a normal by applying this transform's inverse.
+     *  \param n The normal to transform.
+     *  \return n transformed by this transform's inverse.
+     */
+    normal inverse_transform(const normal &n) const;
 
     /*! \return The identity transform.
      */
