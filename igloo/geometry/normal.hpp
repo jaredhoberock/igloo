@@ -27,6 +27,7 @@ class normal : float3
 
     using super_t::operator[];
     using super_t::operator float *;
+    using super_t::operator const float *;
 
     using super_t::x;
     using super_t::y;
