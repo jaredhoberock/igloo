@@ -36,7 +36,7 @@ class point : float3
      */
     inline float3 operator-(const point &rhs) const
     {
-      return point(*this - rhs);
+      return static_cast<const float3&>(*this) - rhs;
     } // end operator-()
 
     /*! \return the vector representing this point as a translation from the origin.
@@ -52,11 +52,12 @@ class point : float3
      */
     inline point operator+(const float3 &rhs) const
     {
-      return point(*this + rhs);
+      return static_cast<const float3&>(*this) + rhs;
     } // end operator+()
 
     using super_t::operator[];
     using super_t::operator float *;
+    using super_t::operator const float *;
 
     using super_t::x;
     using super_t::y;
