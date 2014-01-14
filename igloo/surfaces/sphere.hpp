@@ -1,6 +1,7 @@
 #pragma once
 
 #include <igloo/geometry/point.hpp>
+#include <igloo/geometry/triangle_mesh.hpp>
 
 namespace igloo
 {
@@ -36,6 +37,10 @@ class sphere
     {
       return m_radius;
     } // end sphere::radius()
+
+    /*! \return A triangle_mesh approximating this sphere.
+     */
+    triangle_mesh triangulate() const;
 
   private:
     point m_center;
