@@ -72,6 +72,21 @@ class triangle_mesh
         m_triangles(triangles_first, triangles_last)
     {}
 
+    /*! \return The number of vertices.
+     */
+    inline std::size_t vertices_size() const
+    {
+      return m_points.size();
+    } // end vertices_size()
+
+
+    /*! \return The number of triangles.
+     */
+    inline std::size_t triangles_size() const
+    {
+      return m_triangles.size();
+    } // end triangles_size()
+
 
     /*! \return An iterator pointing to the beginning of the collection of points.
      */
@@ -85,6 +100,13 @@ class triangle_mesh
     inline point_iterator points_end() const
     {
       return m_points.end();
+    }
+
+    /*! \return A pointer pointing to the array of points.
+     */
+    const point *points_data() const
+    {
+      return m_points.data();
     }
 
     /*! \return A iterator pointing to the beginning of the collection of parametrics.
@@ -101,6 +123,13 @@ class triangle_mesh
       return m_parametrics.end();
     }
 
+    /*! \return A pointer pointing to the array of parametrics.
+     */
+    const parametric *parametrics_data() const
+    {
+      return m_parametrics.data();
+    }
+
     /*! \return A iterator pointing to the beginning of the collection of normals.
      */
     inline normal_iterator normals_begin() const
@@ -115,6 +144,13 @@ class triangle_mesh
       return m_normals.end();
     }
 
+    /*! \return A pointer pointing to the array of normals.
+     */
+    const normal *normals_data() const
+    {
+      return m_normals.data();
+    }
+
     /*! \return A iterator pointing to the beginning of the collection of triangles.
      */
     inline triangle_iterator triangles_begin() const
@@ -127,6 +163,13 @@ class triangle_mesh
     inline triangle_iterator triangles_end() const
     {
       return m_triangles.end();
+    }
+
+    /*! \return A pointer pointing to the array of triangles.
+     */
+    const triangle *triangles_data() const
+    {
+      return m_triangles.data();
     }
 
     /*! \param tri The triangle of interest.
