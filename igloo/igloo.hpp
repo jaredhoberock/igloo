@@ -1,7 +1,7 @@
 #pragma once
 
 #include <igloo/surfaces/sphere.hpp>
-#include <igloo/geometry/matrix.hpp>
+#include <igloo/geometry/transform.hpp>
 #include <vector>
 #include <stack>
 
@@ -59,7 +59,9 @@ class igloo
     typedef ::igloo::sphere sphere_type; // disambiguate sphere the type from sphere the function
     std::vector<sphere_type> m_spheres;
 
-    std::stack<float4x4> m_matrix_stack;
+    std::stack<transform> m_transform_stack;
+
+    void mult_matrix_(const transform &xfrm);
 };
 
 
