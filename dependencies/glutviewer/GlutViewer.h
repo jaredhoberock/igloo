@@ -10,21 +10,32 @@
 
 #include <string>
 #include "KeyEvent.h"
-#include <gpcpu/Vector.h>
 
 class GlutViewer
 {
   public:	
+    struct float3
+    {
+      inline float3() {}
+      inline float3(float xx, float yy, float zz) : x(xx), y(yy), z(zz) {}
+      inline float3 operator+(const float3 &rhs) const
+      {
+        return float3(x + rhs.x, y + rhs.y, z + rhs.z);
+      }
+
+      float x, y, z;
+    };
+
     class Camera
     {
       public:
         inline Camera(void);
-        inline void setPosition(const gpcpu::float3 &pos);
-        inline gpcpu::float3 position(void) const;
-        inline void setUpVector(const gpcpu::float3 &up);
-        inline gpcpu::float3 upVector(void) const;
-        inline void setViewDirection(const gpcpu::float3 &direction);
-        inline gpcpu::float3 viewDirection(void) const;
+        inline void setPosition(const float3 &pos);
+        inline float3 position(void) const;
+        inline void setUpVector(const float3 &up);
+        inline float3 upVector(void) const;
+        inline void setViewDirection(const float3 &direction);
+        inline float3 viewDirection(void) const;
         inline void setFieldOfView(float fov);
         inline float fieldOfView(void) const;
         inline void setAspectRatio(float aspect);
@@ -32,9 +43,9 @@ class GlutViewer
         inline float zNear(void) const;
 
       protected:
-        gpcpu::float3 mPosition;
-        gpcpu::float3 mUpVector;
-        gpcpu::float3 mViewDirection;
+        float3 mPosition;
+        float3 mUpVector;
+        float3 mViewDirection;
         float mFieldOfView;
         float mAspectRatio;
         float mZNear;
@@ -100,8 +111,8 @@ class GlutViewer
     inline virtual void setStateFileName(const std::string &filename);
 
     // This method does nothing, but is included to conform to the QGLViewer interface.
-    inline virtual void setSceneBoundingBox(const gpcpu::float3 &min,
-                                            const gpcpu::float3 &max);
+    inline virtual void setSceneBoundingBox(const float3 &min,
+                                            const float3 &max);
     
     // This method returns a pointer to mCamera.
     // \return &mCamera

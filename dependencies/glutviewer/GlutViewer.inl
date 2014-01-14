@@ -33,9 +33,9 @@ GlutViewer
   mWindowTitle = "GlutViewer";
   
   // camera
-  mCamera.setPosition(gpcpu::float3(0,0,0));
-  mCamera.setUpVector(gpcpu::float3(0,1,0));
-  mCamera.setViewDirection(gpcpu::float3(0,0,-1));
+  mCamera.setPosition(float3(0,0,0));
+  mCamera.setUpVector(float3(0,1,0));
+  mCamera.setViewDirection(float3(0,0,-1));
   mCamera.setFieldOfView(PI * 45.0f / 180.0f);
   mCamera.setAspectRatio(static_cast<float>(width()) / height());
 
@@ -253,7 +253,7 @@ void GlutViewer
                  camera()->zNear(),
                  1000.0f);
 
-  gpcpu::float3 lookAt = camera()->position() + camera()->viewDirection();
+  float3 lookAt = camera()->position() + camera()->viewDirection();
   
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
@@ -417,8 +417,8 @@ void GlutViewer
 } // end GlutViewer::setStateFileName()
 
 void GlutViewer
-  ::setSceneBoundingBox(const gpcpu::float3 &min,
-                        const gpcpu::float3 &max)
+  ::setSceneBoundingBox(const float3 &min,
+                        const float3 &max)
 {
   ;
 } // end GlutViewer::setSceneBoundingBox()
@@ -451,36 +451,36 @@ GlutViewer::Camera *GlutViewer
 } // end GlutViewer::camera()
 
 void GlutViewer::Camera
-  ::setPosition(const gpcpu::float3 &pos)
+  ::setPosition(const float3 &pos)
 {
   mPosition = pos;
 } // end Camera::setPosition()
 
-gpcpu::float3 GlutViewer::Camera
+GlutViewer::float3 GlutViewer::Camera
   ::position(void) const
 {
   return mPosition;
 } // end Camera::position()
 
 void GlutViewer::Camera
-  ::setUpVector(const gpcpu::float3 &up)
+  ::setUpVector(const float3 &up)
 {
   mUpVector = up;
 } // end Camera::setUpVector()
 
-gpcpu::float3 GlutViewer::Camera
+GlutViewer::float3 GlutViewer::Camera
   ::upVector(void) const
 {
   return mUpVector;
 } // end Camera::upVector()
 
 void GlutViewer::Camera
-  ::setViewDirection(const gpcpu::float3 &direction)
+  ::setViewDirection(const float3 &direction)
 {
   mViewDirection = direction;
 } // end Camera::setViewDirection()
 
-gpcpu::float3 GlutViewer::Camera
+GlutViewer::float3 GlutViewer::Camera
   ::viewDirection(void) const
 {
   return mViewDirection;
