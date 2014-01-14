@@ -1,6 +1,7 @@
 #include <igloo/viewers/test_viewer.hpp>
 #include <dependencies/glutviewer/GlutViewerInstance.h>
 #include <dependencies/2dmapping/UnitSquareToSphere.h>
+#include <igloo/geometry/triangle_mesh.hpp>
 #include <iostream>
 
 namespace igloo
@@ -13,55 +14,38 @@ test_viewer::test_viewer(const sphere &s, const float4x4 &modelview)
 {}
 
 
+void draw(const triangle_mesh &mesh)
+{
+  const point *points                      = mesh.points_data();
+  const parametric *parametrics            = mesh.parametrics_data();
+  const normal *normals                    = mesh.normals_data();
+
+  glBegin(GL_TRIANGLES);
+  for(auto iter = mesh.triangles_begin();
+      iter != mesh.triangles_end();
+      ++iter)
+  {
+    const triangle_mesh::triangle &tri = *iter;
+
+    glNormal3fv(normals[tri[0]]);
+    glTexCoord2fv(parametrics[tri[0]]);
+    glVertex3fv(points[tri[0]]);
+
+    glNormal3fv(normals[tri[1]]);
+    glTexCoord2fv(parametrics[tri[1]]);
+    glVertex3fv(points[tri[1]]);
+
+    glNormal3fv(normals[tri[2]]);
+    glTexCoord2fv(parametrics[tri[2]]);
+    glVertex3fv(points[tri[2]]);
+  } // end for tri
+  glEnd();
+} // end draw()
+
+
 void draw_sphere(const sphere &s)
 {
-  const point &c = s.center();
-
-  glPushAttrib(GL_POLYGON_BIT);
-  glEnable(GL_CULL_FACE);
-
-  // push the transform
-  glPushMatrix();
-
-  glTranslatef(c[0], c[1], c[2]);
-  
-  size_t uDivisions = 100;
-  size_t vDivisions = 100;
-  float uDel = 1.0f / uDivisions;
-  float vDel = 1.0f / vDivisions;
-
-  glScalef(s.radius(), s.radius(), s.radius());
-
-  glBegin(GL_QUADS);
-  float v = 0;
-  for(size_t j = 0; j != uDivisions; ++j, v += vDel)
-  {
-    float u = 0;
-    for(size_t i = 0; i != vDivisions; ++i, u += uDel)
-    {
-      point p;
-      UnitSquareToSphere::evaluate(u, v, p);
-
-      glNormal3fv(p);
-      glVertex3fv(p);
-
-      UnitSquareToSphere::evaluate(u + uDel, v, p);
-      glNormal3fv(p);
-      glVertex3fv(p);
-
-      UnitSquareToSphere::evaluate(u + uDel, v + vDel, p);
-      glNormal3fv(p);
-      glVertex3fv(p);
-
-      UnitSquareToSphere::evaluate(u, v + vDel, p);
-      glNormal3fv(p);
-      glVertex3fv(p);
-    } // end for
-  } // end for j
-  glEnd();
-
-  glPopMatrix();
-  glPopAttrib();
+  draw(s.triangulate());
 } // end draw()
 
 
