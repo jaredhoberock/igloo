@@ -4,6 +4,7 @@
 #include <vector>
 #include <igloo/geometry/point.hpp>
 #include <igloo/geometry/parametric.hpp>
+#include <igloo/geometry/normal.hpp>
 
 namespace igloo
 {
