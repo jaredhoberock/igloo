@@ -7,8 +7,9 @@ namespace igloo
 {
 
 
-test_viewer::test_viewer(const sphere &s)
-  : m_sphere(s)
+test_viewer::test_viewer(const sphere &s, const float4x4 &modelview)
+  : m_sphere(s),
+    m_modelview(modelview)
 {}
 
 
@@ -68,8 +69,15 @@ void draw_sphere(const sphere &s)
 
 void test_viewer::draw()
 {
-  gluLookAt(0, 0, 3.0, 0, 0, -1.0, 0, 1.0, 0);
+  glPushMatrix();
+
+  // invert m_modelview and send its transpose to GL
+  // GL's matrix format is column-major
+
+  glMultMatrixf(m_modelview.inverse().transpose());
   draw_sphere(m_sphere);
+
+  glPopMatrix();
 } // end draw()
 
 

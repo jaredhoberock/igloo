@@ -2,22 +2,25 @@
 
 #include <commonviewer/CommonViewer.h>
 #include <glutviewer/GlutViewer.h>
-#include <gpcpu/Vector.h>
+#include <igloo/geometry/vector.hpp>
+#include <igloo/geometry/matrix.hpp>
 #include <igloo/surfaces/sphere.hpp>
 
 namespace igloo
 {
 
 
-class test_viewer : public CommonViewer<GlutViewer,KeyEvent,std::string,gpcpu::float3>
+class test_viewer : public CommonViewer<GlutViewer,KeyEvent,std::string,float3>
 {
   public:
-    test_viewer(const sphere &s);
+    test_viewer(const sphere &s, const float4x4 &modelview);
 
     virtual void draw();
 
   private:
     const sphere &m_sphere;
+
+    float4x4 m_modelview;
 };
 
 

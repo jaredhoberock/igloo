@@ -45,6 +45,23 @@ template<typename Derived, typename T, std::size_t N>
       }
     }
 
+    Derived &operator=(const vector_base &other)
+    {
+      for(size_type i = 0; i != static_size; ++i)
+      {
+        (*this)[i] = other[i];
+      }
+    }
+
+    template<typename OtherVector>
+    Derived &operator=(const OtherVector &other)
+    {
+      for(size_type i = 0; i != static_size; ++i)
+      {
+        (*this)[i] = other[i];
+      }
+    }
+
     inline vector_base(value_type v)
     {
       std::fill(begin(), end(), v);
@@ -347,7 +364,7 @@ T product(const vector_base<Derived,T,N> &vec)
 template<typename Derived, typename T, std::size_t N>
 inline Derived normalize(const vector_base<Derived,T,N> &vec)
 {
-  return vec.norm();
+  return vec.normalize();
 }
 
 
@@ -357,6 +374,25 @@ inline Derived reflect(const vector_base<Derived,T,N> &a,
 {
   return a.reflect(b);
 }
+
+
+template<typename Derived, typename T>
+inline Derived cross(const vector_base<Derived,T,3> &lhs,
+                     const vector_base<Derived,T,3> &rhs)
+{
+  Derived result;
+  
+  Derived subtract_me(lhs[2]*rhs[1], lhs[0]*rhs[2], lhs[1]*rhs[0]);
+  
+  result[0] = (lhs[1] * rhs[2]);
+  result[0] -= subtract_me[0];
+  result[1]= (lhs[2] * rhs[0]);
+  result[1]-= subtract_me[1];
+  result[2] = (lhs[0] * rhs[1]);
+  result[2] -= subtract_me[2];
+  
+  return result;
+} // end cross()
 
 
 template<typename Derived, typename T, std::size_t N>

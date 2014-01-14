@@ -33,6 +33,11 @@ class vector<T,3> : public detail::vector_base<vector<T,3>, T, 3>
         z(zz)
     {}
 
+    inline vector cross(const vector &rhs) const
+    {
+      return detail::cross(*this, rhs);
+    } // end cross()
+
     T x, y, z;
 }; // end vector<T,3>
 
