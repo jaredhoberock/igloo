@@ -18,6 +18,11 @@ class normal : float3
      */
     inline normal() : super_t() {}
 
+    /*! Creates a new normal from a float3.
+     *  \param v The float3 to copy.
+     */
+    inline normal(const float3 &v) : super_t(v) {}
+
     /*! Creates a new normal.
      *  \param x The x coordinate of the normal.
      *  \param y The y coordinate of the normal.
