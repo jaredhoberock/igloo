@@ -64,7 +64,8 @@ context::attributes_map context::default_attributes()
 {
   return {
     {"record:width",  "512"},
-    {"record:height", "512"}
+    {"record:height", "512"},
+    {"orientation", "outside"}
   };
 } // end context::default_attributes()
 
@@ -101,8 +102,6 @@ void context::mesh(const float *vertices_,
                    const unsigned int *triangles_,
                    size_t num_triangles)
 {
-  // XXX do we need to reverse the winding of vertices?
-
   std::vector<point> vertices(reinterpret_cast<const point*>(vertices_),
                               reinterpret_cast<const point*>(vertices_) + num_vertices);
   std::vector<uint3> triangles(reinterpret_cast<const uint3*>(triangles_),
@@ -112,6 +111,14 @@ void context::mesh(const float *vertices_,
   {
     return m_transform_stack.top()(p);
   });
+
+  if(m_attributes_stack.top()["orientation"] == "inside")
+  {
+    std::transform(triangles.begin(), triangles.end(), triangles.begin(), [](const uint3 &tri)
+    {
+      return uint3(tri.x, tri.z, tri.y);
+    });
+  } // end if
 
   m_meshes.emplace_back(vertices, triangles);
 } // end context::mesh()
@@ -123,8 +130,6 @@ void context::mesh(const float *vertices_,
                    const unsigned int *triangles_,
                    size_t num_triangles)
 {
-  // XXX do we need to reverse the winding of vertices?
-
   std::vector<point> vertices(reinterpret_cast<const point*>(vertices_),
                               reinterpret_cast<const point*>(vertices_) + num_vertices);
   std::vector<parametric> parametrics(reinterpret_cast<const parametric*>(parametrics_),
@@ -137,6 +142,15 @@ void context::mesh(const float *vertices_,
     return m_transform_stack.top()(p);
   });
 
+  // do we need to reverse the winding of vertices?
+  if(m_attributes_stack.top()["orientation"] == "inside")
+  {
+    std::transform(triangles.begin(), triangles.end(), triangles.begin(), [](const uint3 &tri)
+    {
+      return uint3(tri.x, tri.z, tri.y);
+    });
+  } // end if
+
   m_meshes.emplace_back(vertices, parametrics, triangles);
 } // end context::mesh()
 
@@ -148,8 +162,6 @@ void context::mesh(const float *vertices_,
                    const unsigned int *triangles_,
                    size_t num_triangles)
 {
-  // XXX do we need to reverse the winding of vertices?
-
   std::vector<point> vertices(reinterpret_cast<const point*>(vertices_),
                               reinterpret_cast<const point*>(vertices_) + num_vertices);
   std::vector<parametric> parametrics(reinterpret_cast<const parametric*>(parametrics_),
@@ -164,10 +176,20 @@ void context::mesh(const float *vertices_,
     return m_transform_stack.top()(p);
   });
 
+  // note that we don't reverse the direction of normals, even if orientation == inside
   std::transform(normals.begin(), normals.end(), normals.begin(), [&](const normal &n)
   {
     return m_transform_stack.top()(n);
   });
+
+  // do we need to reverse the winding of vertices?
+  if(m_attributes_stack.top()["orientation"] == "inside")
+  {
+    std::transform(triangles.begin(), triangles.end(), triangles.begin(), [](const uint3 &tri)
+    {
+      return uint3(tri.x, tri.z, tri.y);
+    });
+  } // end if
 
   m_meshes.emplace_back(vertices, parametrics, normals, triangles);
 } // end context::mesh()
