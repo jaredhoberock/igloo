@@ -3,32 +3,16 @@
 #include <iostream>
 #include <cmath>
 #include <algorithm>
+#include <cstdlib>
 
 namespace igloo
 {
 
 
 igloo::igloo()
-  : m_transform_stack(std::deque<transform>(1))
+  : m_transform_stack(std::deque<transform>(1)),
+    m_attributes_stack(std::deque<attributes_map>(1, default_attributes()))
 {}
-
-
-void igloo::translate(float tx, float ty, float tz)
-{
-  mult_matrix_(transform::translate(tx,ty,tz));
-} // end igloo::translate()
-
-
-void igloo::rotate(float degrees, float rx, float ry, float rz)
-{
-  mult_matrix_(transform::rotate(degrees, rx, ry, rz));
-} // end igloo::rotate()
-
-
-void igloo::scale(float sx, float sy, float sz)
-{
-  mult_matrix_(transform::scale(sx, sy, sz)); 
-} // end igloo::scale();
 
 
 void igloo::push_matrix()
@@ -56,6 +40,51 @@ void igloo::mult_matrix_(const transform &xfrm)
 {
   m_transform_stack.top() *= xfrm;
 } // end mult_matrix_()
+
+
+void igloo::push_attributes()
+{
+  m_attributes_stack.push(m_attributes_stack.top());
+} // end igloo::push_attributes()
+
+
+void igloo::pop_attributes()
+{
+  m_attributes_stack.pop();
+} // end igloo::pop_attributes()
+
+
+void igloo::attribute(const std::string &name, const std::string &val)
+{
+  m_attributes_stack.top()[name] = val;
+} // end igloo::attribute()
+
+
+igloo::attributes_map igloo::default_attributes()
+{
+  return {
+    {"record:width",  "512"},
+    {"record:height", "512"}
+  };
+} // end igloo::default_attributes()
+
+
+void igloo::translate(float tx, float ty, float tz)
+{
+  mult_matrix_(transform::translate(tx,ty,tz));
+} // end igloo::translate()
+
+
+void igloo::rotate(float degrees, float rx, float ry, float rz)
+{
+  mult_matrix_(transform::rotate(degrees, rx, ry, rz));
+} // end igloo::rotate()
+
+
+void igloo::scale(float sx, float sy, float sz)
+{
+  mult_matrix_(transform::scale(sx, sy, sz)); 
+} // end igloo::scale();
 
 
 void igloo::sphere(float cx, float cy, float cz, float radius)
@@ -148,9 +177,14 @@ void igloo::mesh(const float *vertices_,
 
 void igloo::render()
 {
+  int height = std::atoi(m_attributes_stack.top()["record:height"].c_str());
+  int width  = std::atoi(m_attributes_stack.top()["record:width"].c_str());
+
   float4x4 m(m_transform_stack.top().data());
   test_viewer v(m_spheres, m_meshes, m);
   v.setWindowTitle("Hello, world!");
+  v.camera()->setAspectRatio(float(width)/height);
+  v.resize(width,height);
   v.show();
 } // end igloo::render()
 

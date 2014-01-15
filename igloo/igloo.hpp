@@ -1,10 +1,12 @@
 #pragma once
 
+#include <vector>
+#include <stack>
+#include <string>
+#include <map>
 #include <igloo/surfaces/sphere.hpp>
 #include <igloo/surfaces/mesh.hpp>
 #include <igloo/geometry/transform.hpp>
-#include <vector>
-#include <stack>
 
 namespace igloo
 {
@@ -16,6 +18,34 @@ class igloo
     /*! Default constructs a new igloo.
      */
     igloo();
+    
+    /*! Pushes a copy of the current attributes to the top of the attributes stack.
+     */
+    void push_attributes();
+
+    /*! Pops the top of the attributes stack.
+     */
+    void pop_attributes();
+
+    /*! Sets the value of a named attribute.
+     *  \param name The name of the attribute to set.
+     *  \param val The value to set.
+     *  XXX it would be cool to make the value of type boost::any
+     */
+    void attribute(const std::string &name, const std::string &val);
+
+    /*! Pushes a copy of the current matrix to the top of the matrix stack.
+     */
+    void push_matrix();
+
+    /*! Pops the top of the matrix stack.
+     */
+    void pop_matrix();
+
+    /*! Multiplies the top of the matrix stack by the given 4x4 matrix.
+     *  \param m A row-major order 4x4 matrix.
+     */
+    void mult_matrix(const float *m);
 
     /*! Transforms the top of the matrix stack by the given translation.
      *  \param tx The x coordinate of the translation vector.
@@ -39,19 +69,6 @@ class igloo
      */
     void scale(float sx, float sy, float sz);
 
-    /*! Pushes a copy of the current matrix to the top of the matrix stack.
-     */
-    void push_matrix();
-
-    /*! Pops the top of the matrix stack.
-     */
-    void pop_matrix();
-
-    /*! Multiplies the top of the matrix stack by the given 4x4 matrix.
-     *  \param m A row-major order 4x4 matrix.
-     */
-    void mult_matrix(const float *m);
-
     /*! Creates a new sphere.
      *  \param cx The x-coordinate of the center of the Sphere.
      *  \param cy The y-coordinate of the center of the Sphere.
@@ -65,6 +82,7 @@ class igloo
      *  \param num_vertices The size of the vertices array.
      *  \param triangles An array of vertex index triples.
      *  \param num_triangles THe size of the triangles array.
+     *  XXX these parameters should be array_ref
      */
     void mesh(const float *vertices,
               size_t num_vertices,
@@ -77,6 +95,7 @@ class igloo
      *  \param num_vertices The size of the vertices array.
      *  \param triangles An array of vertex index triples.
      *  \param num_triangles THe size of the triangles array.
+     *  XXX these parameters should be array_ref
      */
     void mesh(const float *vertices,
               const float *parametrics,
@@ -91,6 +110,7 @@ class igloo
      *  \param num_vertices The size of the vertices array.
      *  \param triangles An array of vertex index triples.
      *  \param num_triangles THe size of the triangles array.
+     *  XXX these parameters should be array_ref
      */
     void mesh(const float *vertices,
               const float *parametrics,
@@ -111,6 +131,11 @@ class igloo
     std::vector<mesh_type> m_meshes;
 
     std::stack<transform> m_transform_stack;
+
+    typedef std::map<std::string,std::string> attributes_map;
+    std::stack<attributes_map> m_attributes_stack;
+
+    static attributes_map default_attributes();
 
     void mult_matrix_(const transform &xfrm);
 };
