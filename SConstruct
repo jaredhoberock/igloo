@@ -5,7 +5,7 @@ env.Append(CPPFLAGS = ['-std=c++11'])
 
 sources = ['main.cpp',
            'ubuntu_13_10_workaround.cpp',
-           'igloo/igloo.cpp',
+           'igloo/context.cpp',
            'igloo/geometry/transform.cpp',
            'igloo/surfaces/mesh.cpp',
            'igloo/surfaces/sphere.cpp',

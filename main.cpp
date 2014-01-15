@@ -1,4 +1,4 @@
-#include <igloo/igloo.hpp>
+#include <igloo/context.hpp>
 #include <igloo/geometry/vector.hpp>
 #include <igloo/geometry/matrix.hpp>
 
@@ -7,7 +7,7 @@ using namespace igloo;
 // see gluLookAt man page: we construct the
 // transpose of their matrix and inverse of their
 // translation
-void look_at(igloo::igloo &renderer, float3 eye, float3 center, float3 up)
+void look_at(igloo::context &renderer, float3 eye, float3 center, float3 up)
 {
   float3 f = normalize(center - eye);
   up = normalize(up);
@@ -26,7 +26,7 @@ void look_at(igloo::igloo &renderer, float3 eye, float3 center, float3 up)
 
 int main()
 {
-  igloo::igloo renderer;
+  igloo::context renderer;
 
   std::vector<float> unit_square_points = {-0.5, 0,  0.5,
                                             0.5, 0,  0.5,

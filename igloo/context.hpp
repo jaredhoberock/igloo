@@ -12,12 +12,12 @@ namespace igloo
 {
 
 
-class igloo
+class context
 {
   public:
-    /*! Default constructs a new igloo.
+    /*! Default constructs a new context.
      */
-    igloo();
+    context();
     
     /*! Pushes a copy of the current attributes to the top of the attributes stack.
      */
@@ -124,11 +124,8 @@ class igloo
     void render();
 
   private:
-    typedef ::igloo::sphere sphere_type; // disambiguate sphere the type from sphere the function
-    std::vector<sphere_type> m_spheres;
-
-    typedef ::igloo::mesh mesh_type; // disambiguate mesh the type from mesh the function
-    std::vector<mesh_type> m_meshes;
+    std::vector<igloo::sphere> m_spheres;
+    std::vector<igloo::mesh>   m_meshes;
 
     std::stack<transform> m_transform_stack;
 
@@ -138,7 +135,7 @@ class igloo
     static attributes_map default_attributes();
 
     void mult_matrix_(const transform &xfrm);
-};
+}; // end context
 
 
 } // end igloo
