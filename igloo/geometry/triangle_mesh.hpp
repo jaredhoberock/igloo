@@ -1,7 +1,7 @@
 #pragma once
 
-#include <array>
 #include <vector>
+#include <igloo/geometry/vector.hpp>
 #include <igloo/geometry/point.hpp>
 #include <igloo/geometry/parametric.hpp>
 #include <igloo/geometry/normal.hpp>
@@ -13,7 +13,7 @@ namespace igloo
 class triangle_mesh
 {
   public:
-    typedef std::array<unsigned int,3> triangle;
+    typedef uint3 triangle;
 
     typedef std::vector<point>::const_iterator      point_iterator;
     typedef std::vector<parametric>::const_iterator parametric_iterator;

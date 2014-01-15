@@ -74,6 +74,9 @@ class vector<T,3> : public detail::vector_base<vector<T,3>, T, 3>
 }; // end vector<T,3>
 
 
+typedef vector<unsigned int,2> uint2;
+typedef vector<unsigned int,3> uint3;
+
 typedef vector<float,2> float2;
 typedef vector<float,3> float3;
 
