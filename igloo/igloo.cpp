@@ -2,6 +2,7 @@
 #include <igloo/viewers/test_viewer.hpp>
 #include <iostream>
 #include <cmath>
+#include <algorithm>
 
 namespace igloo
 {
@@ -30,6 +31,18 @@ void igloo::scale(float sx, float sy, float sz)
 } // end igloo::scale();
 
 
+void igloo::push_matrix()
+{
+  m_transform_stack.push(m_transform_stack.top());
+} // end push_matrix()
+
+
+void igloo::pop_matrix()
+{
+  m_transform_stack.pop();
+} // end pop_matrix()
+
+
 void igloo::mult_matrix(const float *m_)
 {
   const float4x4 &m = *reinterpret_cast<const float4x4*>(m_);
@@ -48,14 +61,95 @@ void igloo::mult_matrix_(const transform &xfrm)
 void igloo::sphere(float cx, float cy, float cz, float radius)
 {
   typedef ::igloo::sphere sphere_type;
-  m_spheres.push_back(sphere_type(cx,cy,cz,radius));
+
+  // XXX should we scale the radius as well? not really clear how to do so
+  point center = m_transform_stack.top()(point(cx,cy,cz));
+
+  m_spheres.emplace_back(center,radius);
 } // end igloo::sphere()
+
+
+void igloo::mesh(const float *vertices_,
+                 size_t num_vertices,
+                 const unsigned int *triangles_,
+                 size_t num_triangles)
+{
+  // XXX do we need to reverse the winding of vertices?
+
+  std::vector<point> vertices(reinterpret_cast<const point*>(vertices_),
+                              reinterpret_cast<const point*>(vertices_) + num_vertices);
+  std::vector<uint3> triangles(reinterpret_cast<const uint3*>(triangles_),
+                              reinterpret_cast<const uint3*>(triangles_) + num_triangles);
+
+  std::transform(vertices.begin(), vertices.end(), vertices.begin(), [&](const point &p)
+  {
+    return m_transform_stack.top()(p);
+  });
+
+  m_meshes.emplace_back(vertices, triangles);
+} // end igloo::mesh()
+
+
+void igloo::mesh(const float *vertices_,
+                 const float *parametrics_,
+                 size_t num_vertices,
+                 const unsigned int *triangles_,
+                 size_t num_triangles)
+{
+  // XXX do we need to reverse the winding of vertices?
+
+  std::vector<point> vertices(reinterpret_cast<const point*>(vertices_),
+                              reinterpret_cast<const point*>(vertices_) + num_vertices);
+  std::vector<parametric> parametrics(reinterpret_cast<const parametric*>(parametrics_),
+                                      reinterpret_cast<const parametric*>(parametrics_) + num_vertices);
+  std::vector<uint3> triangles(reinterpret_cast<const uint3*>(triangles_),
+                               reinterpret_cast<const uint3*>(triangles_) + num_triangles);
+
+  std::transform(vertices.begin(), vertices.end(), vertices.begin(), [&](const point &p)
+  {
+    return m_transform_stack.top()(p);
+  });
+
+  m_meshes.emplace_back(vertices, parametrics, triangles);
+} // end igloo::mesh()
+
+       
+void igloo::mesh(const float *vertices_,
+                 const float *parametrics_,
+                 const float *normals_,
+                 size_t num_vertices,
+                 const unsigned int *triangles_,
+                 size_t num_triangles)
+{
+  // XXX do we need to reverse the winding of vertices?
+
+  std::vector<point> vertices(reinterpret_cast<const point*>(vertices_),
+                              reinterpret_cast<const point*>(vertices_) + num_vertices);
+  std::vector<parametric> parametrics(reinterpret_cast<const parametric*>(parametrics_),
+                                      reinterpret_cast<const parametric*>(parametrics_) + num_vertices);
+  std::vector<normal> normals(reinterpret_cast<const normal*>(normals_),
+                              reinterpret_cast<const normal*>(normals_) + num_vertices);
+  std::vector<uint3> triangles(reinterpret_cast<const uint3*>(triangles_),
+                               reinterpret_cast<const uint3*>(triangles_) + num_triangles);
+
+  std::transform(vertices.begin(), vertices.end(), vertices.begin(), [&](const point &p)
+  {
+    return m_transform_stack.top()(p);
+  });
+
+  std::transform(normals.begin(), normals.end(), normals.begin(), [&](const normal &n)
+  {
+    return m_transform_stack.top()(n);
+  });
+
+  m_meshes.emplace_back(vertices, parametrics, normals, triangles);
+} // end igloo::mesh()
 
 
 void igloo::render()
 {
   float4x4 m(m_transform_stack.top().data());
-  test_viewer v(m_spheres.back(), m);
+  test_viewer v(m_spheres, m_meshes, m);
   v.setWindowTitle("Hello, world!");
   v.show();
 } // end igloo::render()

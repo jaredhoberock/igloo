@@ -28,7 +28,63 @@ int main()
 {
   igloo::igloo renderer;
 
+  std::vector<float> unit_square_points = {-0.5, 0,  0.5,
+                                            0.5, 0,  0.5,
+                                            0.5, 0, -0.5,
+                                           -0.5, 0, -0.5};
+
+  std::vector<unsigned int> unit_square_tris = { 0, 1,  3,
+                                                 1, 2,  3};
+
+  // back wall
+  renderer.push_matrix();
+  renderer.translate(0, 0, -1);
+  renderer.rotate(90, 1, 0, 0);
+  renderer.scale(2, 2, 2);
+  renderer.mesh(unit_square_points.data(), unit_square_points.size() / 3,
+                unit_square_tris.data(), unit_square_tris.size() / 3);
+  renderer.pop_matrix();
+
+  // floor
+  renderer.push_matrix();
+  renderer.translate(0,-1,0);
+  renderer.scale(2, 2, 2);
+  renderer.mesh(unit_square_points.data(), unit_square_points.size() / 3,
+                unit_square_tris.data(), unit_square_tris.size() / 3);
+  renderer.pop_matrix();
+
+  // ceiling
+  renderer.push_matrix();
+  renderer.translate(0,1,0);
+  renderer.scale(2, 2, 2);
+  renderer.rotate(180, 1.0, 0, 0);
+  renderer.mesh(unit_square_points.data(), unit_square_points.size() / 3,
+                unit_square_tris.data(), unit_square_tris.size() / 3);
+  renderer.pop_matrix();
+
+  // left wall
+  renderer.push_matrix();
+  renderer.translate(-1,0,0);
+  renderer.scale(2, 2, 2);
+  renderer.rotate(-90, 0, 0, 1);
+  renderer.mesh(unit_square_points.data(), unit_square_points.size() / 3,
+                unit_square_tris.data(), unit_square_tris.size() / 3);
+  renderer.pop_matrix();
+
+  // right wall
+  renderer.push_matrix();
+  renderer.translate(1,0,0);
+  renderer.scale(2, 2, 2);
+  renderer.rotate(90, 0, 0, 1);
+  renderer.mesh(unit_square_points.data(), unit_square_points.size() / 3,
+                unit_square_tris.data(), unit_square_tris.size() / 3);
+  renderer.pop_matrix();
+
+  // mirror ball
   renderer.sphere(-0.4, -0.66, -0.15, 0.33);
+
+  // glass ball
+  renderer.sphere(0.4, -0.66, 0.25, 0.33);
 
   look_at(renderer, float3(0,0,3), float3(0,0,-1), float3(0,1,0));
 

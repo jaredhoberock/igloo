@@ -7,6 +7,7 @@ sources = ['main.cpp',
            'ubuntu_13_10_workaround.cpp',
            'igloo/igloo.cpp',
            'igloo/geometry/transform.cpp',
+           'igloo/surfaces/mesh.cpp',
            'igloo/surfaces/sphere.cpp',
            'igloo/viewers/test_viewer.cpp']
 
