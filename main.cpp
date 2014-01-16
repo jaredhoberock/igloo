@@ -28,29 +28,27 @@ int main()
 {
   igloo::context renderer;
 
-  std::vector<float> unit_square_points = {-0.5, 0,  0.5,
-                                            0.5, 0,  0.5,
-                                            0.5, 0, -0.5,
-                                           -0.5, 0, -0.5};
+  float unit_square_points[] = {-0.5, 0,  0.5,
+                                 0.5, 0,  0.5,
+                                 0.5, 0, -0.5,
+                                -0.5, 0, -0.5};
 
-  std::vector<unsigned int> unit_square_tris = { 0, 1,  3,
-                                                 1, 2,  3};
+  unsigned int unit_square_tris[] = { 0, 1,  3,
+                                      1, 2,  3};
 
   // back wall
   renderer.push_matrix();
   renderer.translate(0, 0, -1);
   renderer.rotate(90, 1, 0, 0);
   renderer.scale(2, 2, 2);
-  renderer.mesh(unit_square_points.data(), unit_square_points.size() / 3,
-                unit_square_tris.data(), unit_square_tris.size() / 3);
+  renderer.mesh(unit_square_points, unit_square_tris);
   renderer.pop_matrix();
 
   // floor
   renderer.push_matrix();
   renderer.translate(0,-1,0);
   renderer.scale(2, 2, 2);
-  renderer.mesh(unit_square_points.data(), unit_square_points.size() / 3,
-                unit_square_tris.data(), unit_square_tris.size() / 3);
+  renderer.mesh(unit_square_points, unit_square_tris);
   renderer.pop_matrix();
 
   // ceiling
@@ -58,8 +56,7 @@ int main()
   renderer.translate(0,1,0);
   renderer.scale(2, 2, 2);
   renderer.rotate(180, 1.0, 0, 0);
-  renderer.mesh(unit_square_points.data(), unit_square_points.size() / 3,
-                unit_square_tris.data(), unit_square_tris.size() / 3);
+  renderer.mesh(unit_square_points, unit_square_tris);
   renderer.pop_matrix();
 
   // left wall
@@ -67,8 +64,7 @@ int main()
   renderer.translate(-1,0,0);
   renderer.scale(2, 2, 2);
   renderer.rotate(-90, 0, 0, 1);
-  renderer.mesh(unit_square_points.data(), unit_square_points.size() / 3,
-                unit_square_tris.data(), unit_square_tris.size() / 3);
+  renderer.mesh(unit_square_points, unit_square_tris);
   renderer.pop_matrix();
 
   // right wall
@@ -76,8 +72,7 @@ int main()
   renderer.translate(1,0,0);
   renderer.scale(2, 2, 2);
   renderer.rotate(90, 0, 0, 1);
-  renderer.mesh(unit_square_points.data(), unit_square_points.size() / 3,
-                unit_square_tris.data(), unit_square_tris.size() / 3);
+  renderer.mesh(unit_square_points, unit_square_tris);
   renderer.pop_matrix();
 
   // mirror ball

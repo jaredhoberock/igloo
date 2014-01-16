@@ -4,6 +4,7 @@
 #include <cmath>
 #include <algorithm>
 #include <cstdlib>
+#include <stdexcept>
 
 namespace igloo
 {
@@ -97,15 +98,23 @@ void context::sphere(float cx, float cy, float cz, float radius)
 } // end context::sphere()
 
 
-void context::mesh(const float *vertices_,
-                   size_t num_vertices,
-                   const unsigned int *triangles_,
-                   size_t num_triangles)
+void context::mesh(array_ref<const float> vertices_,
+                   array_ref<const unsigned int> triangles_)
 {
-  std::vector<point> vertices(reinterpret_cast<const point*>(vertices_),
-                              reinterpret_cast<const point*>(vertices_) + num_vertices);
-  std::vector<uint3> triangles(reinterpret_cast<const uint3*>(triangles_),
-                               reinterpret_cast<const uint3*>(triangles_) + num_triangles);
+  if(vertices_.size() % 3 > 0)
+  {
+    throw std::logic_error("context::mesh(): vertices.size() must be a multiple of 3");
+  } // end if
+
+  if(triangles_.size() % 3 > 0)
+  {
+    throw std::logic_error("context::mesh(): triangles_.size() must be a multiple of 3");
+  } // end if
+
+  std::vector<point> vertices(reinterpret_cast<const point*>(vertices_.data()),
+                              reinterpret_cast<const point*>(vertices_.data() + vertices_.size()));
+  std::vector<uint3> triangles(reinterpret_cast<const uint3*>(triangles_.data()),
+                               reinterpret_cast<const uint3*>(triangles_.data() + triangles_.size()));
 
   std::transform(vertices.begin(), vertices.end(), vertices.begin(), [&](const point &p)
   {
@@ -124,18 +133,36 @@ void context::mesh(const float *vertices_,
 } // end context::mesh()
 
 
-void context::mesh(const float *vertices_,
-                   const float *parametrics_,
-                   size_t num_vertices,
-                   const unsigned int *triangles_,
-                   size_t num_triangles)
+void context::mesh(array_ref<const float> vertices_,
+                   array_ref<const float> parametrics_,
+                   array_ref<const unsigned int> triangles_)
 {
-  std::vector<point> vertices(reinterpret_cast<const point*>(vertices_),
-                              reinterpret_cast<const point*>(vertices_) + num_vertices);
-  std::vector<parametric> parametrics(reinterpret_cast<const parametric*>(parametrics_),
-                                      reinterpret_cast<const parametric*>(parametrics_) + num_vertices);
-  std::vector<uint3> triangles(reinterpret_cast<const uint3*>(triangles_),
-                               reinterpret_cast<const uint3*>(triangles_) + num_triangles);
+  if(vertices_.size() % 3 > 0)
+  {
+    throw std::logic_error("context::mesh(): vertices.size() must be a multiple of 3");
+  } // end if
+
+  if(parametrics_.size() % 2 > 0)
+  {
+    throw std::logic_error("context::mesh(): parametrics.size() must be a multiple of 2");
+  } // end if
+
+  if(parametrics_.size() / 2 != vertices_.size() / 3)
+  {
+    throw std::logic_error("context::mesh(): parametrics.size() must equal vertices.size()");
+  } // end if
+
+  if(triangles_.size() % 3 > 0)
+  {
+    throw std::logic_error("context::mesh(): triangles_.size() must be a multiple of 3");
+  } // end if
+
+  std::vector<point> vertices(reinterpret_cast<const point*>(vertices_.data()),
+                              reinterpret_cast<const point*>(vertices_.data() + vertices_.size()));
+  std::vector<parametric> parametrics(reinterpret_cast<const parametric*>(parametrics_.data()),
+                                      reinterpret_cast<const parametric*>(parametrics_.data() + parametrics_.size()));
+  std::vector<uint3> triangles(reinterpret_cast<const uint3*>(triangles_.data()),
+                               reinterpret_cast<const uint3*>(triangles_.data() + triangles_.size()));
 
   std::transform(vertices.begin(), vertices.end(), vertices.begin(), [&](const point &p)
   {
@@ -155,21 +182,44 @@ void context::mesh(const float *vertices_,
 } // end context::mesh()
 
        
-void context::mesh(const float *vertices_,
-                   const float *parametrics_,
-                   const float *normals_,
-                   size_t num_vertices,
-                   const unsigned int *triangles_,
-                   size_t num_triangles)
+void context::mesh(array_ref<const float> vertices_,
+                   array_ref<const float> parametrics_,
+                   array_ref<const float> normals_,
+                   array_ref<const unsigned int> triangles_)
 {
-  std::vector<point> vertices(reinterpret_cast<const point*>(vertices_),
-                              reinterpret_cast<const point*>(vertices_) + num_vertices);
-  std::vector<parametric> parametrics(reinterpret_cast<const parametric*>(parametrics_),
-                                      reinterpret_cast<const parametric*>(parametrics_) + num_vertices);
-  std::vector<normal> normals(reinterpret_cast<const normal*>(normals_),
-                              reinterpret_cast<const normal*>(normals_) + num_vertices);
-  std::vector<uint3> triangles(reinterpret_cast<const uint3*>(triangles_),
-                               reinterpret_cast<const uint3*>(triangles_) + num_triangles);
+  if(vertices_.size() % 3 > 0)
+  {
+    throw std::logic_error("context::mesh(): vertices.size() must be a multiple of 3");
+  } // end if
+
+  if(parametrics_.size() % 2 > 0)
+  {
+    throw std::logic_error("context::mesh(): parametrics.size() must be a multiple of 2");
+  } // end if
+
+  if(parametrics_.size() / 2 != vertices_.size() / 3)
+  {
+    throw std::logic_error("context::mesh(): parametrics.size() must equal vertices.size()");
+  } // end if
+
+  if(normals_.size() != vertices_.size())
+  {
+    throw std::logic_error("context::mesh(): normals.size() must equal vertices.size()");
+  } // end if
+
+  if(triangles_.size() % 3 > 0)
+  {
+    throw std::logic_error("context::mesh(): triangles_.size() must be a multiple of 3");
+  } // end if
+
+  std::vector<point> vertices(reinterpret_cast<const point*>(vertices_.data()),
+                              reinterpret_cast<const point*>(vertices_.data() + vertices_.size()));
+  std::vector<parametric> parametrics(reinterpret_cast<const parametric*>(parametrics_.data()),
+                                      reinterpret_cast<const parametric*>(parametrics_.data() + parametrics_.size()));
+  std::vector<normal> normals(reinterpret_cast<const normal*>(normals_.data()),
+                              reinterpret_cast<const normal*>(normals_.data() + normals_.size()));
+  std::vector<uint3> triangles(reinterpret_cast<const uint3*>(triangles_.data()),
+                               reinterpret_cast<const uint3*>(triangles_.data() + triangles_.size()));
 
   std::transform(vertices.begin(), vertices.end(), vertices.begin(), [&](const point &p)
   {

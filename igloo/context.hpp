@@ -4,6 +4,7 @@
 #include <stack>
 #include <string>
 #include <map>
+#include <igloo/utility/array_ref.hpp>
 #include <igloo/surfaces/sphere.hpp>
 #include <igloo/surfaces/mesh.hpp>
 #include <igloo/geometry/transform.hpp>
@@ -78,46 +79,30 @@ class context
     void sphere(float cx, float cy, float cz, float radius);
 
     /*! Creates a new mesh.
-     *  \param vertices An array of triangle vertices.
-     *  \param num_vertices The size of the vertices array.
-     *  \param triangles An array of vertex index triples.
-     *  \param num_triangles THe size of the triangles array.
-     *  XXX these parameters should be array_ref
+     *  \param vertices An array of triangle vertices; size must be a multiple of 3.
+     *  \param triangles An array of vertex index triples; size must be a multiple of 3.
      */
-    void mesh(const float *vertices,
-              size_t num_vertices,
-              const unsigned int *triangles,
-              size_t num_triangles);
+    void mesh(array_ref<const float> vertices, array_ref<const unsigned int> triangles);
 
     /*! Creates a new mesh.
-     *  \param vertices An array of triangle vertices.
-     *  \param parametrics An array of parametric triangle vertex positions.
-     *  \param num_vertices The size of the vertices array.
-     *  \param triangles An array of vertex index triples.
-     *  \param num_triangles THe size of the triangles array.
-     *  XXX these parameters should be array_ref
+     *  \param vertices An array of triangle vertices; vertices.size() must be a multiple of 3.
+     *  \param parametrics An array of parametric triangle vertex positions; parametrics.size() must be a multiple of 2; parametrics.size() / 2 must equal size of vertices.size() / 3.
+     *  \param triangles An array of vertex index triples; triangles.size() must be a multiple of 3.
      */
-    void mesh(const float *vertices,
-              const float *parametrics,
-              size_t num_vertices,
-              const unsigned int *triangles,
-              size_t num_triangles);
+    void mesh(array_ref<const float> vertices,
+              array_ref<const float> parametrics,
+              array_ref<const unsigned int> triangles);
 
     /*! Creates a new mesh.
-     *  \param vertices An array of triangle vertices.
-     *  \param parametrics An array of parametric triangle vertex positions.
-     *  \param normals An array of vertex normals.
-     *  \param num_vertices The size of the vertices array.
-     *  \param triangles An array of vertex index triples.
-     *  \param num_triangles THe size of the triangles array.
-     *  XXX these parameters should be array_ref
+     *  \param vertices An array of triangle vertices; vertices.size() must be a multiple of 3.
+     *  \param parametrics An array of parametric triangle vertex positions; parametric.size() must be a multiple of 2; parametrics.size() / 2 must equal size of vertices.size() / 3.
+     *  \param normals An array of vertex normals; normals.size() must equal vertices.size().
+     *  \param triangles An array of vertex index triples; triangles.size() must be a multiple of 3.
      */
-    void mesh(const float *vertices,
-              const float *parametrics,
-              const float *normals,
-              size_t num_vertices,
-              const unsigned int *triangles,
-              size_t num_triangles);
+    void mesh(array_ref<const float> vertices,
+              array_ref<const float> parametrics,
+              array_ref<const float> normals,
+              array_ref<const unsigned int> triangles);
 
     /*! Starts a render.
      */
