@@ -13,12 +13,17 @@ class test_viewer : public scene_viewer
     typedef scene_viewer super_t;
 
   public:
-    test_viewer(image &im, const std::vector<surface_primitive> &primitives, const float4x4 &modelview);
+    test_viewer(const image &im, const std::vector<surface_primitive> &primitives, const float4x4 &modelview);
 
     virtual void draw();
 
+    virtual void keyPressEvent(KeyEvent *e);
+
   private:
-    image &m_image;
+    void draw_image() const;
+
+    const image &m_image;
+    bool m_draw_preview;
 };
 
 
