@@ -9,6 +9,7 @@ sources = ['main.cpp',
            'igloo/geometry/transform.cpp',
            'igloo/surfaces/mesh.cpp',
            'igloo/surfaces/sphere.cpp',
+           'igloo/viewers/scene_viewer.cpp',
            'igloo/viewers/test_viewer.cpp']
 
 env.Program('demo', sources, LIBS = ['GL', 'GLU', 'glut', 'GLEW', 'pthread'])
