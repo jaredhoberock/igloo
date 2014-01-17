@@ -1,5 +1,6 @@
 #pragma once
 
+#include <igloo/surfaces/surface.hpp>
 #include <igloo/geometry/point.hpp>
 #include <igloo/geometry/triangle_mesh.hpp>
 
@@ -7,7 +8,7 @@ namespace igloo
 {
 
 
-class sphere
+class sphere : public surface
 {
   public:
     /*! Creates a new sphere.
@@ -40,7 +41,7 @@ class sphere
 
     /*! \return A triangle_mesh approximating this sphere.
      */
-    triangle_mesh triangulate() const;
+    virtual triangle_mesh triangulate() const;
 
   private:
     point m_center;

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <igloo/surfaces/surface.hpp>
 #include <igloo/geometry/vector.hpp>
 #include <igloo/geometry/point.hpp>
 #include <igloo/geometry/parametric.hpp>
@@ -10,7 +11,7 @@ namespace igloo
 {
 
 
-class mesh
+class mesh : public surface
 {
   public:
     /*! Creates a new mesh from an array of points and triangles.
@@ -46,7 +47,7 @@ class mesh
 
     /*! \return A triangle_mesh approximating this mesh.
      */
-    inline triangle_mesh triangulate() const
+    inline virtual triangle_mesh triangulate() const
     {
       return m_triangle_mesh;
     } // end triangulate()
