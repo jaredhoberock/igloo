@@ -9,16 +9,14 @@ namespace igloo
 {
 
 
-test_viewer::test_viewer(const std::vector<sphere> &spheres,
-                         const std::vector<mesh> &meshes,
+test_viewer::test_viewer(const std::vector<surface_primitive> &primitives,
                          const float4x4 &modelview)
-  : m_spheres(spheres),
-    m_meshes(meshes),
+  : m_surfaces(primitives),
     m_modelview(modelview)
 {}
 
 
-void draw(const triangle_mesh &mesh)
+void draw_mesh(const triangle_mesh &mesh)
 {
   const point *points                      = mesh.points_data();
   const parametric *parametrics            = mesh.parametrics_data();
@@ -91,18 +89,6 @@ void draw(const triangle_mesh &mesh)
 } // end draw()
 
 
-void draw_sphere(const sphere &s)
-{
-  draw(s.triangulate());
-} // end draw()
-
-
-void draw_mesh(const mesh &m)
-{
-  draw(m.triangulate());
-} // end draw_mesh()
-
-
 void test_viewer::draw()
 {
   glPushMatrix();
@@ -112,14 +98,9 @@ void test_viewer::draw()
 
   glMultMatrixf(m_modelview.inverse().transpose());
 
-  std::for_each(m_spheres.begin(), m_spheres.end(), [&](const sphere &s)
+  std::for_each(m_surfaces.begin(), m_surfaces.end(), [&](const surface_primitive &s)
   {
-    draw_sphere(s);
-  });
-
-  std::for_each(m_meshes.begin(), m_meshes.end(), [&](const mesh &m)
-  {
-    draw_mesh(m);
+    draw_mesh(s.triangulate());
   });
 
   glPopMatrix();

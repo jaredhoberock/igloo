@@ -5,8 +5,7 @@
 #include <string>
 #include <map>
 #include <igloo/utility/array_ref.hpp>
-#include <igloo/surfaces/sphere.hpp>
-#include <igloo/surfaces/mesh.hpp>
+#include <igloo/primitives/surface_primitive.hpp>
 #include <igloo/geometry/transform.hpp>
 
 namespace igloo
@@ -109,8 +108,7 @@ class context
     void render();
 
   private:
-    std::vector<igloo::sphere> m_spheres;
-    std::vector<igloo::mesh>   m_meshes;
+    std::vector<igloo::surface_primitive> m_surfaces;
 
     std::stack<transform> m_transform_stack;
 

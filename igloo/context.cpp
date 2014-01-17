@@ -1,5 +1,6 @@
 #include <igloo/context.hpp>
 #include <igloo/viewers/test_viewer.hpp>
+#include <igloo/utility/make_unique.hpp>
 #include <iostream>
 #include <cmath>
 #include <algorithm>
@@ -94,7 +95,7 @@ void context::sphere(float cx, float cy, float cz, float radius)
   // XXX should we scale the radius as well? not really clear how to do so
   point center = m_transform_stack.top()(point(cx,cy,cz));
 
-  m_spheres.emplace_back(center,radius);
+  m_surfaces.emplace_back(make_unique<igloo::sphere>(center,radius));
 } // end context::sphere()
 
 
@@ -129,7 +130,7 @@ void context::mesh(array_ref<const float> vertices_,
     });
   } // end if
 
-  m_meshes.emplace_back(vertices, triangles);
+  m_surfaces.emplace_back(make_unique<igloo::mesh>(vertices, triangles));
 } // end context::mesh()
 
 
@@ -178,7 +179,7 @@ void context::mesh(array_ref<const float> vertices_,
     });
   } // end if
 
-  m_meshes.emplace_back(vertices, parametrics, triangles);
+  m_surfaces.emplace_back(make_unique<igloo::mesh>(vertices, parametrics, triangles));
 } // end context::mesh()
 
        
@@ -241,7 +242,7 @@ void context::mesh(array_ref<const float> vertices_,
     });
   } // end if
 
-  m_meshes.emplace_back(vertices, parametrics, normals, triangles);
+  m_surfaces.emplace_back(make_unique<igloo::mesh>(vertices, parametrics, normals, triangles));
 } // end context::mesh()
 
 
@@ -251,7 +252,7 @@ void context::render()
   int width  = std::atoi(m_attributes_stack.top()["record:width"].c_str());
 
   float4x4 m(m_transform_stack.top().data());
-  test_viewer v(m_spheres, m_meshes, m);
+  test_viewer v(m_surfaces, m);
   v.setWindowTitle("Hello, world!");
   v.camera()->setAspectRatio(float(width)/height);
   v.resize(width,height);
