@@ -1,7 +1,7 @@
 env = Environment()
 
 env.Append(CPPPATH = ['.', 'dependencies'])
-env.Append(CPPFLAGS = ['-std=c++11'])
+env.Append(CPPFLAGS = ['-O3', '-std=c++11'])
 
 sources = ['main.cpp',
            'ubuntu_13_10_workaround.cpp',
