@@ -92,12 +92,7 @@ template<typename Parent, typename KeyEvent, typename StringType, typename Vecto
   void CommonViewer<Parent,KeyEvent,StringType,VectorType>
     ::drawTexture(const glpp::Texture &t) const
 {
-#if 0
   const Program &p = (t.getTarget() == GL_TEXTURE_2D_ARRAY_EXT) ? mTexture2DArrayProgram : mTexture2DRectProgram;
-#else
-  const Program &p = mTexture2DRectProgram;
-  std::cerr << "CommonViewer::drawTexture(): glew doesn't support GL_TEXTURE_2D_ARRAY_EXT." << std::endl;
-#endif // 0
   drawTexture(t,p);
 } // end CommonViewer::drawTexture()
 
