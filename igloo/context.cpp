@@ -1,6 +1,9 @@
 #include <igloo/context.hpp>
 #include <igloo/viewers/test_viewer.hpp>
 #include <igloo/utility/make_unique.hpp>
+#include <igloo/records/image.hpp>
+#include <igloo/surfaces/sphere.hpp>
+#include <igloo/surfaces/mesh.hpp>
 #include <iostream>
 #include <cmath>
 #include <algorithm>
@@ -251,11 +254,13 @@ void context::render()
   int height = std::atoi(m_attributes_stack.top()["record:height"].c_str());
   int width  = std::atoi(m_attributes_stack.top()["record:width"].c_str());
 
+  image im(height,width);
+
   float4x4 m(m_transform_stack.top().data());
-  test_viewer v(m_surfaces, m);
+
+  test_viewer v(im, m_surfaces, m);
   v.setWindowTitle("Hello, world!");
   v.camera()->setAspectRatio(float(width)/height);
-  v.resize(width,height);
   v.show();
 } // end context::render()
 

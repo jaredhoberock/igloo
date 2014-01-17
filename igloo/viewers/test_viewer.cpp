@@ -9,11 +9,15 @@ namespace igloo
 {
 
 
-test_viewer::test_viewer(const std::vector<surface_primitive> &primitives,
+test_viewer::test_viewer(image &im,
+                         const std::vector<surface_primitive> &primitives,
                          const float4x4 &modelview)
-  : m_surfaces(primitives),
+  : m_image(im),
+    m_surfaces(primitives),
     m_modelview(modelview)
-{}
+{
+  resize(m_image.width(), m_image.height());
+}
 
 
 void draw_mesh(const triangle_mesh &mesh)
