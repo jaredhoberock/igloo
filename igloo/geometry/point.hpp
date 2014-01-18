@@ -1,6 +1,6 @@
 #pragma once
 
-#include <igloo/utility/math_vector.hpp>
+#include <igloo/geometry/vector.hpp>
 
 namespace igloo
 {
@@ -8,15 +8,15 @@ namespace igloo
 
 /*! A point represents coordinates in 3-space.
  */
-class point : float3
+class point : vector
 {
   private:
-    typedef float3 super_t;
+    typedef vector super_t;
 
     /*! Creates a new point from a float3.
-     *  \param v The float3 to copy.
+     *  \param v The vector to copy.
      */
-    inline point(const float3 &v) : super_t(v) {}
+    inline point(const vector &v) : super_t(v) {}
 
   public:
     /*! Creates a new default constructed point.
@@ -33,17 +33,15 @@ class point : float3
     /*! point difference.
      *  \param rhs The point to subtract.
      *  \return The vector pointing from rhs to *this.
-     *  XXX change this to vector instead of float3
      */
-    inline float3 operator-(const point &rhs) const
+    inline vector operator-(const point &rhs) const
     {
-      return static_cast<const float3&>(*this) - rhs;
+      return static_cast<const vector&>(*this) - rhs;
     } // end operator-()
 
     /*! \return the vector representing this point as a translation from the origin.
-     *  XXX change this to vector instead of float3
      */
-    inline float3 as_translation() const
+    inline vector as_translation() const
     {
       return (*this) - point(0,0,0);
     } // end as_translation()
@@ -51,11 +49,10 @@ class point : float3
     /*! Translation.
      *  \param rhs The vector to add.
      *  \return The point resulting from the given translation.
-     *  XXX change this to vector instead of float3
      */
-    inline point operator+(const float3 &rhs) const
+    inline point operator+(const vector &rhs) const
     {
-      return static_cast<const float3&>(*this) + rhs;
+      return static_cast<const vector&>(*this) + rhs;
     } // end operator+()
 
     using super_t::operator[];

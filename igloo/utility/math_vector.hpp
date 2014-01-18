@@ -448,11 +448,6 @@ class math_vector<T,2> : public math_vector_facade<math_vector<T,2>, T, 2>
         y(yy)
     {}
 
-    inline math_vector cross(const math_vector &rhs) const
-    {
-      return cross(*this, rhs);
-    } // end cross()
-
     T x, y;
 }; // end math_vector<T,2>
 
@@ -482,7 +477,7 @@ class math_vector<T,3> : public math_vector_facade<math_vector<T,3>, T, 3>
 
     inline math_vector cross(const math_vector &rhs) const
     {
-      return cross(*this, rhs);
+      return igloo::cross(*this, rhs);
     } // end cross()
 
     T x, y, z;

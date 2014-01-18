@@ -401,8 +401,8 @@ template<typename Derived, typename T, std::size_t M, std::size_t N>
       return igloo::detail::determinant<M>::do_it(*this);
     } // end determinant()
 
-    template<std::size_t, std::size_t> friend struct adjoint;
-    template<size_t> friend struct determinant;
+    template<std::size_t, std::size_t> friend struct detail::adjoint;
+    template<size_t> friend struct detail::determinant;
 }; // end matrix_facade
 
 
