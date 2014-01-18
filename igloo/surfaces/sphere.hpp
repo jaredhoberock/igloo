@@ -2,7 +2,9 @@
 
 #include <igloo/surfaces/surface.hpp>
 #include <igloo/geometry/point.hpp>
+#include <igloo/geometry/normal.hpp>
 #include <igloo/geometry/triangle_mesh.hpp>
+#include <igloo/geometry/ray.hpp>
 
 namespace igloo
 {
@@ -43,7 +45,10 @@ class sphere : public surface
      */
     virtual triangle_mesh triangulate() const;
 
+    bool intersect(const ray &r, float &t, normal &n) const;
+
   private:
+    static std::pair<float,float> solve_quadratic(float a, float b, float c);
     point m_center;
     float m_radius;
 }; // end sphere

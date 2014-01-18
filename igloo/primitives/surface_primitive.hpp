@@ -24,8 +24,14 @@ class surface_primitive
       return m_surface->triangulate();
     } // end triangulate();
 
+    // XXX eliminate this
+    inline const surface &surf() const
+    {
+      return *m_surface;
+    }
+
   private:
-    std::unique_ptr<surface> m_surface;
+    std::unique_ptr<igloo::surface> m_surface;
 }; // end surface_primitive
 
 

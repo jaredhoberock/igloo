@@ -252,6 +252,8 @@ void context::mesh(array_ref<const float> vertices_,
 
 void context::render()
 {
+  float4x4 m(m_transform_stack.top().data());
+
   int height = std::atoi(m_attributes_stack.top()["record:height"].c_str());
   int width  = std::atoi(m_attributes_stack.top()["record:width"].c_str());
 
@@ -260,13 +262,13 @@ void context::render()
   progress_snapshot progress(im);
 
   debug_renderer renderer(m_surfaces, im);
-  renderer.render(progress);
-
-  float4x4 m(m_transform_stack.top().data());
+  renderer.render(m, progress);
 
   test_viewer v(progress, m_surfaces, m);
   v.setWindowTitle("Hello, world!");
   v.camera()->setAspectRatio(float(width)/height);
+  float fovy_radians = 60 * (3.1428 / 180.0);
+  v.camera()->setFieldOfView(fovy_radians);
   v.show();
 } // end context::render()
 

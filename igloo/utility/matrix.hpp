@@ -349,7 +349,7 @@ template<typename Derived, typename T, std::size_t M, std::size_t N>
     template<typename DerivedVector>
     DerivedVector operator*(const math_vector_facade<DerivedVector,value_type,M> &rhs) const
     {
-      DerivedVector result(0);
+      DerivedVector result(value_type(0));
 
       for(unsigned int j = 0; j < M; ++j)
       {

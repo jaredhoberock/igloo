@@ -55,6 +55,15 @@ class point : vector
       return static_cast<const vector&>(*this) + rhs;
     } // end operator+()
 
+    /*! Translation.
+     *  \param rhs The vector to subtract.
+     *  \return The point resulting from the given translatino.
+     */
+    inline point operator-(const vector &rhs) const
+    {
+      return static_cast<const vector&>(*this) - rhs;
+    } // end operator-()
+
     using super_t::operator[];
     using super_t::operator float *;
     using super_t::operator const float *;
@@ -62,6 +71,11 @@ class point : vector
     using super_t::x;
     using super_t::y;
     using super_t::z;
+
+    friend inline std::ostream &operator<<(std::ostream &os, const point &p)
+    {
+      return os << static_cast<const vector&>(p);
+    } // end operator<<()
 }; // end point
 
 

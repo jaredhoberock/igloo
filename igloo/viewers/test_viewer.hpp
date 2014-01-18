@@ -42,10 +42,11 @@ class progress_snapshot : public render_progress
     }
 
   protected:
-    inline virtual void on_progress(std::size_t, std::size_t)
+    inline virtual void on_progress(std::size_t current_count, std::size_t expected_count)
     {
       // every 30 ms, update_snapshot()
-      if(std::chrono::system_clock::now() - m_last_update > std::chrono::milliseconds(30))
+      if(std::chrono::system_clock::now() - m_last_update > std::chrono::milliseconds(30)
+         || current_count >= expected_count)
       {
         update_snapshot();
       } // end if
@@ -54,6 +55,7 @@ class progress_snapshot : public render_progress
   private:
     inline void update_snapshot()
     {
+      // XXX this needs a mutex because presumably the renderer and viewer are in separate threads
       m_snapshot = m_image;
       m_last_update = std::chrono::system_clock::now();
     }

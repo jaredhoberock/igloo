@@ -484,11 +484,40 @@ class math_vector<T,3> : public math_vector_facade<math_vector<T,3>, T, 3>
 }; // end math_vector<T,3>
 
 
+template<typename T>
+class math_vector<T,4> : public math_vector_facade<math_vector<T,4>, T, 4>
+{
+  private:
+    typedef math_vector_facade<math_vector<T,4>, T, 4> super_t;
+
+  public:
+    typedef typename super_t::value_type value_type;
+
+    inline math_vector() : super_t() {}
+
+    template<typename OtherVector>
+    inline math_vector(const OtherVector &other) : super_t(other) {}
+
+    inline math_vector(value_type v) : super_t(v) {}
+
+    inline math_vector(value_type xx, value_type yy, value_type zz, value_type ww)
+      : super_t(),
+        x(xx),
+        y(yy),
+        z(zz),
+        w(ww)
+    {}
+
+    T x, y, z, w;
+}; // end math_vector<T,3>
+
+
 typedef math_vector<unsigned int,2> uint2;
 typedef math_vector<unsigned int,3> uint3;
 
 typedef math_vector<float,2> float2;
 typedef math_vector<float,3> float3;
+typedef math_vector<float,4> float4;
 
 
 } // end igloo

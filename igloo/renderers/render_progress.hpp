@@ -37,14 +37,14 @@ class render_progress
 
     inline std::size_t operator+=(const std::size_t increment)
     {
-      m_expected_count += increment;
+      m_count += increment;
 
       on_progress(count(), expected_count());
 
       return m_expected_count;
     }
 
-    inline std::size_t operator++()
+    inline std::size_t operator++(int)
     {
       return operator+=(1);
     }

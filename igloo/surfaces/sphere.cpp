@@ -2,6 +2,7 @@
 #include <dependencies/2dmapping/UnitSquareToSphere.h>
 #include <vector>
 #include <algorithm>
+#include <cmath>
 
 namespace igloo
 {
@@ -78,7 +79,88 @@ triangle_mesh sphere::triangulate() const
                        parametrics.begin(),
                        normals.begin(),
                        triangles.begin(), triangles.end());
-} // end triangulate::triangulate()
+} // end sphere::triangulate()
+
+
+bool sphere::intersect(const ray &r, float &t, normal &n) const
+{
+  vector diff = r.origin() - center();
+
+  // compute the coefficients of the quadratic equation of this sphere
+  float a = r.direction().norm2();
+  float b = 2.0f * dot(r.direction(), diff);
+  float c = diff.norm2() - radius() * radius();
+
+  // solve the quadratic
+  float root0, root1;
+  std::tie(root0,root1) = solve_quadratic(a,b,c);
+  if(std::isnan(root0))
+  {
+    return false;
+  }
+
+  // the hits must lie in the interval
+  if(root0 > r.interval().y || root1 < r.interval().x)
+  {
+    return false;
+  } // end if
+
+  // the hits must lie in the legal bound
+  if(root0 < r.interval().x)
+  {
+    t = root1;
+    if(t > r.interval().y)
+    {
+      return false;
+    } // end if
+  } // end if
+  else
+  {
+    t = root0;
+  } // end else
+
+  // compute the hit point
+  point x = r(t);
+
+  // compute the normal at the hit point
+  n = normalize(x - center());
+
+  return true;
+} // end sphere::intersect()
+
+
+std::pair<float,float> sphere::solve_quadratic(float a, float b, float c)
+{
+  float x0 = std::numeric_limits<float>::quiet_NaN();
+  float x1 = x0;
+
+  int result = 0;
+
+  // are there roots?
+  float denom = 2.0f*a;
+
+  if(denom != 0.0f)
+  {
+    float root = b*b - 4.0f*a*c;
+
+    if(root == 0.0f)
+    {
+      // one root
+      x0 = x1 = -b / denom;
+    } // end if
+    else if(root > 0.0f)
+    {
+      root = std::sqrt(root);
+
+      x0 = (-b - root) / denom;
+      x1 = (-b + root) / denom;
+
+      if(x0 > x1) std::swap(x0,x1);
+    } // end else if
+  } // end if
+
+  return std::make_pair(x0,x1);
+} // end solve_quadratic()
 
 
 } // end igloo
