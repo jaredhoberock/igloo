@@ -5,14 +5,14 @@ namespace igloo
 {
 
 
-test_viewer::test_viewer(const image &im,
+test_viewer::test_viewer(const progress_snapshot &progress,
                          const scene &s,
                          const float4x4 &modelview)
   : super_t(s, modelview),
-    m_image(im),
+    m_progress(progress),
     m_draw_preview(true)
 {
-  resize(m_image.width(), m_image.height());
+  resize(progress.width(), progress.height());
 }
 
 
@@ -20,7 +20,10 @@ void test_viewer::draw_image() const
 {
   glpp::Texture tex;
   tex.create();
-  tex.texImage2D(GL_RGB, m_image.width(), m_image.height(), 0, GL_RGB, GL_FLOAT, m_image.data());
+  tex.texImage2D(GL_RGB,
+                 m_progress.snapshot().width(), m_progress.snapshot().height(), 0,
+                 GL_RGB, GL_FLOAT,
+                 m_progress.snapshot().data());
 
   drawTexture(tex);
 } // end test_viewer::draw_image()
@@ -35,7 +38,7 @@ void test_viewer::draw()
   else
   {
     draw_image();
-  }
+  } // end else
 } // end draw()
 
 

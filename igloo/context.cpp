@@ -4,6 +4,7 @@
 #include <igloo/records/image.hpp>
 #include <igloo/surfaces/sphere.hpp>
 #include <igloo/surfaces/mesh.hpp>
+#include <igloo/renderers/debug_renderer.hpp>
 #include <iostream>
 #include <cmath>
 #include <algorithm>
@@ -256,9 +257,14 @@ void context::render()
 
   image im(height,width);
 
+  progress_snapshot progress(im);
+
+  debug_renderer renderer(m_surfaces, im);
+  renderer.render(progress);
+
   float4x4 m(m_transform_stack.top().data());
 
-  test_viewer v(im, m_surfaces, m);
+  test_viewer v(progress, m_surfaces, m);
   v.setWindowTitle("Hello, world!");
   v.camera()->setAspectRatio(float(width)/height);
   v.show();
