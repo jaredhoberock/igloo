@@ -1,15 +1,15 @@
 #pragma once
 
-#include <igloo/geometry/vector.hpp>
+#include <igloo/utility/math_vector.hpp>
 
 namespace igloo
 {
 
 
-class spectrum : public detail::vector_base<spectrum, float, 3>
+class spectrum : public math_vector_facade<spectrum, float, 3>
 {
   private:
-    typedef detail::vector_base<spectrum, float, 3> super_t;
+    typedef math_vector_facade<spectrum, float, 3> super_t;
 
   public:
     inline spectrum() : super_t() {}

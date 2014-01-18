@@ -1,7 +1,6 @@
 #pragma once
 
 #include <igloo/surfaces/surface.hpp>
-#include <igloo/geometry/vector.hpp>
 #include <igloo/geometry/point.hpp>
 #include <igloo/geometry/parametric.hpp>
 #include <igloo/geometry/normal.hpp>

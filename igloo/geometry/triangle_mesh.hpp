@@ -2,7 +2,6 @@
 
 #include <vector>
 #include <stdexcept>
-#include <igloo/geometry/vector.hpp>
 #include <igloo/geometry/point.hpp>
 #include <igloo/geometry/parametric.hpp>
 #include <igloo/geometry/normal.hpp>

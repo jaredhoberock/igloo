@@ -1,7 +1,6 @@
 #pragma once
 
-#include <igloo/geometry/matrix.hpp>
-#include <igloo/geometry/vector.hpp>
+#include <igloo/utility/matrix.hpp>
 #include <igloo/geometry/point.hpp>
 #include <igloo/geometry/normal.hpp>
 

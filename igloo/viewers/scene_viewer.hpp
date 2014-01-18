@@ -2,14 +2,15 @@
 
 #include <commonviewer/CommonViewer.h>
 #include <glutviewer/GlutViewer.h>
-#include <igloo/geometry/vector.hpp>
-#include <igloo/geometry/matrix.hpp>
+#include <igloo/utility/math_vector.hpp>
+#include <igloo/utility/matrix.hpp>
 #include <igloo/primitives/surface_primitive.hpp>
 
 namespace igloo
 {
 
 
+// XXX use igloo::vector?
 class scene_viewer : public CommonViewer<GlutViewer,KeyEvent,std::string,float3>
 {
   public:

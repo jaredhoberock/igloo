@@ -1,6 +1,6 @@
 #include <igloo/context.hpp>
-#include <igloo/geometry/vector.hpp>
-#include <igloo/geometry/matrix.hpp>
+#include <igloo/utility/math_vector.hpp>
+#include <igloo/utility/matrix.hpp>
 
 using namespace igloo;
 

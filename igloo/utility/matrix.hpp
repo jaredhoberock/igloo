@@ -1,15 +1,17 @@
 #pragma once
 
-#include <utility>
 #include <iostream>
-#include "vector_base.hpp"
+#include <igloo/utility/math_vector.hpp>
 
 namespace igloo
 {
+
+
+template<typename Derived, typename T, std::size_t M, std::size_t N> class matrix_facade;
+
+
 namespace detail
 {
-
-template<typename Derived, typename T, std::size_t M, std::size_t N> class matrix_base;
 
 
 template<std::size_t M, std::size_t N> struct adjoint;
@@ -18,7 +20,7 @@ template<>
 struct adjoint<2,2>
 {
   template<typename Derived, typename T>
-  inline static Derived do_it(const matrix_base<Derived,T,2,2> &A)
+  inline static Derived do_it(const matrix_facade<Derived,T,2,2> &A)
   {
     Derived result;
 
@@ -36,7 +38,7 @@ template<>
 struct adjoint<3,3>
 {
   template<typename Derived, typename T>
-  inline static Derived do_it(const matrix_base<Derived,T,3,3> &A)
+  inline static Derived do_it(const matrix_facade<Derived,T,3,3> &A)
   {
     Derived result;
     
@@ -59,7 +61,7 @@ template<>
 struct adjoint<4,4>
 {
   template<typename Derived, typename T>
-  inline static Derived do_it(const matrix_base<Derived,T,4,4> &A)
+  inline static Derived do_it(const matrix_facade<Derived,T,4,4> &A)
   {
     Derived result;
 
@@ -92,7 +94,7 @@ template<>
 struct determinant<2>
 {
   template<typename Derived, typename T>
-  inline static T do_it(const matrix_base<Derived,T,2,2> &A)
+  inline static T do_it(const matrix_facade<Derived,T,2,2> &A)
   {
     return A(0,0)*A(1,1) - A(0,1)*A(1,0);
   }
@@ -103,7 +105,7 @@ template<>
 struct determinant<3>
 {
   template<typename Derived, typename T>
-  inline static T do_it(const matrix_base<Derived,T,3,3> &A)
+  inline static T do_it(const matrix_facade<Derived,T,3,3> &A)
   {
     return A(0,0) * A.minor_(1, 2, 1, 2) -
            A(0,1) * A.minor_(1, 2, 0, 2) +
@@ -116,7 +118,7 @@ template<>
 struct determinant<4>
 {
   template<typename Derived, typename T>
-  inline static T do_it(const matrix_base<Derived,T,4,4> &A)
+  inline static T do_it(const matrix_facade<Derived,T,4,4> &A)
   {
     return A(0,0) * A.minor_(1, 2, 3, 1, 2, 3) -
            A(0,1) * A.minor_(1, 2, 3, 0, 2, 3) +
@@ -126,10 +128,13 @@ struct determinant<4>
 };
 
 
+} // end detail
+
+
 // M: num_rows
 // N: num_columns
 template<typename Derived, typename T, std::size_t M, std::size_t N>
-  class matrix_base
+  class matrix_facade
 {
   public:
     typedef T                               value_type;
@@ -142,9 +147,9 @@ template<typename Derived, typename T, std::size_t M, std::size_t N>
     typedef T*       iterator;
     typedef const T* const_iterator;
 
-    matrix_base(){}
+    matrix_facade(){}
 
-    matrix_base(const matrix_base &other)
+    matrix_facade(const matrix_facade &other)
     {
       for(size_type i = 0; i != static_size; ++i)
       {
@@ -153,7 +158,7 @@ template<typename Derived, typename T, std::size_t M, std::size_t N>
     }
 
     template<typename OtherMatrix>
-    matrix_base(const OtherMatrix &other)
+    matrix_facade(const OtherMatrix &other)
     {
       for(size_type i = 0; i != static_size; ++i)
       {
@@ -161,12 +166,12 @@ template<typename Derived, typename T, std::size_t M, std::size_t N>
       }
     }
 
-    matrix_base(value_type v)
+    matrix_facade(value_type v)
     {
       std::fill(begin(), end(), v);
     }
 
-    Derived &operator=(const matrix_base &other)
+    Derived &operator=(const matrix_facade &other)
     {
       for(size_type i = 0; i != static_size; ++i)
       {
@@ -262,12 +267,12 @@ template<typename Derived, typename T, std::size_t M, std::size_t N>
 
     template<typename OtherDerived, size_type P>
     inline typename OtherDerived::template rebind<value_type,M,P>::type
-      operator*(const matrix_base<OtherDerived,T,N,P> &rhs) const
+      operator*(const matrix_facade<OtherDerived,T,N,P> &rhs) const
     {
       typedef typename OtherDerived::template rebind<value_type,M,P>::type result_type;
 
       result_type result;
-      const matrix_base &lhs = *this;
+      const matrix_facade &lhs = *this;
 
       value_type temp;
       // iterate over elements of the result:
@@ -297,7 +302,7 @@ template<typename Derived, typename T, std::size_t M, std::size_t N>
     } // end operator*()
 
     // XXX can this be performed in place?
-    Derived &operator*=(const matrix_base &rhs)
+    Derived &operator*=(const matrix_facade &rhs)
     {
       Derived result = (*this) * rhs;
 
@@ -338,11 +343,11 @@ template<typename Derived, typename T, std::size_t M, std::size_t N>
 
     Derived adjoint() const
     {
-      return ::igloo::detail::adjoint<M,N>::do_it(*this);
+      return igloo::detail::adjoint<M,N>::do_it(*this);
     }
 
     template<typename DerivedVector>
-    DerivedVector operator*(const vector_base<DerivedVector,value_type,M> &rhs) const
+    DerivedVector operator*(const math_vector_facade<DerivedVector,value_type,M> &rhs) const
     {
       DerivedVector result(0);
 
@@ -374,7 +379,7 @@ template<typename Derived, typename T, std::size_t M, std::size_t N>
     value_type minor_(const size_type r0, const size_type r1,
                       const size_type c0, const size_type c1) const
     {
-      const matrix_base &A = *this;
+      const matrix_facade &A = *this;
       return A(r0,c0) * A(r1,c1) - A(r1,c0) * A(r0,c1);
     } // end minor()
 
@@ -383,7 +388,7 @@ template<typename Derived, typename T, std::size_t M, std::size_t N>
     value_type minor_(const size_type r0, const size_type r1, const size_type r2,
                       const size_type c0, const size_type c1, const size_type c2) const
     {
-      const matrix_base &A = *this;
+      const matrix_facade &A = *this;
       return A(r0,c0) * (A(r1,c1) * A(r2,c2) - A(r2,c1) * A(r1,c2)) -
     	     A(r0,c1) * (A(r1,c0) * A(r2,c2) - A(r2,c0) * A(r1,c2)) +
     	     A(r0,c2) * (A(r1,c0) * A(r2,c1) - A(r2,c0) * A(r1,c1));
@@ -393,16 +398,16 @@ template<typename Derived, typename T, std::size_t M, std::size_t N>
     // XXX move this to square_matrix?
     value_type determinant() const
     {
-      return ::igloo::detail::determinant<M>::do_it(*this);
+      return igloo::detail::determinant<M>::do_it(*this);
     } // end determinant()
 
     template<std::size_t, std::size_t> friend struct adjoint;
     template<size_t> friend struct determinant;
-}; // end matrix_base
+}; // end matrix_facade
 
 
 template<typename Derived, typename T, std::size_t M, std::size_t N>
-std::ostream &operator<<(std::ostream &os, const matrix_base<Derived,T,M,N> &m)
+std::ostream &operator<<(std::ostream &os, const matrix_facade<Derived,T,M,N> &m)
 {
   for(size_t row = 0; row < M; ++row)
   {
@@ -423,11 +428,15 @@ std::ostream &operator<<(std::ostream &os, const matrix_base<Derived,T,M,N> &m)
 }
 
 
+namespace detail
+{
+
+
 template<typename Derived, typename T, std::size_t N>
-class square_matrix : public matrix_base<Derived, T, N, N>
+class square_matrix : public matrix_facade<Derived, T, N, N>
 {
   private:
-    typedef matrix_base<Derived,T,N,N> super_t;
+    typedef matrix_facade<Derived,T,N,N> super_t;
 
   public:
     typedef typename super_t::value_type value_type;
@@ -487,5 +496,84 @@ Derived &transpose(const square_matrix<Derived,T,N> &m)
 
 
 } // end detail
+
+
+template<typename T, std::size_t, std::size_t> class matrix;
+
+
+template<typename T>
+class matrix<T,3,3> : public detail::square_matrix<matrix<T,3,3>,T,3>
+{
+  private:
+    typedef detail::square_matrix<matrix<T,3,3>,T,3> super_t;
+
+  public:
+    template<typename U, std::size_t M, std::size_t N>
+    struct rebind
+    {
+      typedef matrix<U,M,N> type;
+    };
+
+    typedef typename super_t::value_type value_type;
+
+    inline matrix() : super_t() {}
+
+    template<typename OtherMatrix>
+    inline matrix(const OtherMatrix &other) : super_t(other) {}
+
+    inline matrix(value_type v) : super_t(v) {}
+
+    inline matrix(value_type m00_, value_type m01_, value_type m02_,
+                  value_type m10_, value_type m11_, value_type m12_,
+                  value_type m20_, value_type m21_, value_type m22_)
+      : m00(m00_), m01(m01_), m02(m02_),
+        m10(m10_), m11(m11_), m12(m12_),
+        m20(m20_), m21(m21_), m22(m22_)
+    {}
+
+    value_type m00, m01, m02, m10, m11, m12, m20, m21, m22;
+}; // end matrix<T,3,3>
+
+
+template<typename T>
+class matrix<T,4,4> : public detail::square_matrix<matrix<T,4,4>,T,4>
+{
+  private:
+    typedef detail::square_matrix<matrix<T,4,4>,T,4> super_t;
+
+  public:
+    template<typename U, std::size_t M, std::size_t N>
+    struct rebind
+    {
+      typedef matrix<U,M,N> type;
+    };
+
+    typedef typename super_t::value_type value_type;
+
+    inline matrix() : super_t() {}
+
+    template<typename OtherMatrix>
+    inline matrix(const OtherMatrix &other) : super_t(other) {}
+
+    inline matrix(value_type v) : super_t(v) {}
+
+    inline matrix(value_type m00_, value_type m01_, value_type m02_, value_type m03_,
+                  value_type m10_, value_type m11_, value_type m12_, value_type m13_,
+                  value_type m20_, value_type m21_, value_type m22_, value_type m23_,
+                  value_type m30_, value_type m31_, value_type m32_, value_type m33_)
+      : m00(m00_), m01(m01_), m02(m02_), m03(m03_),
+        m10(m10_), m11(m11_), m12(m12_), m13(m13_),
+        m20(m20_), m21(m21_), m22(m22_), m23(m23_),
+        m30(m30_), m31(m31_), m32(m32_), m33(m33_)
+    {}
+
+    value_type m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23, m30, m31, m32, m33;
+}; // end matrix<T,3,3>
+
+
+typedef matrix<float,3,3> float3x3;
+typedef matrix<float,4,4> float4x4;
+
+
 } // end igloo
 

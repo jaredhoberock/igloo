@@ -1,6 +1,6 @@
 #pragma once
 
-#include <igloo/geometry/vector.hpp>
+#include <igloo/utility/math_vector.hpp>
 
 namespace igloo
 {
@@ -20,6 +20,7 @@ class normal : float3
 
     /*! Creates a new normal from a float3.
      *  \param v The float3 to copy.
+     *  XXX change this to vector
      */
     inline normal(const float3 &v) : super_t(v) {}
 

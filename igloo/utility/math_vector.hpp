@@ -1,20 +1,16 @@
 #pragma once
 
-#include <cstddef>
-#include <functional>
-#include <algorithm>
 #include <numeric>
 #include <cmath>
+#include <functional>
 #include <iostream>
 
 namespace igloo
 {
-namespace detail
-{
 
 
 template<typename Derived, typename T, std::size_t N>
-  class vector_base
+  class math_vector_facade
 {
   public:
     typedef T                  value_type;
@@ -26,9 +22,9 @@ template<typename Derived, typename T, std::size_t N>
     typedef T*       iterator;
     typedef const T* const_iterator;
 
-    vector_base(){}
+    math_vector_facade(){}
 
-    vector_base(const vector_base &other)
+    math_vector_facade(const math_vector_facade &other)
     {
       for(size_type i = 0; i != static_size; ++i)
       {
@@ -37,7 +33,7 @@ template<typename Derived, typename T, std::size_t N>
     }
 
     template<typename OtherVector>
-    inline vector_base(const OtherVector &other)
+    inline math_vector_facade(const OtherVector &other)
     {
       for(size_type i = 0; i != static_size; ++i)
       {
@@ -45,7 +41,7 @@ template<typename Derived, typename T, std::size_t N>
       }
     }
 
-    Derived &operator=(const vector_base &other)
+    Derived &operator=(const math_vector_facade &other)
     {
       for(size_type i = 0; i != static_size; ++i)
       {
@@ -62,7 +58,7 @@ template<typename Derived, typename T, std::size_t N>
       }
     }
 
-    inline vector_base(value_type v)
+    inline math_vector_facade(value_type v)
     {
       std::fill(begin(), end(), v);
     }
@@ -257,8 +253,8 @@ template<typename Derived, typename T, std::size_t N>
 
 
 template<typename Derived, typename T, std::size_t N>
-Derived operator+(const vector_base<Derived,T,N> &a,
-                  const vector_base<Derived,T,N> &b)
+Derived operator+(const math_vector_facade<Derived,T,N> &a,
+                  const math_vector_facade<Derived,T,N> &b)
 {
   Derived result = a;
   result += b;
@@ -267,8 +263,8 @@ Derived operator+(const vector_base<Derived,T,N> &a,
 
 
 template<typename Derived, typename T, std::size_t N>
-Derived operator-(const vector_base<Derived,T,N> &a,
-                  const vector_base<Derived,T,N> &b)
+Derived operator-(const math_vector_facade<Derived,T,N> &a,
+                  const math_vector_facade<Derived,T,N> &b)
 {
   Derived result = a;
   result -= b;
@@ -277,7 +273,7 @@ Derived operator-(const vector_base<Derived,T,N> &a,
 
 
 template<typename Derived, typename T, std::size_t N>
-Derived operator*(const vector_base<Derived,T,N> &a, T b)
+Derived operator*(const math_vector_facade<Derived,T,N> &a, T b)
 {
   Derived result = a;
   result *= b;
@@ -285,7 +281,7 @@ Derived operator*(const vector_base<Derived,T,N> &a, T b)
 }
 
 template<typename Derived, typename T, std::size_t N>
-Derived operator*(T a, const vector_base<Derived,T,N> &b)
+Derived operator*(T a, const math_vector_facade<Derived,T,N> &b)
 {
   Derived result = b;
   result *= a;
@@ -294,8 +290,8 @@ Derived operator*(T a, const vector_base<Derived,T,N> &b)
 
 
 template<typename Derived, typename T, std::size_t N>
-Derived operator*(const vector_base<Derived,T,N> &a,
-                  const vector_base<Derived,T,N> &b)
+Derived operator*(const math_vector_facade<Derived,T,N> &a,
+                  const math_vector_facade<Derived,T,N> &b)
 {
   Derived result = a;
   result *= b;
@@ -304,7 +300,7 @@ Derived operator*(const vector_base<Derived,T,N> &a,
 
 
 template<typename Derived, typename T, std::size_t N>
-Derived operator/(const vector_base<Derived,T,N> &a, T b)
+Derived operator/(const math_vector_facade<Derived,T,N> &a, T b)
 {
   Derived result = a;
   result /= b;
@@ -313,8 +309,8 @@ Derived operator/(const vector_base<Derived,T,N> &a, T b)
 
 
 template<typename Derived, typename T, std::size_t N>
-Derived operator/(const vector_base<Derived,T,N> &a,
-                  const vector_base<Derived,T,N> &b)
+Derived operator/(const math_vector_facade<Derived,T,N> &a,
+                  const math_vector_facade<Derived,T,N> &b)
 {
   Derived result = a;
   result /= b;
@@ -323,67 +319,67 @@ Derived operator/(const vector_base<Derived,T,N> &a,
 
 
 template<typename Derived, typename T, std::size_t N>
-T dot(const vector_base<Derived,T,N> &a,
-      const vector_base<Derived,T,N> &b)
+T dot(const math_vector_facade<Derived,T,N> &a,
+      const math_vector_facade<Derived,T,N> &b)
 {
   return a.dot(b);
 } // end dot()
 
 
 template<typename Derived, typename T, std::size_t N>
-T abs_dot(const vector_base<Derived,T,N> &a,
-          const vector_base<Derived,T,N> &b)
+T abs_dot(const math_vector_facade<Derived,T,N> &a,
+          const math_vector_facade<Derived,T,N> &b)
 {
   return a.abs_dot(b);
 } // end dot()
 
 
 template<typename Derived, typename T, std::size_t N>
-T norm(const vector_base<Derived,T,N> &vec)
+T norm(const math_vector_facade<Derived,T,N> &vec)
 {
   return vec.norm();
 }
 
 
 template<typename Derived, typename T, std::size_t N>
-T norm2(const vector_base<Derived,T,N> &vec)
+T norm2(const math_vector_facade<Derived,T,N> &vec)
 {
   return vec.norm2();
 }
 
 
 template<typename Derived, typename T, std::size_t N>
-T sum(const vector_base<Derived,T,N> &vec)
+T sum(const math_vector_facade<Derived,T,N> &vec)
 {
   return vec.sum();
 }
 
 
 template<typename Derived, typename T, std::size_t N>
-T product(const vector_base<Derived,T,N> &vec)
+T product(const math_vector_facade<Derived,T,N> &vec)
 {
   return vec.product();
 }
 
 
 template<typename Derived, typename T, std::size_t N>
-inline Derived normalize(const vector_base<Derived,T,N> &vec)
+inline Derived normalize(const math_vector_facade<Derived,T,N> &vec)
 {
   return vec.normalize();
 }
 
 
 template<typename Derived, typename T, std::size_t N>
-inline Derived reflect(const vector_base<Derived,T,N> &a,
-                       const vector_base<Derived,T,N> &b)
+inline Derived reflect(const math_vector_facade<Derived,T,N> &a,
+                       const math_vector_facade<Derived,T,N> &b)
 {
   return a.reflect(b);
 }
 
 
 template<typename Derived, typename T>
-inline Derived cross(const vector_base<Derived,T,3> &lhs,
-                     const vector_base<Derived,T,3> &rhs)
+inline Derived cross(const math_vector_facade<Derived,T,3> &lhs,
+                     const math_vector_facade<Derived,T,3> &rhs)
 {
   Derived result;
   
@@ -401,7 +397,7 @@ inline Derived cross(const vector_base<Derived,T,3> &lhs,
 
 
 template<typename Derived, typename T, std::size_t N>
-std::ostream &operator<<(std::ostream &os, const vector_base<Derived,T,N> &v)
+std::ostream &operator<<(std::ostream &os, const math_vector_facade<Derived,T,N> &v)
 {
   size_t i = 0;
   for(; i < N - 1; ++i)
@@ -416,7 +412,7 @@ std::ostream &operator<<(std::ostream &os, const vector_base<Derived,T,N> &v)
 
 
 template<typename Derived, typename T, std::size_t N>
-std::istream &operator>>(std::istream &is, const vector_base<Derived,T,N> &v)
+std::istream &operator>>(std::istream &is, const math_vector_facade<Derived,T,N> &v)
 {
   for(size_t i = 0; i < N; ++i)
   {
@@ -427,6 +423,78 @@ std::istream &operator>>(std::istream &is, const vector_base<Derived,T,N> &v)
 } // end operator<<()
 
 
-} // end detail
+template<typename T, std::size_t N> class math_vector;
+
+
+template<typename T>
+class math_vector<T,2> : public math_vector_facade<math_vector<T,2>, T, 2>
+{
+  private:
+    typedef math_vector_facade<math_vector<T,2>, T, 2> super_t;
+
+  public:
+    typedef typename super_t::value_type value_type;
+
+    inline math_vector() : super_t() {}
+
+    template<typename OtherVector>
+    inline math_vector(const OtherVector &other) : super_t(other) {}
+
+    inline math_vector(value_type v) : super_t(v) {}
+
+    inline math_vector(value_type xx, value_type yy)
+      : super_t(),
+        x(xx),
+        y(yy)
+    {}
+
+    inline math_vector cross(const math_vector &rhs) const
+    {
+      return cross(*this, rhs);
+    } // end cross()
+
+    T x, y;
+}; // end math_vector<T,2>
+
+
+template<typename T>
+class math_vector<T,3> : public math_vector_facade<math_vector<T,3>, T, 3>
+{
+  private:
+    typedef math_vector_facade<math_vector<T,3>, T, 3> super_t;
+
+  public:
+    typedef typename super_t::value_type value_type;
+
+    inline math_vector() : super_t() {}
+
+    template<typename OtherVector>
+    inline math_vector(const OtherVector &other) : super_t(other) {}
+
+    inline math_vector(value_type v) : super_t(v) {}
+
+    inline math_vector(value_type xx, value_type yy, value_type zz)
+      : super_t(),
+        x(xx),
+        y(yy),
+        z(zz)
+    {}
+
+    inline math_vector cross(const math_vector &rhs) const
+    {
+      return cross(*this, rhs);
+    } // end cross()
+
+    T x, y, z;
+}; // end math_vector<T,3>
+
+
+typedef math_vector<unsigned int,2> uint2;
+typedef math_vector<unsigned int,3> uint3;
+
+typedef math_vector<float,2> float2;
+typedef math_vector<float,3> float3;
+
+
 } // end igloo
 

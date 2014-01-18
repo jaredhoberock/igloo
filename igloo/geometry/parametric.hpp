@@ -1,6 +1,6 @@
 #pragma once
 
-#include <igloo/geometry/vector.hpp>
+#include <igloo/utility/math_vector.hpp>
 
 namespace igloo
 {

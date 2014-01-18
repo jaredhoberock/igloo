@@ -1,6 +1,6 @@
 #pragma once
 
-#include <igloo/geometry/vector.hpp>
+#include <igloo/utility/math_vector.hpp>
 
 namespace igloo
 {
@@ -33,6 +33,7 @@ class point : float3
     /*! point difference.
      *  \param rhs The point to subtract.
      *  \return The vector pointing from rhs to *this.
+     *  XXX change this to vector instead of float3
      */
     inline float3 operator-(const point &rhs) const
     {
@@ -40,6 +41,7 @@ class point : float3
     } // end operator-()
 
     /*! \return the vector representing this point as a translation from the origin.
+     *  XXX change this to vector instead of float3
      */
     inline float3 as_translation() const
     {
@@ -49,6 +51,7 @@ class point : float3
     /*! Translation.
      *  \param rhs The vector to add.
      *  \return The point resulting from the given translation.
+     *  XXX change this to vector instead of float3
      */
     inline point operator+(const float3 &rhs) const
     {
