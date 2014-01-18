@@ -53,6 +53,12 @@ class transform
      */
     point operator()(const point &p) const;
 
+    /*! Transform a vector by applying this transform.
+     *  \param v The vector to transform.
+     *  \return v transformed by *this.
+     */
+    vector operator()(const vector &v) const;
+
     /*! Transforms a normal by applying this transform.
      *  \param n The normal to transform.
      *  \return n transformed by *this.

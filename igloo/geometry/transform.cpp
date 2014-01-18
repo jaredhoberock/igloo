@@ -72,6 +72,16 @@ static point transform_point(const float4x4 &m, const point &p)
 } // end transform_point()
 
 
+static vector transform_vector(const float4x4 &m, const vector &v)
+{
+  float x = m(0,0)*v.x + m(0,1)*v.y + m(0,2)*v.z;
+  float y = m(1,0)*v.x + m(1,1)*v.y + m(1,2)*v.z;
+  float z = m(2,0)*v.x + m(2,1)*v.y + m(2,2)*v.z;
+
+  return vector(x,y,z);
+} // end transform_vector()
+
+
 static normal transform_normal(const float4x4 &inv, const normal &n)
 {
   float x = inv(0,0)*n.x + inv(1,0)*n.y + inv(2,0)*n.z;
@@ -85,6 +95,12 @@ static normal transform_normal(const float4x4 &inv, const normal &n)
 point transform::operator()(const point &p) const
 {
   return transform_point(m_xfrm, p);
+} // end transform::operator()()
+
+
+vector transform::operator()(const vector &v) const
+{
+  return transform_vector(m_xfrm, v);
 } // end transform::operator()()
 
 
