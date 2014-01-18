@@ -6,9 +6,9 @@ namespace igloo
 
 
 test_viewer::test_viewer(const image &im,
-                         const std::vector<surface_primitive> &primitives,
+                         const scene &s,
                          const float4x4 &modelview)
-  : super_t(primitives, modelview),
+  : super_t(s, modelview),
     m_image(im),
     m_draw_preview(true)
 {

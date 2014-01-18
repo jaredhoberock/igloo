@@ -4,7 +4,7 @@
 #include <glutviewer/GlutViewer.h>
 #include <igloo/utility/math_vector.hpp>
 #include <igloo/utility/matrix.hpp>
-#include <igloo/primitives/surface_primitive.hpp>
+#include <igloo/primitives/scene.hpp>
 
 namespace igloo
 {
@@ -14,12 +14,12 @@ namespace igloo
 class scene_viewer : public CommonViewer<GlutViewer,KeyEvent,std::string,float3>
 {
   public:
-    scene_viewer(const std::vector<surface_primitive> &primitives, const float4x4 &modelview);
+    scene_viewer(const scene &s, const float4x4 &modelview);
 
     virtual void draw();
 
   private:
-    const std::vector<surface_primitive> &m_surfaces;
+    const scene &m_scene;
 
     float4x4 m_modelview;
 };

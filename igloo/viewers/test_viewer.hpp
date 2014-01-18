@@ -13,7 +13,7 @@ class test_viewer : public scene_viewer
     typedef scene_viewer super_t;
 
   public:
-    test_viewer(const image &im, const std::vector<surface_primitive> &primitives, const float4x4 &modelview);
+    test_viewer(const image &im, const scene &s, const float4x4 &modelview);
 
     virtual void draw();
 

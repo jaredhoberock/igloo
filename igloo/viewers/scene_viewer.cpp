@@ -9,9 +9,9 @@ namespace igloo
 {
 
 
-scene_viewer::scene_viewer(const std::vector<surface_primitive> &primitives,
+scene_viewer::scene_viewer(const scene &s,
                            const float4x4 &modelview)
-  : m_surfaces(primitives),
+  : m_scene(s),
     m_modelview(modelview)
 {
   resize(512, 512);
@@ -100,7 +100,7 @@ void scene_viewer::draw()
 
   glMultMatrixf(m_modelview.inverse().transpose());
 
-  std::for_each(m_surfaces.begin(), m_surfaces.end(), [&](const surface_primitive &s)
+  std::for_each(m_scene.begin(), m_scene.end(), [&](const surface_primitive &s)
   {
     draw_mesh(s.triangulate());
   });
