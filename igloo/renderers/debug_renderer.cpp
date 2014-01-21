@@ -2,6 +2,7 @@
 #include <igloo/primitives/scene.hpp>
 #include <igloo/surfaces/sphere.hpp>
 #include <igloo/surfaces/mesh.hpp>
+#include <igloo/shading/perspective_sensor.hpp>
 
 namespace igloo
 {
@@ -28,24 +29,17 @@ void debug_renderer::render(const float4x4 &modelview, render_progress &progress
   float fovy = 60;
   float fovy_radians = fovy * (3.1428 / 180.0);
 
-  // compute the location of the ll corner of the viewport, in world coordinates
-  auto near = 1.0f / std::tan(0.5f * fovy_radians);
+  perspective_sensor perspective(fovy_radians, 1.f);
 
-  float aspect_ratio = float(m_image.width()) / m_image.height();
-
-  point ll = eye + near*look - aspect_ratio*right - up;
-
-  for(image::size_type row = 0; row < m_image.height(); ++row)
+  float v_spacing = 1.f / m_image.height();
+  float v = v_spacing / 2;
+  for(image::size_type row = 0; row < m_image.height(); ++row, v += v_spacing)
   {
-    for(image::size_type col = 0; col < m_image.width(); ++col)
+    float u_spacing = 1.f / m_image.width();
+    float u = u_spacing / 2;
+    for(image::size_type col = 0; col < m_image.width(); ++col, u += u_spacing)
     {
-      float u = float(col) / m_image.width();
-      float v = float(row) / m_image.height();
-
-      auto shoot_me = ll + (2.0f * aspect_ratio * u * right) + (2.0f * v * up);
-
-      // create a ray from the eye to the point on the viewport
-      ray r(eye, shoot_me - eye);
+      ray r(eye, perspective.sample(right,look,up,u,v));
 
       for(auto &prim : m_scene)
       {
