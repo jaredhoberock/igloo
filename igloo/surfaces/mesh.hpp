@@ -51,6 +51,8 @@ class mesh : public surface
       return m_triangle_mesh;
     } // end triangulate()
 
+    bool intersect(const ray &r, float &t, normal &n) const;
+
   private:
     triangle_mesh m_triangle_mesh;
 }; // end mesh

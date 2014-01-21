@@ -44,5 +44,21 @@ mesh::mesh(const std::vector<point> &points,
 {}
 
 
+bool mesh::intersect(const ray &r, float &t, normal &n) const
+{
+  auto result = m_triangle_mesh.intersect(r); 
+  if(result)
+  {
+    triangle_mesh::triangle_iterator tri;
+    triangle_mesh::barycentric b;
+    std::tie(tri, t, b) = *result;
+
+    n = m_triangle_mesh.normal_at(tri, b);
+  } // end if
+
+  return bool(result);
+} // end mesh::intersect()
+
+
 } // end igloo
 

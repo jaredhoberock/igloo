@@ -2,9 +2,12 @@
 
 #include <vector>
 #include <stdexcept>
+#include <tuple>
+#include <igloo/utility/optional.hpp>
 #include <igloo/geometry/point.hpp>
 #include <igloo/geometry/parametric.hpp>
 #include <igloo/geometry/normal.hpp>
+#include <igloo/geometry/ray.hpp>
 
 namespace igloo
 {
@@ -13,7 +16,8 @@ namespace igloo
 class triangle_mesh
 {
   public:
-    typedef uint3 triangle;
+    typedef uint3  triangle;
+    typedef float2 barycentric;
 
     typedef std::vector<point>::const_iterator      point_iterator;
     typedef std::vector<parametric>::const_iterator parametric_iterator;
@@ -251,7 +255,7 @@ class triangle_mesh
 
     /*! \return A pointer pointing to the array of points.
      */
-    const point *points_data() const
+    inline const point *points_data() const
     {
       return m_points.data();
     }
@@ -272,7 +276,7 @@ class triangle_mesh
 
     /*! \return A pointer pointing to the array of parametrics.
      */
-    const parametric *parametrics_data() const
+    inline const parametric *parametrics_data() const
     {
       return m_parametrics.data();
     }
@@ -293,7 +297,7 @@ class triangle_mesh
 
     /*! \return A pointer pointing to the array of normals.
      */
-    const normal *normals_data() const
+    inline const normal *normals_data() const
     {
       return m_normals.data();
     }
@@ -314,7 +318,7 @@ class triangle_mesh
 
     /*! \return A pointer pointing to the array of triangles.
      */
-    const triangle *triangles_data() const
+    inline const triangle *triangles_data() const
     {
       return m_triangles.data();
     }
@@ -329,7 +333,94 @@ class triangle_mesh
       return 0.5f * norm(cross(e0,e1));
     } // end surface_area()
 
+    // XXX return optional
+    inline bool intersect(const ray &r, const triangle &tri, float &t, float &b0, float &b1) const
+    {
+      const point &p0 = m_points[tri.x];
+      const point &p1 = m_points[tri.y];
+      const point &p2 = m_points[tri.z];
+
+      vector e1 = p1 - p0;
+      vector e2 = p2 - p0;
+      vector s1 = r.direction().cross(e2);
+      float divisor = dot(s1,e1);
+      if(divisor == 0.0f)
+      {
+        return false;
+      } // end if
+
+      float inv_divisor = 1.0f / divisor;
+
+      // compute barycentric coordinates 
+      vector d = r.origin() - p0;
+      b0 = dot(d,s1) * inv_divisor;
+      if(b0 < 0.0f || b0 > 1.0f)
+      {
+        return false;
+      } // end if
+
+      vector s2 = cross(d,e1);
+      b1 = dot(r.direction(), s2) * inv_divisor;
+      if(b1 < 0.0f || b0 + b1 > 1.0f)
+      {
+        return false;
+      } // end if
+
+      // compute t
+      t = inv_divisor * dot(e2,s2);
+
+      return true;
+    } // end intersect()
+
+
+    inline optional<std::tuple<triangle_iterator,float,barycentric>>
+      intersect(const ray &r_) const
+    {
+      optional<std::tuple<triangle_iterator,float,barycentric>> result;
+
+      ray r = r_;
+
+      // XXX this is really a reduction
+      //     it requires something like transform_min_element
+      for(auto tri_iter = triangles_begin();
+          tri_iter != triangles_end();
+          ++tri_iter)
+      {
+        float t, b0, b1;
+        if(intersect(r, *tri_iter, t, b0, b1))
+        {
+          // shorten ray
+          r.end(t);
+          result = std::make_tuple(tri_iter, t, barycentric(b0, b1));
+        } // end if
+      } // end for
+
+      return result;
+    } // end intersect()
+
+
+    inline normal normal_at(triangle_iterator tri, const barycentric &b) const
+    {
+      // XXX might want to create a face normal instead
+      if(!has_normals()) return igloo::normal(0.f);
+
+      return has_vertex_normals() ? interpolate_normal(*tri, b) : m_normals[tri - triangles_begin()];
+    } // end normal()
+
+
   private:
+    inline normal interpolate_normal(const triangle &tri, const barycentric &b) const
+    {
+      float b0 = 1.0f - b.x - b.y;
+
+      const normal &n0 = m_normals[tri.x];
+      const normal &n1 = m_normals[tri.y];
+      const normal &n2 = m_normals[tri.z];
+
+      return b0 * n0 + b.x * n1 + b.y * n2;
+    } // end interpolate_normal()
+
+
     std::vector<point>      m_points;
     std::vector<parametric> m_parametrics;
     std::vector<normal>     m_normals;

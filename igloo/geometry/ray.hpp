@@ -51,6 +51,11 @@ class ray
       return origin() + t * direction();
     }
 
+    inline void end(float t)
+    {
+      m_interval.y = t;
+    }
+
   private:
     inline static float epsilon()
     {

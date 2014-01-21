@@ -30,6 +30,24 @@ class normal : vector
      */
     inline normal(float x, float y, float z) : super_t(x,y,z) {}
 
+    /*! normal difference.
+     *  \param rhs The normal to subtract.
+     *  \return The normal resulting from the given subtraction.
+     */
+    inline normal operator-(const normal &rhs) const
+    {
+      return static_cast<const vector&>(*this) - rhs;
+    } // end operator-()
+
+    /*! normal addition.
+     *  \param rhs The normal to add.
+     *  \return The normal resulting from the given addition.
+     */
+    inline normal operator+(const normal &rhs) const
+    {
+      return static_cast<const normal&>(*this) + rhs;
+    } // end operator+()
+
     using super_t::operator[];
     using super_t::operator float *;
     using super_t::operator const float *;
@@ -38,6 +56,17 @@ class normal : vector
     using super_t::y;
     using super_t::z;
 }; // end normal
+
+
+/*! normal scalar multiply.
+ *  \param x The scalar to multiply by.
+ *  \param n The normal to scale.
+ *  \return n multiplied by x.
+ */
+inline normal operator*(float x, const normal &n)
+{
+  return normal(x * n.x, x * n.y, x * n.z);
+} // end operator*()
 
 
 } // end igloo
