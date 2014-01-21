@@ -1,6 +1,7 @@
 #include <igloo/renderers/debug_renderer.hpp>
 #include <igloo/primitives/scene.hpp>
 #include <igloo/surfaces/sphere.hpp>
+#include <igloo/surfaces/mesh.hpp>
 
 namespace igloo
 {
@@ -54,6 +55,17 @@ void debug_renderer::render(const float4x4 &modelview, render_progress &progress
           float t;
           normal n;
           if(s->intersect(r, t, n))
+          {
+            m_image.raster(col, row) = spectrum(std::abs(n.x), std::abs(n.y), std::abs(n.z));
+          } // end if
+        } // end if
+
+        const mesh *m = dynamic_cast<const mesh*>(&prim.surf());
+        if(m)
+        {
+          float t;
+          normal n;
+          if(m->intersect(r, t, n))
           {
             m_image.raster(col, row) = spectrum(std::abs(n.x), std::abs(n.y), std::abs(n.z));
           } // end if
