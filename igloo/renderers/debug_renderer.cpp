@@ -50,7 +50,7 @@ void debug_renderer::render(const float4x4 &modelview, render_progress &progress
           normal n;
           if(s->intersect(r, t, n))
           {
-            m_image.raster(col, row) = color(std::abs(n.x), std::abs(n.y), std::abs(n.z));
+            m_image.raster(col, row) = abs(color(n));
           } // end if
         } // end if
 
@@ -61,7 +61,7 @@ void debug_renderer::render(const float4x4 &modelview, render_progress &progress
           normal n;
           if(m->intersect(r, t, n))
           {
-            m_image.raster(col, row) = color(std::abs(n.x), std::abs(n.y), std::abs(n.z));
+            m_image.raster(col, row) = abs(color(n));
           } // end if
         } // end if
       } // end for surf
