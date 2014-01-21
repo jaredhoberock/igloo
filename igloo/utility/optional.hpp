@@ -25,6 +25,8 @@ template<typename T>
 class optional
 {
   public:
+    typedef T value_type;
+
     /*! Creates a new disenaged optional object.
      */
     constexpr optional()
@@ -34,29 +36,77 @@ class optional
     /*! Copies the contained value of other, if it is engaged.
      *  \param other The other optional to copy.
      */
-    constexpr optional(const optional &other)
-      : m_is_engaged(other.m_is_engaged)
+    optional(const optional &other)
+      : m_is_engaged(false)
+    {
+      operator=(other);
+    } // end optional::optional()
+
+    /*! Destroys the contained value, if this is in an engaged state.
+     */
+    ~optional()
     {
       if(m_is_engaged)
       {
-        new(m_data) T(other.value());
+        (**this).~T();
       } // end if
-    } // end optional::optional()
+    } // end optional::~optional()
+
+    /*! Assigns the contained value the value of other, if it is engaged.
+     *  \param other The other optional to assign.
+     *  \return *this
+     */
+    optional &operator=(const optional &other)
+    {
+      if(other.m_is_engaged)
+      {
+        return operator=(*other);
+      } // end if
+      else if(m_is_engaged)
+      {
+        // destroy the contained object
+        (**this).~T();
+        m_is_engaged = false;
+      } // end else
+
+      return *this;
+    } // end operator=()
+
+    /*! Assigns the contained value.
+     *  \param value The value to assign.
+     *  \return *this
+     */
+    template<typename U>
+    optional &operator=(U &&value)
+    {
+      if(m_is_engaged)
+      {
+        operator*() = std::forward<U>(value);
+      } // end if
+      else
+      {
+        new(operator->()) T(std::forward<U>(value));
+        m_is_engaged = true;
+      } // end else
+
+      return *this;
+    } // end operator=()
+
 
     /*! \return A pointer to the contained value.
      *  \note The behavior is undefined if *this is in a disengaged state.
      */
     constexpr const T* operator->() const
     {
-      return m_data;
+      return reinterpret_cast<const T*>(&m_data);
     } // end operator->()
 
     /*! \return A pointer to the contained value.
      *  \note The behavior is undefined if *this is in a disengaged state.
      */
-    constexpr T* operator->()
+    T* operator->()
     {
-      return m_data;
+      return reinterpret_cast<T*>(&m_data);
     } // end operator->()
 
     /*! \return A reference to the contained value.
@@ -70,7 +120,7 @@ class optional
     /*! \return A reference to the contained value.
      *  \note The behavior is undefined if *this is in a disengaged state.
      */
-    constexpr T &operator*()
+    T &operator*()
     {
       return *operator->();
     } // end operator->()
@@ -89,7 +139,7 @@ class optional
     {
       if(!m_is_engaged)
       {
-        throw bad_optional_access();
+        throw bad_optional_access("optional is not engaged");
       } // end if
 
       return operator*();
@@ -98,11 +148,11 @@ class optional
     /*! \return A reference to the contained value.
      *  \throws A bad_optional_access exception if *this is in a disengaged state.
      */
-    constexpr T &value()
+    T &value()
     {
       if(!m_is_engaged)
       {
-        throw bad_optional_access();
+        throw bad_optional_access("optional is not engaged");
       } // end if
 
       return operator*();
@@ -119,7 +169,7 @@ class optional
 
   private:
     bool m_is_engaged;
-    typedef typename std::aligned_storage<T>::type m_data;
+    typename std::aligned_storage<sizeof(T),alignof(T)>::type m_data;
 }; // end optional
 
 
