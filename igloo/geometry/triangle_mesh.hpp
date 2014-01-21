@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <stdexcept>
+#include <utility>
 #include <tuple>
 #include <igloo/utility/optional.hpp>
 #include <igloo/geometry/point.hpp>
@@ -333,8 +334,14 @@ class triangle_mesh
       return 0.5f * norm(cross(e0,e1));
     } // end surface_area()
 
-    // XXX return optional
-    inline bool intersect(const ray &r, const triangle &tri, float &t, float &b0, float &b1) const
+    /*! Tests a ray and a triangle for intersection.
+     *  \param r The ray of interest.
+     *  \param tri The triangle of interest.
+     *  \return false, if no intersection exists;
+     *          otherwise the ray parameter, and barycentric coordinates at the intersection.
+     */
+    inline optional<std::pair<float,barycentric>>
+      intersect(const ray &r, const triangle &tri) const
     {
       const point &p0 = m_points[tri.x];
       const point &p1 = m_points[tri.y];
@@ -346,33 +353,37 @@ class triangle_mesh
       float divisor = dot(s1,e1);
       if(divisor == 0.0f)
       {
-        return false;
+        return nullopt;
       } // end if
 
       float inv_divisor = 1.0f / divisor;
 
       // compute barycentric coordinates 
       vector d = r.origin() - p0;
-      b0 = dot(d,s1) * inv_divisor;
+      float b0 = dot(d,s1) * inv_divisor;
       if(b0 < 0.0f || b0 > 1.0f)
       {
-        return false;
+        return nullopt;
       } // end if
 
       vector s2 = cross(d,e1);
-      b1 = dot(r.direction(), s2) * inv_divisor;
+      float b1 = dot(r.direction(), s2) * inv_divisor;
       if(b1 < 0.0f || b0 + b1 > 1.0f)
       {
-        return false;
+        return nullopt;
       } // end if
 
       // compute t
-      t = inv_divisor * dot(e2,s2);
+      float t = inv_divisor * dot(e2,s2);
 
-      return true;
+      return std::make_pair(t, barycentric(b0,b1));
     } // end intersect()
 
-
+    /*! Tests a ray and this triangle_mesh for intersection.
+     *  \param r The ray of interest.
+     *  \return false, if no intersection exists;
+     *          otherwise returns the triangle, ray parameter, and barycentric coordinates at the intersection.
+     */
     inline optional<std::tuple<triangle_iterator,float,barycentric>>
       intersect(const ray &r_) const
     {
@@ -386,12 +397,16 @@ class triangle_mesh
           tri_iter != triangles_end();
           ++tri_iter)
       {
-        float t, b0, b1;
-        if(intersect(r, *tri_iter, t, b0, b1))
+        auto this_result = intersect(r, *tri_iter);
+        if(this_result)
         {
+          float t;
+          barycentric b;
+          std::tie(t,b) = *this_result;
+
           // shorten ray
-          r.end(t);
-          result = std::make_tuple(tri_iter, t, barycentric(b0, b1));
+          r.end(std::get<0>(*this_result));
+          result = std::make_tuple(tri_iter, t, b);
         } // end if
       } // end for
 
