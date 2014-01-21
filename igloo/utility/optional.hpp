@@ -21,6 +21,12 @@ class bad_optional_access : public std::logic_error
 };
 
 
+struct nullopt_t {};
+
+
+constexpr nullopt_t nullopt;
+
+
 template<typename T>
 class optional
 {
@@ -33,6 +39,12 @@ class optional
       : m_is_engaged(false)
     {}
 
+    /*! Creates a new disengaged optional object.
+     */
+    constexpr optional(nullopt_t)
+      : m_is_engaged(false)
+    {}
+
     /*! Copies the contained value of other, if it is engaged.
      *  \param other The other optional to copy.
      */
@@ -40,6 +52,25 @@ class optional
       : m_is_engaged(false)
     {
       operator=(other);
+    } // end optional::optional()
+
+    /*! Moves the contained value of other, if it is engaged.
+     *  \param other The other optional to move.
+     */
+    optional(optional &&other)
+      : m_is_engaged(false)
+    {
+      operator=(std::move(other));
+    } // end optional::optional()
+
+    /*! Copies value.
+     *  \param value The value to copy.
+     */
+    template<typename U>
+    optional(U &&value)
+      : m_is_engaged(false)
+    {
+      operator=(std::forward<U>(value));
     } // end optional::optional()
 
     /*! Destroys the contained value, if this is in an engaged state.
@@ -52,6 +83,20 @@ class optional
       } // end if
     } // end optional::~optional()
 
+    /*! Destroys the contained object, if this is in an engaged state and disengages this optional.
+     *  \return *this
+     */
+    optional &operator=(nullopt_t)
+    {
+      if(m_is_engaged)
+      {
+        (**this).~T();
+        m_is_engaged = false;
+      } // end if
+
+      return *this;
+    } // end operator=()
+
     /*! Assigns the contained value the value of other, if it is engaged.
      *  \param other The other optional to assign.
      *  \return *this
@@ -62,11 +107,27 @@ class optional
       {
         return operator=(*other);
       } // end if
-      else if(m_is_engaged)
+      else
       {
-        // destroy the contained object
-        (**this).~T();
-        m_is_engaged = false;
+        operator=(nullopt);
+      } // end else
+
+      return *this;
+    } // end operator=()
+
+    /*! Moves the contained value of other, if it is engaged.
+     *  \param other The other optional to move.
+     *  \return *this
+     */
+    optional &operator=(optional &&other)
+    {
+      if(other.m_is_engaged)
+      {
+        return operator=(std::move(*other));
+      } // end if
+      else
+      {
+        operator=(nullopt);
       } // end else
 
       return *this;
