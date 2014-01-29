@@ -46,10 +46,11 @@ void debug_renderer::render(const float4x4 &modelview, render_progress &progress
         const sphere *s = dynamic_cast<const sphere*>(&prim.surf());
         if(s)
         {
-          float t;
-          normal n;
-          if(s->intersect(r, t, n))
+          auto intersection = s->intersect(r);
+          if(intersection)
           {
+            const normal &n = std::get<2>(*intersection);
+
             vector wo = -normalize(r.direction());
             vector wi = wo;
 

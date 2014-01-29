@@ -82,7 +82,8 @@ triangle_mesh sphere::triangulate() const
 } // end sphere::triangulate()
 
 
-bool sphere::intersect(const ray &r, float &t, normal &n) const
+optional<std::tuple<float,parametric,normal>>
+  sphere::intersect(const ray &r) const
 {
   vector diff = r.origin() - center();
 
@@ -96,36 +97,47 @@ bool sphere::intersect(const ray &r, float &t, normal &n) const
   std::tie(root0,root1) = solve_quadratic(a,b,c);
   if(std::isnan(root0))
   {
-    return false;
+    return nullopt;
   }
 
   // the hits must lie in the interval
   if(root0 > r.interval().y || root1 < r.interval().x)
   {
-    return false;
+    return nullopt;
   } // end if
 
+  float t = root0;
+
   // the hits must lie in the legal bound
-  if(root0 < r.interval().x)
+  if(t < r.interval().x)
   {
     t = root1;
     if(t > r.interval().y)
     {
-      return false;
+      return nullopt;
     } // end if
   } // end if
-  else
-  {
-    t = root0;
-  } // end else
 
   // compute the hit point
   point x = r(t);
 
   // compute the normal at the hit point
-  n = normalize(x - center());
+  normal n = normalize(x - center());
 
-  return true;
+  const float pi = 3.14159265359;
+  const float two_pi = 2.0 * pi;
+  const float min_theta = 0;
+  const float max_theta = pi;
+
+  // compute parametric location
+  float phi = std::atan2(n.y, n.x);
+  if(phi < 0) phi += two_pi;
+
+  float theta = std::acos(n.z);
+
+  parametric parm(phi / two_pi, (theta - min_theta) / (max_theta - min_theta));
+
+  return std::make_tuple(t,parm,n);
 } // end sphere::intersect()
 
 
