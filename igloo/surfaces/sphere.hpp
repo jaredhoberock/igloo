@@ -47,7 +47,11 @@ class sphere : public surface
      */
     virtual triangle_mesh triangulate() const;
 
-    optional<std::tuple<float,parametric,normal>> intersect(const ray &r) const;
+    /*! Tests for intersection between a ray and this sphere.
+     *  \param r The ray of interest.
+     *  \param nullopt if no intersection exists, otherwise the differential geometry at the point of intersection.
+     */
+    virtual optional<std::tuple<float,parametric,normal>> intersect(const ray &r) const;
 
   private:
     static std::pair<float,float> solve_quadratic(float a, float b, float c);

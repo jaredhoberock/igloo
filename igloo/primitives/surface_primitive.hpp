@@ -3,6 +3,7 @@
 #include <memory>
 #include <igloo/surfaces/surface.hpp>
 #include <igloo/shading/material.hpp>
+#include <igloo/utility/optional.hpp>
 
 namespace igloo
 {
@@ -27,11 +28,14 @@ class surface_primitive
       return m_surface->triangulate();
     } // end triangulate();
 
-    // XXX eliminate this
-    inline const surface &surf() const
+    /*! Tests for intersection between a ray and this surface_primitive.
+     *  \param r The ray of interest.
+     *  \param nullopt if no intersection exists, otherwise the differential geometry at the point of intersection.
+     */
+    inline optional<std::tuple<float,parametric,normal>> intersect(const ray &r) const
     {
-      return *m_surface;
-    }
+      return m_surface->intersect(r);
+    } // end intersect()
 
     /*! \return This surface_primitive's material.
      */

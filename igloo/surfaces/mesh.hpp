@@ -52,7 +52,11 @@ class mesh : public surface
       return m_triangle_mesh;
     } // end triangulate()
 
-    optional<std::tuple<float,parametric,normal>> intersect(const ray &r) const;
+    /*! Tests for intersection between a ray and this mesh.
+     *  \param r The ray of interest.
+     *  \param nullopt if no intersection exists, otherwise the differential geometry at the point of intersection.
+     */
+    virtual optional<std::tuple<float,parametric,normal>> intersect(const ray &r) const;
 
   private:
     triangle_mesh m_triangle_mesh;

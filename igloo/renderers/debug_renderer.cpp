@@ -43,36 +43,16 @@ void debug_renderer::render(const float4x4 &modelview, render_progress &progress
 
       for(auto &prim : m_scene)
       {
-        const sphere *s = dynamic_cast<const sphere*>(&prim.surf());
-        if(s)
+        auto intersection = prim.intersect(r);
+        if(intersection)
         {
-          auto intersection = s->intersect(r);
-          if(intersection)
-          {
-            const normal &n = std::get<2>(*intersection);
+          const normal &n = std::get<2>(*intersection);
 
-            vector wo = -normalize(r.direction());
-            vector wi = wo;
+          vector wo = -normalize(r.direction());
+          vector wi = wo;
 
-            scattering_distribution_function f = prim.get_material().evaluate_scattering(n);
-            m_image.raster(col, row) = f(wo,wi) * abs_dot(wi,n);
-          } // end if
-        } // end if
-
-        const mesh *m = dynamic_cast<const mesh*>(&prim.surf());
-        if(m)
-        {
-          auto intersection = m->intersect(r);
-          if(intersection)
-          {
-            const normal &n = std::get<2>(*intersection);
-
-            vector wo = -normalize(r.direction());
-            vector wi = wo;
-
-            scattering_distribution_function f = prim.get_material().evaluate_scattering(n);
-            m_image.raster(col, row) = f(wo,wi) * abs_dot(wi,n);
-          } // end if
+          scattering_distribution_function f = prim.get_material().evaluate_scattering(n);
+          m_image.raster(col, row) = f(wo,wi) * abs_dot(wi,n);
         } // end if
       } // end for surf
 
