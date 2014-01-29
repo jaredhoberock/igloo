@@ -1,5 +1,6 @@
 #pragma once
 
+#include <type_traits>
 #include <numeric>
 #include <cmath>
 #include <functional>
@@ -33,7 +34,10 @@ template<typename Derived, typename T, std::size_t N>
     }
 
     template<typename OtherVector>
-    inline math_vector_facade(const OtherVector &other)
+    math_vector_facade(const OtherVector &other,
+                       typename std::enable_if<
+                         !std::is_arithmetic<OtherVector>::value
+                       >::type * = 0)
     {
       for(size_type i = 0; i != static_size; ++i)
       {
@@ -58,7 +62,11 @@ template<typename Derived, typename T, std::size_t N>
       }
     }
 
-    inline math_vector_facade(value_type v)
+    template<typename Number>
+    explicit math_vector_facade(Number v,
+                                typename std::enable_if<
+                                  std::is_arithmetic<Number>::value
+                                >::type * = 0)
     {
       std::fill(begin(), end(), v);
     }

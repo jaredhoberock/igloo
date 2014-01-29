@@ -1,6 +1,7 @@
 #pragma once
 
 #include <igloo/utility/math_vector.hpp>
+#include <type_traits>
 #include <cmath>
 
 namespace igloo
@@ -16,9 +17,16 @@ class color : public math_vector_facade<color, float, 3>
     inline color() : super_t() {}
 
     template<typename OtherVector>
-    inline color(const OtherVector &other) : super_t(other) {}
+    color(const OtherVector &other,
+          typename std::enable_if<
+            !std::is_arithmetic<OtherVector>::value
+          >::type * = 0) : super_t(other) {}
 
-    inline color(value_type v) : super_t(v) {}
+    template<typename Number>
+    explicit color(Number v,
+                   typename std::enable_if<
+                     std::is_arithmetic<Number>::value
+                   >::type * = 0) : super_t(v) {}
 
     inline color(float rr, float gg, float bb)
       : super_t(),
