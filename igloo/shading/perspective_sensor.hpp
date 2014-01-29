@@ -15,13 +15,9 @@ class perspective_sensor
         m_aspect_ratio(aspect_ratio)
     {}
 
-    inline vector sample(const vector &tangent,
-                         const vector &binormal,
-                         const vector &normal,
-                         float u0,
-                         float u1) const
+    inline vector sample(float u0, float u1) const
     {
-      return normalize(m_near_distance * binormal + (u0 - 0.5f) * m_aspect_ratio * tangent + (u1 - 0.5f) * normal);
+      return normalize(vector((u0 - 0.5f) * m_aspect_ratio, (u1 - 0.5f), m_near_distance));
     } // end sample()
  
   private:

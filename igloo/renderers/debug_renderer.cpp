@@ -3,6 +3,7 @@
 #include <igloo/surfaces/sphere.hpp>
 #include <igloo/surfaces/mesh.hpp>
 #include <igloo/shading/perspective_sensor.hpp>
+#include <igloo/shading/scattering_distribution_function.hpp>
 
 namespace igloo
 {
@@ -39,7 +40,7 @@ void debug_renderer::render(const float4x4 &modelview, render_progress &progress
     float u = u_spacing / 2;
     for(image::size_type col = 0; col < m_image.width(); ++col, u += u_spacing)
     {
-      ray r(eye, perspective.sample(right,look,up,u,v));
+      ray r(eye, sample_with_basis(perspective, right, up, look, u, v));
 
       for(auto &prim : m_scene)
       {
