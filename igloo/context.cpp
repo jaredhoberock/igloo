@@ -99,7 +99,7 @@ void context::sphere(float cx, float cy, float cz, float radius)
   // XXX should we scale the radius as well? not really clear how to do so
   point center = m_transform_stack.top()(point(cx,cy,cz));
 
-  m_surfaces.emplace_back(make_unique<igloo::sphere>(center,radius));
+  m_surfaces.emplace_back(make_unique<igloo::sphere>(center,radius), m_default_material);
 } // end context::sphere()
 
 
@@ -134,7 +134,7 @@ void context::mesh(array_ref<const float> vertices_,
     });
   } // end if
 
-  m_surfaces.emplace_back(make_unique<igloo::mesh>(vertices, triangles));
+  m_surfaces.emplace_back(make_unique<igloo::mesh>(vertices, triangles), m_default_material);
 } // end context::mesh()
 
 
@@ -183,7 +183,7 @@ void context::mesh(array_ref<const float> vertices_,
     });
   } // end if
 
-  m_surfaces.emplace_back(make_unique<igloo::mesh>(vertices, parametrics, triangles));
+  m_surfaces.emplace_back(make_unique<igloo::mesh>(vertices, parametrics, triangles), m_default_material);
 } // end context::mesh()
 
        
@@ -246,7 +246,7 @@ void context::mesh(array_ref<const float> vertices_,
     });
   } // end if
 
-  m_surfaces.emplace_back(make_unique<igloo::mesh>(vertices, parametrics, normals, triangles));
+  m_surfaces.emplace_back(make_unique<igloo::mesh>(vertices, parametrics, normals, triangles), m_default_material);
 } // end context::mesh()
 
 

@@ -7,6 +7,7 @@
 #include <igloo/utility/array_ref.hpp>
 #include <igloo/primitives/surface_primitive.hpp>
 #include <igloo/geometry/transform.hpp>
+#include <igloo/shading/default_material.hpp>
 
 namespace igloo
 {
@@ -118,6 +119,9 @@ class context
     static attributes_map default_attributes();
 
     void mult_matrix_(const transform &xfrm);
+
+    // XXX generalize the current material
+    default_material m_default_material;
 }; // end context
 
 

@@ -50,7 +50,11 @@ void debug_renderer::render(const float4x4 &modelview, render_progress &progress
           normal n;
           if(s->intersect(r, t, n))
           {
-            m_image.raster(col, row) = abs(color(n));
+            vector wo = -normalize(r.direction());
+            vector wi = wo;
+
+            scattering_distribution_function f = prim.get_material().evaluate_scattering(n);
+            m_image.raster(col, row) = f(wo,wi) * abs_dot(wi,n);
           } // end if
         } // end if
 
@@ -61,7 +65,11 @@ void debug_renderer::render(const float4x4 &modelview, render_progress &progress
           normal n;
           if(m->intersect(r, t, n))
           {
-            m_image.raster(col, row) = abs(color(n));
+            vector wo = -normalize(r.direction());
+            vector wi = wo;
+
+            scattering_distribution_function f = prim.get_material().evaluate_scattering(n);
+            m_image.raster(col, row) = f(wo,wi) * abs_dot(wi,n);
           } // end if
         } // end if
       } // end for surf

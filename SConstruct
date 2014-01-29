@@ -9,6 +9,8 @@ sources = ['main.cpp',
            'igloo/geometry/transform.cpp',
            'igloo/surfaces/mesh.cpp',
            'igloo/surfaces/sphere.cpp',
+           'igloo/shading/material.cpp',
+           'igloo/shading/default_material.cpp',
            'igloo/renderers/debug_renderer.cpp',
            'igloo/viewers/scene_viewer.cpp',
            'igloo/viewers/test_viewer.cpp']
