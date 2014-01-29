@@ -36,7 +36,7 @@ class normal : vector
      */
     inline normal operator-(const normal &rhs) const
     {
-      return static_cast<const vector&>(*this) - rhs;
+      return as_vector() - rhs;
     } // end operator-()
 
     /*! normal addition.
@@ -45,7 +45,7 @@ class normal : vector
      */
     inline normal operator+(const normal &rhs) const
     {
-      return static_cast<const normal&>(*this) + rhs;
+      return as_vector() + rhs;
     } // end operator+()
 
     using super_t::operator[];
@@ -55,6 +55,42 @@ class normal : vector
     using super_t::x;
     using super_t::y;
     using super_t::z;
+
+    friend inline float dot(const normal &a, const normal &b)
+    {
+      return igloo::dot(a.as_vector(), b.as_vector());
+    } // end abs_dot()
+
+    friend inline float dot(const vector &a, const normal &b)
+    {
+      return igloo::dot(a, b.as_vector());
+    } // end abs_dot()
+
+    friend inline float dot(const normal &a, const vector &b)
+    {
+      return igloo::dot(a.as_vector(), b);
+    } // end abs_dot()
+
+    friend inline float abs_dot(const normal &a, const normal &b)
+    {
+      return igloo::abs_dot(a.as_vector(), b.as_vector());
+    } // end abs_dot()
+
+    friend inline float abs_dot(const vector &a, const normal &b)
+    {
+      return igloo::abs_dot(a, b.as_vector());
+    } // end abs_dot()
+
+    friend inline float abs_dot(const normal &a, const vector &b)
+    {
+      return igloo::abs_dot(a.as_vector(), b);
+    } // end abs_dot()
+
+  private:
+    inline const vector &as_vector() const
+    {
+      return *this;
+    } // end as_vector()
 }; // end normal
 
 
