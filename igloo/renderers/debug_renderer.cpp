@@ -61,10 +61,11 @@ void debug_renderer::render(const float4x4 &modelview, render_progress &progress
         const mesh *m = dynamic_cast<const mesh*>(&prim.surf());
         if(m)
         {
-          float t;
-          normal n;
-          if(m->intersect(r, t, n))
+          auto intersection = m->intersect(r);
+          if(intersection)
           {
+            const normal &n = std::get<2>(*intersection);
+
             vector wo = -normalize(r.direction());
             vector wi = wo;
 

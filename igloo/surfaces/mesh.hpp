@@ -5,6 +5,7 @@
 #include <igloo/geometry/parametric.hpp>
 #include <igloo/geometry/normal.hpp>
 #include <igloo/geometry/triangle_mesh.hpp>
+#include <igloo/utility/optional.hpp>
 
 namespace igloo
 {
@@ -51,7 +52,7 @@ class mesh : public surface
       return m_triangle_mesh;
     } // end triangulate()
 
-    bool intersect(const ray &r, float &t, normal &n) const;
+    optional<std::tuple<float,parametric,normal>> intersect(const ray &r) const;
 
   private:
     triangle_mesh m_triangle_mesh;

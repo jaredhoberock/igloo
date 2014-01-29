@@ -44,19 +44,24 @@ mesh::mesh(const std::vector<point> &points,
 {}
 
 
-bool mesh::intersect(const ray &r, float &t, normal &n) const
+optional<std::tuple<float,parametric,normal>>
+  mesh::intersect(const ray &r) const
 {
-  auto result = m_triangle_mesh.intersect(r); 
-  if(result)
+  auto hit = m_triangle_mesh.intersect(r); 
+  if(hit)
   {
     triangle_mesh::triangle_iterator tri;
+    float t;
     triangle_mesh::barycentric b;
-    std::tie(tri, t, b) = *result;
+    std::tie(tri, t, b) = *hit;
 
-    n = m_triangle_mesh.normal_at(tri, b);
+    parametric parm = m_triangle_mesh.parametric_at(tri, b);
+    normal n = m_triangle_mesh.normal_at(tri, b);
+
+    return std::make_tuple(t, parm, n);
   } // end if
 
-  return bool(result);
+  return nullopt;
 } // end mesh::intersect()
 
 
