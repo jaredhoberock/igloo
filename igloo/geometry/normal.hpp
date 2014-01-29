@@ -18,8 +18,8 @@ class normal : vector
      */
     inline normal() : super_t() {}
 
-    /*! Creates a new normal from a float3.
-     *  \param v The float3 to copy.
+    /*! Creates a new normal from a vector.
+     *  \param v The vector to copy.
      */
     inline normal(const vector &v) : super_t(v) {}
 
