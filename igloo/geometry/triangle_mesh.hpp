@@ -414,16 +414,36 @@ class triangle_mesh
     } // end intersect()
 
 
+    inline parametric parametric_at(triangle_iterator tri, const barycentric &b) const
+    {
+      if(!has_parametrics()) return igloo::parametric(0.f);
+
+      return interpolate_parametric(*tri,b);
+    } // end parametric_at()
+
+
     inline normal normal_at(triangle_iterator tri, const barycentric &b) const
     {
       // XXX might want to create a face normal instead
       if(!has_normals()) return igloo::normal(0.f);
 
       return has_vertex_normals() ? interpolate_normal(*tri, b) : m_normals[tri - triangles_begin()];
-    } // end normal()
+    } // end normal_at()
 
 
   private:
+    inline parametric interpolate_parametric(const triangle &tri, const barycentric &b) const
+    {
+      float b0 = 1.0f - b.x - b.y;
+
+      const parametric &p0 = m_parametrics[tri.x];
+      const parametric &p1 = m_parametrics[tri.y];
+      const parametric &p2 = m_parametrics[tri.z];
+
+      return b0 * p0 + b.x * p1 + b.y * p2;
+    } // end interpolate_parametric()
+
+
     inline normal interpolate_normal(const triangle &tri, const barycentric &b) const
     {
       float b0 = 1.0f - b.x - b.y;
