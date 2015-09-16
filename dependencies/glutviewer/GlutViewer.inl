@@ -3,9 +3,14 @@
  *  \brief Inline file for GlutViewer.h.
  */
 
+#ifdef __APPLE__
+#include <GLUT/glut.h>
+#else
+#include <GL/glut.h>
+#endif
+
 #include <string.h>
 #include "GlutViewer.h"
-#include <GL/glut.h>
 #include <math.h>
 #include <stdio.h>
 #include <vector>
