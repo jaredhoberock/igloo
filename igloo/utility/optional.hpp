@@ -24,7 +24,7 @@ class bad_optional_access : public std::logic_error
 struct nullopt_t {};
 
 
-constexpr nullopt_t nullopt;
+constexpr nullopt_t nullopt{};
 
 
 template<typename T>
