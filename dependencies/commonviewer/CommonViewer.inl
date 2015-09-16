@@ -135,7 +135,11 @@ template<typename Parent, typename KeyEvent, typename StringType, typename Vecto
         gl_FragColor.rgb = vec3(1,0,0);\n\
       }\n\
     }";
-  mTexture2DRectShader.create(GL_FRAGMENT_SHADER, source.c_str());
+  if(!mTexture2DRectShader.create(GL_FRAGMENT_SHADER, source.c_str()))
+  {
+    std::cerr << "CommonViewer::reloadShaders(): Problem creating mTexture2DRectShader." << std::endl;
+    std::cerr << mTexture2DRectShader << std::endl;
+  } // end if
 
   if(!mTexture2DRectProgram.create(0,0,mTexture2DRectShader))
   {
@@ -157,7 +161,7 @@ template<typename Parent, typename KeyEvent, typename StringType, typename Vecto
     void main(void)\n\
     {\n\
       gl_FragColor = texture2DRect(texture, gl_TexCoord[0].xy);\n\
-      gl_FragColor.rgb = pow(scale * gl_Color * gl_FragColor.rgb, 1.0f / gamma);\n\
+      gl_FragColor.rgb = pow(scale * gl_Color.rgb * gl_FragColor.rgb, vec3(1.0 / gamma));\n\
       if(gl_FragColor.r != gl_FragColor.r ||\n\
          gl_FragColor.g != gl_FragColor.g ||\n\
          gl_FragColor.b != gl_FragColor.b)\n\
@@ -165,7 +169,12 @@ template<typename Parent, typename KeyEvent, typename StringType, typename Vecto
         gl_FragColor.rgb = vec3(1,0,0);\n\
       }\n\
     }";
-  mTexture2DRectGammaShader.create(GL_FRAGMENT_SHADER, source.c_str());
+  if(!mTexture2DRectGammaShader.create(GL_FRAGMENT_SHADER, source.c_str()))
+  {
+    std::cerr << "CommonViewer::reloadShaders(): Problem creating mTexture2DRectGammaShader." << std::endl;
+    std::cerr << mTexture2DRectGammaShader << std::endl;
+  } // end if
+
   if(!mTexture2DRectGammaProgram.create(0,0,mTexture2DRectGammaShader))
   {
     std::cerr << "CommonViewer::reloadShaders(): Problem creating mTexture2DRectGammaProgram." << std::endl;
@@ -190,9 +199,13 @@ template<typename Parent, typename KeyEvent, typename StringType, typename Vecto
       uniform sampler2DArray texture;\n\
       void main(void)\n\
       {\n\
-        gl_FragColor = texture2DArrayLod(texture, vec3(gl_TexCoord[0].xy,1), 0.0f);\n\
+        gl_FragColor = texture2DArrayLod(texture, vec3(gl_TexCoord[0].xy,1), 0.0);\n\
       }";
-    mTexture2DArrayShader.create(GL_FRAGMENT_SHADER, source.c_str());
+    if(!mTexture2DArrayShader.create(GL_FRAGMENT_SHADER, source.c_str()))
+    {
+      std::cerr << "CommonViewer::reloadShaders(): Problem creating mTexture2DArrayShader." << std::endl;
+      std::cerr << mTexture2DArrayShader << std::endl;
+    } // end if
 
     if(!mTexture2DArrayProgram.create(0,0,mTexture2DArrayShader))
     {
@@ -214,7 +227,11 @@ template<typename Parent, typename KeyEvent, typename StringType, typename Vecto
       gl_FragColor = texture2DRect(texture, gl_TexCoord[0].xy);\n\
       gl_FragColor /= gl_FragColor.a;\n\
     }";
-  mTexture2DRectNormalizeShader.create(GL_FRAGMENT_SHADER, source.c_str());
+  if(!mTexture2DRectNormalizeShader.create(GL_FRAGMENT_SHADER, source.c_str()))
+  {
+    std::cerr << "CommonViewer::reloadShaders(): Problem creating mTexture2DRectNormalizeShader." << std::endl;
+    std::cerr << mTexture2DRectNormalizeShader << std::endl;
+  } // end if
 
   if(!mTexture2DRectNormalizeProgram.create(0,0,mTexture2DRectNormalizeShader))
   {
@@ -248,7 +265,7 @@ template<typename Parent, typename KeyEvent, typename StringType, typename Vecto
       float Lmax2 = Lmax * Lmax;\n\
       float Ld = Lpixel * (1.0 + Lpixel / Lmax2);\n\
       Ld /= (1.0 + Lpixel);\n\
-      if(Lw > 0) gl_FragColor.rgb /= Lw;\n\
+      if(Lw > 0.0) gl_FragColor.rgb /= Lw;\n\
       gl_FragColor.rgb *= Ld;\n\
       gl_FragColor.a = 1.0;\n\
       if(gl_FragColor.r != gl_FragColor.r ||\n\
@@ -258,7 +275,12 @@ template<typename Parent, typename KeyEvent, typename StringType, typename Vecto
         gl_FragColor.rgb = vec3(1,0,0);\n\
       }\n\
     }";
-  mTexture2DRectTonemapShader.create(GL_FRAGMENT_SHADER, source.c_str());
+  if(!mTexture2DRectTonemapShader.create(GL_FRAGMENT_SHADER, source.c_str()))
+  {
+    std::cerr << "CommonViewer::reloadShaders(): Problem creating mTexture2DRectTonemapShader." << std::endl;
+    std::cerr << mTexture2DRectTonemapShader << std::endl;
+  } // end if
+
   if(!mTexture2DRectTonemapProgram.create(0,0,mTexture2DRectTonemapShader))
   {
     std::cerr << "CommonViewer::reloadShaders(): Problem creating mTexture2DRectTonemapProgram." << std::endl;
@@ -276,7 +298,7 @@ template<typename Parent, typename KeyEvent, typename StringType, typename Vecto
     uniform float gamma;\n\
     void main(void)\n\
     {\n\
-      gl_FragColor.rgb = pow(scale * gl_Color.rgb, 1.0f / gamma);\n\
+      gl_FragColor.rgb = pow(scale * gl_Color.rgb, vec3(1.0 / gamma));\n\
       if(gl_FragColor.r != gl_FragColor.r ||\n\
          gl_FragColor.g != gl_FragColor.g ||\n\
          gl_FragColor.b != gl_FragColor.b)\n\
@@ -284,7 +306,12 @@ template<typename Parent, typename KeyEvent, typename StringType, typename Vecto
         gl_FragColor.rgb = vec3(1,0,0);\n\
       }\n\
     }";
-  mPassthroughGammaShader.create(GL_FRAGMENT_SHADER, source.c_str());
+  if(!mPassthroughGammaShader.create(GL_FRAGMENT_SHADER, source.c_str()))
+  {
+    std::cerr << "CommonViewer::reloadShaders(): Problem creating mPassthroughGammaShader." << std::endl;
+    std::cerr << mPassthroughGammaShader << std::endl;
+  } // end if
+
   if(!mPassthroughGammaProgram.create(0,0,mPassthroughGammaShader))
   {
     std::cerr << "CommonViewer::reloadShaders(): Problem creating mPassthroughGammaProgram." << std::endl;
