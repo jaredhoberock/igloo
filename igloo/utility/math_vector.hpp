@@ -51,6 +51,8 @@ template<typename Derived, typename T, std::size_t N>
       {
         (*this)[i] = other[i];
       }
+
+      return derived();
     }
 
     template<typename OtherVector>
@@ -60,6 +62,8 @@ template<typename Derived, typename T, std::size_t N>
       {
         (*this)[i] = other[i];
       }
+
+      return derived();
     }
 
     template<typename Number>
