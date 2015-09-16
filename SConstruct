@@ -1,3 +1,5 @@
+import sys
+
 env = Environment()
 
 env.Append(CPPPATH = ['.', 'dependencies'])
@@ -15,5 +17,9 @@ sources = ['main.cpp',
            'igloo/viewers/scene_viewer.cpp',
            'igloo/viewers/test_viewer.cpp']
 
-env.Program('demo', sources, LIBS = ['GL', 'GLU', 'glut', 'GLEW', 'pthread'])
+if sys.platform == "darwin":
+  env.AppendUnique(FRAMEWORKS=Split('OpenGL GLUT'))
+  env.Program('demo', sources, LIBS = ['GLEW', 'pthread'])
+else:
+  env.Program('demo', sources, LIBS = ['GL', 'GLU', 'glut', 'GLEW', 'pthread'])
 
