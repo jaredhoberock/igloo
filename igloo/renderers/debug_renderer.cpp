@@ -47,7 +47,7 @@ void debug_renderer::render(const float4x4 &modelview, render_progress &progress
         auto intersection = prim.intersect(r);
         if(intersection)
         {
-          const normal &n = std::get<2>(*intersection);
+          const normal &n = intersection->differential_geometry().geometric_normal();
 
           vector wo = -normalize(r.direction());
 

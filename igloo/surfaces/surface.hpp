@@ -1,6 +1,8 @@
 #pragma once
 
 #include <igloo/geometry/triangle_mesh.hpp>
+#include <igloo/surfaces/intersection.hpp>
+#include <igloo/utility/optional.hpp>
 
 namespace igloo
 {
@@ -15,9 +17,9 @@ class surface
 
     /*! Tests for intersection between a ray and this surface.
      *  \param r The ray of interest.
-     *  \param nullopt if no intersection exists, otherwise the differential geometry at the point of intersection.
+     *  \param nullopt if no intersection exists, otherwise the details of the intersection.
      */
-    virtual optional<std::tuple<float,parametric,normal>> intersect(const ray &r) const = 0;
+    virtual optional<intersection> intersect(const ray &r) const = 0;
 
     /*! \return A triangle_mesh approximating this surface.
      */

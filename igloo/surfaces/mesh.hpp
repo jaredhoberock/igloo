@@ -54,9 +54,9 @@ class mesh : public surface
 
     /*! Tests for intersection between a ray and this mesh.
      *  \param r The ray of interest.
-     *  \param nullopt if no intersection exists, otherwise the differential geometry at the point of intersection.
+     *  \param nullopt if no intersection exists, otherwise the details of the intersection.
      */
-    virtual optional<std::tuple<float,parametric,normal>> intersect(const ray &r) const;
+    virtual optional<intersection> intersect(const ray &r) const;
 
   private:
     triangle_mesh m_triangle_mesh;

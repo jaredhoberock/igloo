@@ -82,8 +82,7 @@ triangle_mesh sphere::triangulate() const
 } // end sphere::triangulate()
 
 
-optional<std::tuple<float,parametric,normal>>
-  sphere::intersect(const ray &r) const
+optional<intersection> sphere::intersect(const ray &r) const
 {
   vector diff = r.origin() - center();
 
@@ -137,7 +136,7 @@ optional<std::tuple<float,parametric,normal>>
 
   parametric parm(phi / two_pi, (theta - min_theta) / (max_theta - min_theta));
 
-  return std::make_tuple(t,parm,n);
+  return intersection(t,differential_geometry(parm,n));
 } // end sphere::intersect()
 
 

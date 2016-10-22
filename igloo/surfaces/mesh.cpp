@@ -44,7 +44,7 @@ mesh::mesh(const std::vector<point> &points,
 {}
 
 
-optional<std::tuple<float,parametric,normal>>
+optional<intersection>
   mesh::intersect(const ray &r) const
 {
   auto hit = m_triangle_mesh.intersect(r); 
@@ -58,7 +58,7 @@ optional<std::tuple<float,parametric,normal>>
     parametric parm = m_triangle_mesh.parametric_at(tri, b);
     normal n = m_triangle_mesh.normal_at(tri, b);
 
-    return std::make_tuple(t, parm, n);
+    return intersection(t, differential_geometry(parm, n));
   } // end if
 
   return nullopt;

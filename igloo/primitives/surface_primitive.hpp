@@ -30,9 +30,9 @@ class surface_primitive
 
     /*! Tests for intersection between a ray and this surface_primitive.
      *  \param r The ray of interest.
-     *  \param nullopt if no intersection exists, otherwise the differential geometry at the point of intersection.
+     *  \param nullopt if no intersection exists, otherwise the details of the intersection.
      */
-    inline optional<std::tuple<float,parametric,normal>> intersect(const ray &r) const
+    inline optional<intersection> intersect(const ray &r) const
     {
       return m_surface->intersect(r);
     } // end intersect()

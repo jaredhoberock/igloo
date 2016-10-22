@@ -6,7 +6,6 @@
 #include <igloo/geometry/triangle_mesh.hpp>
 #include <igloo/geometry/ray.hpp>
 #include <igloo/utility/optional.hpp>
-#include <tuple>
 
 namespace igloo
 {
@@ -49,9 +48,9 @@ class sphere : public surface
 
     /*! Tests for intersection between a ray and this sphere.
      *  \param r The ray of interest.
-     *  \param nullopt if no intersection exists, otherwise the differential geometry at the point of intersection.
+     *  \param nullopt if no intersection exists, otherwise the details of the intersection.
      */
-    virtual optional<std::tuple<float,parametric,normal>> intersect(const ray &r) const;
+    virtual optional<intersection> intersect(const ray &r) const;
 
   private:
     static std::pair<float,float> solve_quadratic(float a, float b, float c);
