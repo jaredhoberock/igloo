@@ -1,6 +1,8 @@
 #include <igloo/context.hpp>
+#include <igloo/shading/matte.hpp>
 #include <igloo/utility/math_vector.hpp>
 #include <igloo/utility/matrix.hpp>
+#include <memory>
 
 using namespace igloo;
 
@@ -36,7 +38,13 @@ int main()
   unsigned int unit_square_tris[] = { 0, 1,  3,
                                       1, 2,  3};
 
+  // create three materials
+  renderer.material(std::make_unique<igloo::matte>(0.8, 0.1, 0.1), "red");
+  renderer.material(std::make_unique<igloo::matte>(0.1, 0.8, 0.1), "green");
+  renderer.material(std::make_unique<igloo::matte>(0.8, 0.8, 0.8), "white");
+
   // back wall
+  renderer.attribute("material", "white");
   renderer.push_matrix();
   renderer.translate(0, 0, -1);
   renderer.rotate(90, 1, 0, 0);
@@ -45,6 +53,7 @@ int main()
   renderer.pop_matrix();
 
   // floor
+  renderer.attribute("material", "white");
   renderer.push_matrix();
   renderer.translate(0,-1,0);
   renderer.scale(2, 2, 2);
@@ -52,6 +61,7 @@ int main()
   renderer.pop_matrix();
 
   // ceiling
+  renderer.attribute("material", "white");
   renderer.push_matrix();
   renderer.translate(0,1,0);
   renderer.scale(2, 2, 2);
@@ -60,6 +70,7 @@ int main()
   renderer.pop_matrix();
 
   // left wall
+  renderer.attribute("material", "red");
   renderer.push_matrix();
   renderer.translate(-1,0,0);
   renderer.scale(2, 2, 2);
@@ -68,6 +79,7 @@ int main()
   renderer.pop_matrix();
 
   // right wall
+  renderer.attribute("material", "green");
   renderer.push_matrix();
   renderer.translate(1,0,0);
   renderer.scale(2, 2, 2);
@@ -76,9 +88,11 @@ int main()
   renderer.pop_matrix();
 
   // mirror ball
+  renderer.attribute("material", "default");
   renderer.sphere(-0.4, -0.66, -0.15, 0.33);
 
   // glass ball
+  renderer.attribute("material", "default");
   renderer.sphere(0.4, -0.66, 0.25, 0.33);
 
   look_at(renderer, float3(0,0,3), float3(0,0,-1), float3(0,1,0));

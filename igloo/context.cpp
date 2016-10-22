@@ -1,6 +1,5 @@
 #include <igloo/context.hpp>
 #include <igloo/viewers/test_viewer.hpp>
-#include <igloo/utility/make_unique.hpp>
 #include <igloo/records/image.hpp>
 #include <igloo/surfaces/sphere.hpp>
 #include <igloo/surfaces/mesh.hpp>
@@ -19,7 +18,7 @@ context::context()
   : m_transform_stack(std::deque<transform>(1)),
     m_attributes_stack(std::deque<attributes_map>(1, default_attributes()))
 {
-  material(make_unique<default_material>(), "default");
+  material(std::make_unique<default_material>(), "default");
 }
 
 
@@ -131,7 +130,7 @@ void context::sphere(float cx, float cy, float cz, float radius)
   // XXX should we scale the radius as well? not really clear how to do so
   point center = m_transform_stack.top()(point(cx,cy,cz));
 
-  surface(make_unique<igloo::sphere>(center, radius));
+  surface(std::make_unique<igloo::sphere>(center, radius));
 } // end context::sphere()
 
 
@@ -166,7 +165,7 @@ void context::mesh(array_ref<const float> vertices_,
     });
   } // end if
 
-  surface(make_unique<igloo::mesh>(vertices, triangles));
+  surface(std::make_unique<igloo::mesh>(vertices, triangles));
 } // end context::mesh()
 
 
@@ -215,7 +214,7 @@ void context::mesh(array_ref<const float> vertices_,
     });
   } // end if
 
-  surface(make_unique<igloo::mesh>(vertices, parametrics, triangles));
+  surface(std::make_unique<igloo::mesh>(vertices, parametrics, triangles));
 } // end context::mesh()
 
        
@@ -278,7 +277,7 @@ void context::mesh(array_ref<const float> vertices_,
     });
   } // end if
 
-  surface(make_unique<igloo::mesh>(vertices, parametrics, normals, triangles));
+  surface(std::make_unique<igloo::mesh>(vertices, parametrics, normals, triangles));
 } // end context::mesh()
 
 
