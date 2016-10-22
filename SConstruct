@@ -5,7 +5,7 @@ env = Environment()
 env.Append(CPPPATH = ['.', 'dependencies'])
 env.Append(CPPFLAGS = ['-O3', '-std=c++14'])
 
-sources = ['main.cpp',
+sources = ['cornell_box.cpp',
            'igloo/context.cpp',
            'igloo/geometry/transform.cpp',
            'igloo/shading/default_material.cpp',
@@ -20,7 +20,7 @@ sources = ['main.cpp',
 
 if sys.platform == "darwin":
   env.AppendUnique(FRAMEWORKS=Split('OpenGL GLUT'))
-  env.Program('demo', sources, LIBS = ['GLEW', 'pthread'])
+  env.Program('cornell_box', sources, LIBS = ['GLEW', 'pthread'])
 else:
-  env.Program('demo', sources, LIBS = ['GL', 'GLU', 'glut', 'GLEW', 'pthread'])
+  env.Program('cornell_box', sources, LIBS = ['GL', 'GLU', 'glut', 'GLEW', 'pthread'])
 
