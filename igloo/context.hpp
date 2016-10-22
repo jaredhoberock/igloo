@@ -104,11 +104,19 @@ class context
               array_ref<const float> normals,
               array_ref<const unsigned int> triangles);
 
+    /*! Introduces a new material and sets the current material to track this newly created material.
+     *  \param m A material to take ownership of.
+     *  \param name The of the material.
+     */
+    void material(std::unique_ptr<material>&& m, const std::string name);
+
     /*! Starts a render.
      */
     void render();
 
   private:
+    void surface(std::unique_ptr<surface>&& surf);
+
     std::vector<igloo::surface_primitive> m_surfaces;
 
     std::stack<transform> m_transform_stack;
@@ -120,8 +128,8 @@ class context
 
     void mult_matrix_(const transform &xfrm);
 
-    // XXX generalize the current material
-    default_material m_default_material;
+    using materials_map = std::map<std::string, std::unique_ptr<igloo::material>>;
+    materials_map m_materials;
 }; // end context
 
 

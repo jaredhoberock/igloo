@@ -18,7 +18,9 @@ namespace igloo
 context::context()
   : m_transform_stack(std::deque<transform>(1)),
     m_attributes_stack(std::deque<attributes_map>(1, default_attributes()))
-{}
+{
+  material(make_unique<default_material>(), "default");
+}
 
 
 void context::push_matrix()
@@ -94,12 +96,42 @@ void context::scale(float sx, float sy, float sz)
 } // end context::scale();
 
 
+void context::material(std::unique_ptr<igloo::material>&& m, const std::string name)
+{
+  if(m_materials.count(name) > 0)
+  {
+    throw std::runtime_error("context::material(): duplicate material name");
+  }
+
+  m_materials[name] = std::move(m);
+
+  attribute("material", name);
+}
+
+
+void context::surface(std::unique_ptr<igloo::surface>&& surf)
+{
+  std::string material_name = m_attributes_stack.top().at("material");
+
+  auto iter = m_materials.find(material_name);
+  if(iter == m_materials.end())
+  {
+    std::string what = "context::surface(): material \"" + material_name + "\" not found";
+    throw std::runtime_error(what);
+  }
+
+  const igloo::material& m = *iter->second;
+
+  m_surfaces.emplace_back(std::move(surf), m);
+}
+
+
 void context::sphere(float cx, float cy, float cz, float radius)
 {
   // XXX should we scale the radius as well? not really clear how to do so
   point center = m_transform_stack.top()(point(cx,cy,cz));
 
-  m_surfaces.emplace_back(make_unique<igloo::sphere>(center,radius), m_default_material);
+  surface(make_unique<igloo::sphere>(center, radius));
 } // end context::sphere()
 
 
@@ -134,7 +166,7 @@ void context::mesh(array_ref<const float> vertices_,
     });
   } // end if
 
-  m_surfaces.emplace_back(make_unique<igloo::mesh>(vertices, triangles), m_default_material);
+  surface(make_unique<igloo::mesh>(vertices, triangles));
 } // end context::mesh()
 
 
@@ -183,7 +215,7 @@ void context::mesh(array_ref<const float> vertices_,
     });
   } // end if
 
-  m_surfaces.emplace_back(make_unique<igloo::mesh>(vertices, parametrics, triangles), m_default_material);
+  surface(make_unique<igloo::mesh>(vertices, parametrics, triangles));
 } // end context::mesh()
 
        
@@ -246,7 +278,7 @@ void context::mesh(array_ref<const float> vertices_,
     });
   } // end if
 
-  m_surfaces.emplace_back(make_unique<igloo::mesh>(vertices, parametrics, normals, triangles), m_default_material);
+  surface(make_unique<igloo::mesh>(vertices, parametrics, normals, triangles));
 } // end context::mesh()
 
 
