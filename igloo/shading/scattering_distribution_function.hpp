@@ -1,28 +1,69 @@
 #pragma once
 
 #include <igloo/shading/lambertian.hpp>
+#include <igloo/shading/hemispherical_emission.hpp>
 #include <igloo/geometry/vector.hpp>
 #include <igloo/shading/color.hpp>
+#include <igloo/utility/variant.hpp>
 
 namespace igloo
 {
 
 
-// XXX this should eventually be implemented like boost::variant
 class scattering_distribution_function
 {
   public:
-    inline scattering_distribution_function(const lambertian &other)
+    inline scattering_distribution_function(const lambertian& other)
       : m_impl(other)
     {}
 
-    inline color operator()(const vector &wo, const vector &wi) const
-    {
-      return m_impl(wo,wi);
-    } // end operator()
+    inline scattering_distribution_function(const hemispherical_emission& other)
+      : m_impl(other)
+    {}
 
   private:
-    lambertian m_impl;
+    struct bidirectional_visitor
+    {
+      const vector& wo;
+      const normal& n;
+      const vector& wi;
+
+      template<class F>
+      color operator()(const F& f) const
+      {
+        return f(wo,n,wi);
+      }
+    };
+
+    struct unidirectional_visitor
+    {
+      const vector& wo;
+      const normal& n;
+
+      template<class F>
+      color operator()(const F& f) const
+      {
+        return f(wo,n);
+      }
+    };
+
+  public:
+    // XXX eliminate this normal parameter
+    inline color operator()(const vector &wo, const normal& n, const vector &wi) const
+    {
+      bidirectional_visitor visitor{wo,n,wi};
+      return std::experimental::visit(visitor, m_impl);
+    } // end operator()
+
+    // XXX eliminate this normal parameter
+    inline color operator()(const vector& wo, const normal& n) const
+    {
+      unidirectional_visitor visitor{wo,n};
+      return std::experimental::visit(visitor, m_impl);
+    }
+
+  private:
+    std::experimental::variant<lambertian, hemispherical_emission> m_impl;
 }; // end scattering_distribution_function
 
 

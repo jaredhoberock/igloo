@@ -1,27 +1,29 @@
 #include <igloo/shading/material.hpp>
 #include <igloo/shading/color.hpp>
-#include <igloo/shading/lambertian.hpp>
+#include <igloo/shading/hemispherical_emission.hpp>
 
 namespace igloo
 {
 
 
-class matte : public material
+class light : public material
 {
   public:
-    matte(const color& c);
+    light(const color& radiosity);
 
-    matte(float r, float g, float b);
+    light(float r, float g, float b);
 
-    virtual const char *name() const;
+    virtual const char* name() const;
+
+    virtual bool is_emitter() const;
 
     virtual scattering_distribution_function evaluate_scattering(const normal& ng) const;
 
     virtual scattering_distribution_function evaluate_emission(const normal& ng) const;
 
   private:
-    const lambertian color_;
-}; // end default_material
+    hemispherical_emission emission_;
+};
 
 
 } // end igloo

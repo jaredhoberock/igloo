@@ -1,4 +1,5 @@
 #include <igloo/shading/matte.hpp>
+#include <igloo/shading/hemispherical_emission.hpp>
 
 namespace igloo
 {
@@ -20,6 +21,11 @@ const char* matte::name() const
 scattering_distribution_function matte::evaluate_scattering(const normal& ng) const
 {
   return color_;
+}
+
+scattering_distribution_function matte::evaluate_emission(const normal& ng) const
+{
+  return hemispherical_emission(color::black());
 }
 
 

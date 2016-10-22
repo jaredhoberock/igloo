@@ -22,7 +22,9 @@ class material
      */
     virtual bool is_sensor() const;
 
-    virtual scattering_distribution_function evaluate_scattering(const normal &ng) const = 0;
+    virtual scattering_distribution_function evaluate_scattering(const normal& ng) const = 0;
+
+    virtual scattering_distribution_function evaluate_emission(const normal& ng) const = 0;
 }; // end material
 
 

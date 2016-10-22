@@ -102,7 +102,18 @@ void scene_viewer::draw()
 
   std::for_each(m_scene.begin(), m_scene.end(), [&](const surface_primitive &s)
   {
+    glPushAttrib(GL_CURRENT_BIT | GL_ENABLE_BIT);
+
+    // color lights yellow and turn off lighting
+    if(s.get_material().is_emitter())
+    {
+      glDisable(GL_LIGHTING);
+      glColor3f(1,1,0);
+    }
+
     draw_mesh(s.triangulate());
+
+    glPopAttrib();
   });
 
   glPopMatrix();

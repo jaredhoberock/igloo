@@ -1,5 +1,6 @@
 #include <igloo/context.hpp>
 #include <igloo/shading/matte.hpp>
+#include <igloo/shading/light.hpp>
 #include <igloo/utility/math_vector.hpp>
 #include <igloo/utility/matrix.hpp>
 #include <memory>
@@ -38,10 +39,11 @@ int main()
   unsigned int unit_square_tris[] = { 0, 1,  3,
                                       1, 2,  3};
 
-  // create three materials
+  // create four materials
   renderer.material(std::make_unique<igloo::matte>(0.8, 0.1, 0.1), "red");
   renderer.material(std::make_unique<igloo::matte>(0.1, 0.8, 0.1), "green");
   renderer.material(std::make_unique<igloo::matte>(0.8, 0.8, 0.8), "white");
+  renderer.material(std::make_unique<igloo::light>(20, 20, 20), "light");
 
   // back wall
   renderer.attribute("material", "white");
@@ -94,6 +96,15 @@ int main()
   // glass ball
   renderer.attribute("material", "default");
   renderer.sphere(0.4, -0.66, 0.25, 0.33);
+
+  // ceiling light
+  renderer.attribute("material", "light");
+  renderer.push_matrix();
+  renderer.translate(0, 0.95, 0);
+  renderer.scale(0.5, 0.5, 0.5);
+  renderer.rotate(180, 1, 0, 0);
+  renderer.mesh(unit_square_points, unit_square_tris);
+  renderer.pop_matrix();
 
   look_at(renderer, float3(0,0,3), float3(0,0,-1), float3(0,1,0));
 

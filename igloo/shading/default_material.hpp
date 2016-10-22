@@ -9,7 +9,9 @@ class default_material : public material
   public:
     virtual const char *name() const;
 
-    virtual scattering_distribution_function evaluate_scattering(const normal &ng) const;
+    virtual scattering_distribution_function evaluate_scattering(const normal& ng) const;
+
+    virtual scattering_distribution_function evaluate_emission(const normal& ng) const;
 }; // end default_material
 
 
