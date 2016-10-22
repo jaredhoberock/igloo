@@ -52,6 +52,10 @@ class sphere : public surface
      */
     virtual optional<intersection> intersect(const ray &r) const;
 
+    /*! \return The surface area of this sphere.
+     */
+    virtual float area() const;
+
   private:
     static std::pair<float,float> solve_quadratic(float a, float b, float c);
     point m_center;

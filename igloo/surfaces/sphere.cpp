@@ -1,4 +1,5 @@
 #include <igloo/surfaces/sphere.hpp>
+#include <igloo/geometry.hpp>
 #include <dependencies/2dmapping/UnitSquareToSphere.h>
 #include <vector>
 #include <algorithm>
@@ -123,8 +124,6 @@ optional<intersection> sphere::intersect(const ray &r) const
   // compute the normal at the hit point
   normal n = normalize(x - center());
 
-  const float pi = 3.14159265359;
-  const float two_pi = 2.0 * pi;
   const float max_phi = two_pi;
   const float min_theta = 0;
   const float max_theta = pi;
@@ -182,6 +181,12 @@ std::pair<float,float> sphere::solve_quadratic(float a, float b, float c)
 
   return std::make_pair(x0,x1);
 } // end solve_quadratic()
+
+
+float sphere::area() const
+{
+  return 4.f * pi * radius() * radius();
+} // end area()
 
 
 } // end igloo

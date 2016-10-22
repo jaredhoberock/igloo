@@ -1,4 +1,5 @@
 #include <igloo/geometry/transform.hpp>
+#include <igloo/geometry/pi.hpp>
 
 namespace igloo
 {
@@ -141,7 +142,6 @@ transform transform::translate(float dx, float dy, float dz)
 
 static float degrees_to_radians(float degrees)
 {
-  const float pi = 3.14159265f;
   return degrees * (pi / 180.0f);
 } // end degrees_to_radians()
 
