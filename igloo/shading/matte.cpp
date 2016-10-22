@@ -18,12 +18,12 @@ const char* matte::name() const
   return "matte";
 }
 
-scattering_distribution_function matte::evaluate_scattering(const normal& ng) const
+scattering_distribution_function matte::evaluate_scattering(const differential_geometry&) const
 {
   return color_;
 }
 
-scattering_distribution_function matte::evaluate_emission(const normal& ng) const
+scattering_distribution_function matte::evaluate_emission(const differential_geometry&) const
 {
   return hemispherical_emission(color::black());
 }

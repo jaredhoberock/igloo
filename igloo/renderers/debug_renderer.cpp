@@ -47,14 +47,15 @@ void debug_renderer::render(const float4x4 &modelview, render_progress &progress
         auto intersection = prim.intersect(r);
         if(intersection)
         {
-          const normal &n = intersection->differential_geometry().geometric_normal();
+          const differential_geometry &dg = intersection->differential_geometry();
+          const normal& n = dg.normal();
 
           vector wo = -normalize(r.direction());
 
           vector wi = wo;
 
-          scattering_distribution_function f = prim.get_material().evaluate_scattering(n);
-          scattering_distribution_function e = prim.get_material().evaluate_emission(n);
+          scattering_distribution_function f = prim.get_material().evaluate_scattering(dg);
+          scattering_distribution_function e = prim.get_material().evaluate_emission(dg);
 
           // XXX we should rotate wo into the basis of the shading point, and then evaluate these functions
           //     to do that, we need a tangent and normal vector

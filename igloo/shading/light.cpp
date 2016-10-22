@@ -23,12 +23,12 @@ bool light::is_emitter() const
   return true;
 }
 
-scattering_distribution_function light::evaluate_scattering(const normal& ng) const
+scattering_distribution_function light::evaluate_scattering(const differential_geometry&) const
 {
   return lambertian(color::black());
 }
 
-scattering_distribution_function light::evaluate_emission(const normal& ng) const
+scattering_distribution_function light::evaluate_emission(const differential_geometry&) const
 {
   return emission_;
 }

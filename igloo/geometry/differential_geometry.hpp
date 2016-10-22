@@ -10,9 +10,9 @@ namespace igloo
 class differential_geometry
 {
   public:
-    inline differential_geometry(const parametric& p, const normal& geometric_normal)
+    inline differential_geometry(const parametric& p, const normal& n)
       : parametric_coordinates_(p),
-        geometric_normal_(geometric_normal)
+        normal_(n)
     {}
 
     const igloo::parametric& parametric_coordinates() const
@@ -20,14 +20,14 @@ class differential_geometry
       return parametric_coordinates_;
     }
 
-    const igloo::normal& geometric_normal() const
+    const igloo::normal& normal() const
     {
-      return geometric_normal_;
+      return normal_;
     }
 
   private:
     parametric parametric_coordinates_;
-    normal     geometric_normal_;
+    igloo::normal normal_;
 };
 
 

@@ -17,9 +17,9 @@ class light : public material
 
     virtual bool is_emitter() const;
 
-    virtual scattering_distribution_function evaluate_scattering(const normal& ng) const;
+    virtual scattering_distribution_function evaluate_scattering(const differential_geometry& dg) const;
 
-    virtual scattering_distribution_function evaluate_emission(const normal& ng) const;
+    virtual scattering_distribution_function evaluate_emission(const differential_geometry& dg) const;
 
   private:
     hemispherical_emission emission_;
