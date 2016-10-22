@@ -414,6 +414,12 @@ class triangle_mesh
     } // end intersect()
 
 
+    inline point point_at(triangle_iterator tri, const barycentric &b) const
+    {
+      return interpolate_point(*tri,b);
+    } // end point_at()
+
+
     inline parametric parametric_at(triangle_iterator tri, const barycentric &b) const
     {
       if(!has_parametrics()) return igloo::parametric(0.f);
@@ -479,27 +485,42 @@ class triangle_mesh
 
 
   private:
+    template<class T>
+    static inline T interpolate(const barycentric& b, const T& x0, const T& x1, const T& x2)
+    {
+      float b0 = 1.f - b.x - b.y;
+
+      return b0 * x0 + b.x * x1 + b.y * x2;
+    } // end interpolate()
+
+
+    inline point interpolate_point(const triangle& tri, const barycentric& b) const
+    {
+      const point &x0 = m_points[tri.x];
+      const point &x1 = m_points[tri.y];
+      const point &x2 = m_points[tri.z];
+
+      return interpolate(b, x0, x1, x2);
+    } // end interpolate_point()
+
+
     inline parametric interpolate_parametric(const triangle &tri, const barycentric &b) const
     {
-      float b0 = 1.0f - b.x - b.y;
-
       const parametric &p0 = m_parametrics[tri.x];
       const parametric &p1 = m_parametrics[tri.y];
       const parametric &p2 = m_parametrics[tri.z];
 
-      return b0 * p0 + b.x * p1 + b.y * p2;
+      return interpolate(b, p0, p1, p2);
     } // end interpolate_parametric()
 
 
     inline normal interpolate_normal(const triangle &tri, const barycentric &b) const
     {
-      float b0 = 1.0f - b.x - b.y;
-
       const normal &n0 = m_normals[tri.x];
       const normal &n1 = m_normals[tri.y];
       const normal &n2 = m_normals[tri.z];
 
-      return b0 * n0 + b.x * n1 + b.y * n2;
+      return interpolate(b, n0, n1, n2);
     } // end interpolate_normal()
 
 

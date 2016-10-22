@@ -64,6 +64,15 @@ class point : vector
       return static_cast<const vector&>(*this) - rhs;
     } // end operator-()
 
+    /*! Addition.
+     *  \param rhs The point to add.
+     *  \return The coordinate-wise sum of the two points.
+     */
+    inline point operator+(const point& rhs) const
+    {
+      return *this + rhs.as_translation();
+    } // end operator+()
+
     using super_t::operator[];
     using super_t::operator float *;
     using super_t::operator const float *;
