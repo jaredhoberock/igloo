@@ -334,6 +334,16 @@ class triangle_mesh
       return 0.5f * norm(cross(e0,e1));
     } // end surface_area()
 
+    /*! \return The surface area of this mesh
+     */
+    inline float surface_area() const
+    {
+      return std::accumulate(triangles_begin(), triangles_end(), 0.f, [this](float partial_area, const triangle& tri)
+      {
+        return partial_area + surface_area(tri);
+      });
+    } // end surface_area();
+
     /*! Tests a ray and a triangle for intersection.
      *  \param r The ray of interest.
      *  \param tri The triangle of interest.
