@@ -24,6 +24,10 @@ class surface
     /*! \return A triangle_mesh approximating this surface.
      */
     virtual triangle_mesh triangulate() const = 0;
+
+    /*! \return The surface area of this surface.
+     */
+    virtual float area() const = 0;
 }; // end surface
 
 
