@@ -125,6 +125,7 @@ optional<intersection> sphere::intersect(const ray &r) const
 
   const float pi = 3.14159265359;
   const float two_pi = 2.0 * pi;
+  const float max_phi = two_pi;
   const float min_theta = 0;
   const float max_theta = pi;
 
@@ -134,9 +135,18 @@ optional<intersection> sphere::intersect(const ray &r) const
 
   float theta = std::acos(n.z);
 
-  parametric parm(phi / two_pi, (theta - min_theta) / (max_theta - min_theta));
+  parametric parm(phi / max_phi, (theta - min_theta) / (max_theta - min_theta));
 
-  return intersection(t,differential_geometry(parm,n));
+  float z_radius = std::sqrt(x[0]*x[0] + x[1]*x[1]);
+  float inv_z_radius = 1.f / z_radius;
+
+  float cos_phi = x[0] * inv_z_radius;
+  float sin_phi = x[1] * inv_z_radius;
+
+  vector dpdu(-max_phi * x[1], max_phi * x[0], 0);
+  vector dpdv = (max_theta - min_theta) * vector(x[2] * cos_phi, x[2] * sin_phi, -radius() * std::sin(theta));
+
+  return intersection(t,differential_geometry(parm,dpdu,dpdv,n));
 } // end sphere::intersect()
 
 

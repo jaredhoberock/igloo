@@ -58,7 +58,10 @@ optional<intersection>
     parametric parm = m_triangle_mesh.parametric_at(tri, b);
     normal n = m_triangle_mesh.normal_at(tri, b);
 
-    return intersection(t, differential_geometry(parm, n));
+    vector dpdu, dpdv;
+    std::tie(dpdu, dpdv) = m_triangle_mesh.parameteric_derivatives(tri);
+
+    return intersection(t, differential_geometry(parm, dpdu, dpdv, n));
   } // end if
 
   return nullopt;

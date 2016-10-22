@@ -17,12 +17,12 @@ class lambertian
       : m_albedo_over_pi(albedo / 3.14159265359f)
     {}
 
-    inline color operator()(const vector&, const normal&, const vector&) const
+    inline color operator()(const vector&, const vector&) const
     {
       return m_albedo_over_pi;
     } // end operator()
 
-    inline color operator()(const vector&, const normal&) const
+    inline color operator()(const vector&) const
     {
       return color::black();
     }

@@ -13,10 +13,10 @@ class hemispherical_emission
       : radiance_(radiosity / 3.14159265359f)
     {}
 
-    inline color operator()(const vector& wo, const normal& n) const
+    inline color operator()(const vector& wo) const
     {
-      // are wo and n in the same hemisphere?
-      if(dot(wo,n) > 0)
+      // are we in the +z hemispher?
+      if(wo.z > 0)
       {
         return radiance_;
       }
@@ -24,9 +24,9 @@ class hemispherical_emission
       return color::black();
     }
 
-    inline color operator()(const vector& wo, const normal& n, const vector&) const
+    inline color operator()(const vector& wo, const vector&) const
     {
-      return operator()(wo,n);
+      return operator()(wo);
     }
 
   private:

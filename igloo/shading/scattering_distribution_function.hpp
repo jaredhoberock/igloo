@@ -25,40 +25,36 @@ class scattering_distribution_function
     struct bidirectional_visitor
     {
       const vector& wo;
-      const normal& n;
       const vector& wi;
 
       template<class F>
       color operator()(const F& f) const
       {
-        return f(wo,n,wi);
+        return f(wo,wi);
       }
     };
 
     struct unidirectional_visitor
     {
       const vector& wo;
-      const normal& n;
 
       template<class F>
       color operator()(const F& f) const
       {
-        return f(wo,n);
+        return f(wo);
       }
     };
 
   public:
-    // XXX eliminate this normal parameter
-    inline color operator()(const vector &wo, const normal& n, const vector &wi) const
+    inline color operator()(const vector &wo, const vector &wi) const
     {
-      bidirectional_visitor visitor{wo,n,wi};
+      bidirectional_visitor visitor{wo,wi};
       return std::experimental::visit(visitor, m_impl);
     } // end operator()
 
-    // XXX eliminate this normal parameter
-    inline color operator()(const vector& wo, const normal& n) const
+    inline color operator()(const vector& wo) const
     {
-      unidirectional_visitor visitor{wo,n};
+      unidirectional_visitor visitor{wo};
       return std::experimental::visit(visitor, m_impl);
     }
 

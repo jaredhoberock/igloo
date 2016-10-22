@@ -52,6 +52,9 @@ void debug_renderer::render(const float4x4 &modelview, render_progress &progress
 
           vector wo = -normalize(r.direction());
 
+          // transform wo into dg's local coordinate system
+          wo = dg.localize(wo);
+
           vector wi = wo;
 
           scattering_distribution_function f = prim.get_material().evaluate_scattering(dg);
@@ -60,7 +63,7 @@ void debug_renderer::render(const float4x4 &modelview, render_progress &progress
           // XXX we should rotate wo into the basis of the shading point, and then evaluate these functions
           //     to do that, we need a tangent and normal vector
           
-          m_image.raster(col, row) = f(wo,n,wi) * abs_dot(wi,n) + e(wo,n);
+          m_image.raster(col, row) = f(wo,wi) * dg.abs_cos_theta(wi) + e(wo);
         } // end if
       } // end for surf
 

@@ -431,6 +431,53 @@ class triangle_mesh
     } // end normal_at()
 
 
+    inline std::pair<vector,vector> parameteric_derivatives(triangle_iterator tri) const
+    {
+      const point& p1 = m_points[tri->x];
+      const point& p2 = m_points[tri->y];
+      const point& p3 = m_points[tri->z];
+
+      vector dp1 = p1 - p3;
+      vector dp2 = p2 - p3;
+
+      vector dpdu;
+      vector dpdv;
+
+      if(has_parametrics())
+      {
+        const parametric& uv0 = m_parametrics[tri->x];
+        const parametric& uv1 = m_parametrics[tri->y];
+        const parametric& uv2 = m_parametrics[tri->z];
+
+        // see PBRT v2 p143
+        float du1 = uv0[0] - uv2[0];
+        float du2 = uv1[0] - uv2[0];
+        float dv1 = uv0[1] - uv2[1];
+        float dv2 = uv1[1] - uv2[1];
+
+        float determinant = du1 * dv2 - dv1 * du2;
+
+        if(determinant == 0)
+        {
+          // the determinant doesn't exist, so just create an orthonormal_basis around the normal vector
+          std::tie(std::ignore, dpdu, dpdv) = orthonormal_basis(dp1.cross(dp2));
+        }
+        else
+        {
+          float inv_determinant = 1.f / determinant;
+
+          dpdu = inv_determinant * ( dv2 * dp1 - dv1 * dp2);
+          dpdv = inv_determinant * (-du2 * dp1 + du1 * dp2);
+        }
+      }
+      else
+      {
+        // no parametrics, so just create an orthonormal basis around the normal vector
+        std::tie(std::ignore, dpdu, dpdv) = orthonormal_basis(dp1.cross(dp2));
+      }
+    }
+
+
   private:
     inline parametric interpolate_parametric(const triangle &tri, const barycentric &b) const
     {
