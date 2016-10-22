@@ -58,6 +58,10 @@ class mesh : public surface
      */
     virtual optional<intersection> intersect(const ray &r) const;
 
+    /*! \return The surface area of this mesh.
+     */
+    virtual float area() const;
+
   private:
     triangle_mesh m_triangle_mesh;
 }; // end mesh

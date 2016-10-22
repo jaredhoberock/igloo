@@ -68,5 +68,11 @@ optional<intersection>
 } // end mesh::intersect()
 
 
+float mesh::area() const
+{
+  return m_triangle_mesh.surface_area();
+} // end mesh::area()
+
+
 } // end igloo
 
