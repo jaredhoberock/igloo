@@ -44,6 +44,13 @@ class surface_primitive
       return m_material;
     }
 
+    /*! \return The point on the surface at parametric coordinates uv.
+     */
+    inline point point_on_surface(const parametric& uv) const
+    {
+      return m_surface->point_on_surface(uv);
+    }
+
   private:
     std::unique_ptr<igloo::surface> m_surface;
     const material &m_material;
