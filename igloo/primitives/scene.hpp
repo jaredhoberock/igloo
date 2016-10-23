@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <igloo/primitives/surface_primitive.hpp>
+#include <igloo/utility/filter_iterator.hpp>
 
 namespace igloo
 {
@@ -37,6 +38,40 @@ class scene : public std::vector<surface_primitive>
      *  \param nullopt if no interest exists, otherwise the details of the intersection.
      */
     optional<intersection> intersect(const ray &r) const;
+
+  private:
+    struct is_emitter
+    {
+      bool operator()(const surface_primitive& surface) const
+      {
+        return surface.get_material().is_emitter();
+      }
+    };
+
+  public:
+    using surface_iterator = std::vector<surface_primitive>::const_iterator;
+
+    surface_iterator surfaces_begin() const
+    {
+      return begin();
+    }
+
+    surface_iterator surfaces_end() const
+    {
+      return end();
+    }
+
+    using emitter_iterator = filter_iterator<is_emitter, surface_iterator>;
+
+    emitter_iterator emitters_begin() const
+    {
+      return emitter_iterator(is_emitter(), surfaces_begin(), surfaces_end());
+    }
+
+    emitter_iterator emitters_end() const
+    {
+      return emitter_iterator(is_emitter(), surfaces_end(), surfaces_end());
+    }
 };
 
 

@@ -1,4 +1,5 @@
 #include <igloo/primitives/scene.hpp>
+#include <algorithm>
 
 namespace igloo
 {
@@ -8,7 +9,7 @@ optional<scene::intersection> scene::intersect(const ray& r) const
 {
   optional<scene::intersection> result;
 
-  for(const auto& surface : *this)
+  std::for_each(surfaces_begin(), surfaces_end(), [&](const auto& surface)
   {
     auto i = surface.intersect(r);
 
@@ -16,7 +17,7 @@ optional<scene::intersection> scene::intersect(const ray& r) const
     {
       result.emplace(*i, surface);
     }
-  }
+  });
 
   return result;
 } // end scene::intersect()
