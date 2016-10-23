@@ -4,6 +4,7 @@
 #include <igloo/surfaces/sphere.hpp>
 #include <igloo/surfaces/mesh.hpp>
 #include <igloo/renderers/debug_renderer.hpp>
+#include <igloo/renderers/direct_lighting_renderer.hpp>
 #include <iostream>
 #include <cmath>
 #include <algorithm>
@@ -72,7 +73,8 @@ context::attributes_map context::default_attributes()
   return {
     {"record:width",  "512"},
     {"record:height", "512"},
-    {"orientation", "outside"}
+    {"orientation", "outside"},
+    {"renderer", "direct_lighting"}
   };
 } // end context::default_attributes()
 
@@ -281,6 +283,24 @@ void context::mesh(array_ref<const float> vertices_,
 } // end context::mesh()
 
 
+// XXX should introduce a renderer factory into igloo/renderers
+static std::unique_ptr<renderer> make_renderer(const std::string& which_renderer, const scene& s, image& im)
+{
+  std::unique_ptr<renderer> result;
+
+  if(which_renderer == "debug")
+  {
+    result = std::make_unique<debug_renderer>(s, im);
+  }
+  else if(which_renderer == "direct_lighting")
+  {
+    result = std::make_unique<direct_lighting_renderer>(s, im);
+  }
+
+  return result;
+}
+
+
 void context::render()
 {
   float4x4 m(m_transform_stack.top().data());
@@ -292,8 +312,8 @@ void context::render()
 
   progress_snapshot progress(im);
 
-  debug_renderer renderer(m_scene, im);
-  renderer.render(m, progress);
+  auto renderer = make_renderer(m_attributes_stack.top()["renderer"], m_scene, im);
+  renderer->render(m, progress);
 
   test_viewer v(progress, m_scene, m);
   v.setWindowTitle("Hello, world!");
