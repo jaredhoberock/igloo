@@ -39,62 +39,69 @@ class scene : public std::vector<surface_primitive>
      */
     optional<intersection> intersect(const ray &r) const;
 
-  private:
-    struct is_emitter
+    class surfaces_view
     {
-      bool operator()(const surface_primitive& surface) const
-      {
-        return surface.get_material().is_emitter();
-      }
+      public:
+        surfaces_view(const_iterator begin, const_iterator end)
+          : begin_(begin),
+            end_(end)
+        {}
+
+        using iterator = scene::const_iterator;
+
+        iterator begin() const
+        {
+          return begin_;
+        }
+
+        iterator end() const
+        {
+          return end_;
+        }
+
+      private:
+        const_iterator begin_;
+        const_iterator end_;
     };
 
-  public:
-    using surface_iterator = std::vector<surface_primitive>::const_iterator;
-
-    surface_iterator surfaces_begin() const
+    surfaces_view surfaces() const
     {
-      return begin();
-    }
-
-    surface_iterator surfaces_end() const
-    {
-      return end();
-    }
-
-    using emitter_iterator = filter_iterator<is_emitter, surface_iterator>;
-
-    emitter_iterator emitters_begin() const
-    {
-      return emitter_iterator(is_emitter(), surfaces_begin(), surfaces_end());
-    }
-
-    emitter_iterator emitters_end() const
-    {
-      return emitter_iterator(is_emitter(), surfaces_end(), surfaces_end());
+      return surfaces_view(begin(), end());
     }
 
     class emitters_view
     {
+      private:
+        struct is_emitter
+        {
+          bool operator()(const surface_primitive& surface) const
+          {
+            return surface.get_material().is_emitter();
+          }
+        };
+
       public:
         emitters_view(const scene& self)
           : self_(self)
         {}
 
-        emitter_iterator begin() const
+        using iterator = filter_iterator<is_emitter, surfaces_view::iterator>;
+
+        iterator begin() const
         {
-          return self_.emitters_begin();
+          return iterator(is_emitter(), self_.surfaces().begin(), self_.surfaces().end());
         }
 
-        emitter_iterator end() const
+        iterator end() const
         {
-          return self_.emitters_end();
+          return iterator(is_emitter(), self_.surfaces().end(), self_.surfaces().end());
         }
 
       private:
         const scene& self_;
     };
 
-    emitters_view all_emitters() const
+    emitters_view emitters() const
     {
       return emitters_view(*this);
     }

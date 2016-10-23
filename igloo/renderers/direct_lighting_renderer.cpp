@@ -62,7 +62,7 @@ void direct_lighting_renderer::render(const float4x4 &modelview, render_progress
         scattering_distribution_function f = surface.get_material().evaluate_scattering(dg);
 
         // sum the contribution of each emitter
-        for(const auto& emitter : m_scene.all_emitters())
+        for(const auto& emitter : m_scene.emitters())
         {
           // XXX need to evaluate emission function
 
