@@ -5,6 +5,7 @@
 #include <string>
 #include <map>
 #include <igloo/utility/array_ref.hpp>
+#include <igloo/primitives/scene.hpp>
 #include <igloo/primitives/surface_primitive.hpp>
 #include <igloo/geometry/transform.hpp>
 #include <igloo/shading/default_material.hpp>
@@ -117,7 +118,7 @@ class context
   private:
     void surface(std::unique_ptr<surface>&& surf);
 
-    std::vector<igloo::surface_primitive> m_surfaces;
+    scene m_scene;
 
     std::stack<transform> m_transform_stack;
 

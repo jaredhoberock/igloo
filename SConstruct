@@ -8,6 +8,7 @@ env.Append(CPPFLAGS = ['-O3', '-std=c++14'])
 sources = ['cornell_box.cpp',
            'igloo/context.cpp',
            'igloo/geometry/transform.cpp',
+           'igloo/primitives/scene.cpp',
            'igloo/shading/default_material.cpp',
            'igloo/shading/light.cpp',
            'igloo/shading/material.cpp',

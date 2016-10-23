@@ -121,7 +121,7 @@ void context::surface(std::unique_ptr<igloo::surface>&& surf)
 
   const igloo::material& m = *iter->second;
 
-  m_surfaces.emplace_back(std::move(surf), m);
+  m_scene.emplace_back(std::move(surf), m);
 }
 
 
@@ -292,10 +292,10 @@ void context::render()
 
   progress_snapshot progress(im);
 
-  debug_renderer renderer(m_surfaces, im);
+  debug_renderer renderer(m_scene, im);
   renderer.render(m, progress);
 
-  test_viewer v(progress, m_surfaces, m);
+  test_viewer v(progress, m_scene, m);
   v.setWindowTitle("Hello, world!");
   v.camera()->setAspectRatio(float(width)/height);
   float fovy_radians = 60 * (3.1428 / 180.0);
