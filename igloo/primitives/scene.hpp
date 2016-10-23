@@ -72,6 +72,32 @@ class scene : public std::vector<surface_primitive>
     {
       return emitter_iterator(is_emitter(), surfaces_end(), surfaces_end());
     }
+
+    class emitters_view
+    {
+      public:
+        emitters_view(const scene& self)
+          : self_(self)
+        {}
+
+        emitter_iterator begin() const
+        {
+          return self_.emitters_begin();
+        }
+
+        emitter_iterator end() const
+        {
+          return self_.emitters_end();
+        }
+
+      private:
+        const scene& self_;
+    };
+
+    emitters_view all_emitters() const
+    {
+      return emitters_view(*this);
+    }
 };
 
 
