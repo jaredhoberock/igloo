@@ -491,6 +491,8 @@ class triangle_mesh
         // no parametrics, so just create an orthonormal basis around the normal vector
         std::tie(std::ignore, dpdu, dpdv) = orthonormal_basis(dp1.cross(dp2));
       }
+
+      return std::make_pair(dpdu, dpdv);
     }
 
 
