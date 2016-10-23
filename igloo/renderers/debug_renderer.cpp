@@ -46,7 +46,6 @@ void debug_renderer::render(const float4x4 &modelview, render_progress &progress
       if(intersection)
       {
         const differential_geometry &dg = intersection->differential_geometry();
-        const normal& n = dg.normal();
 
         vector wo = -normalize(r.direction());
 

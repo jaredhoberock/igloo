@@ -1,15 +1,14 @@
 #pragma once
 
+#include <igloo/renderers/renderer.hpp>
 #include <igloo/primitives/scene.hpp>
 #include <igloo/records/image.hpp>
-#include <igloo/renderers/render_progress.hpp>
-#include <igloo/utility/matrix.hpp>
 
 namespace igloo
 {
 
 
-class debug_renderer
+class debug_renderer : public renderer
 {
   public:
     debug_renderer(const scene &s, image &im);
