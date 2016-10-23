@@ -74,5 +74,13 @@ float mesh::area() const
 } // end mesh::area()
 
 
+point mesh::point_on_surface(const igloo::parametric& uv) const
+{
+  auto tri = m_triangle_mesh.triangles_begin();
+
+  return m_triangle_mesh.point_at(tri, uv);
+} // end mesh::area()
+
+
 } // end igloo
 

@@ -19,6 +19,18 @@ sphere::sphere(float cx, float cy, float cz, float r)
 {} // end sphere::sphere()
 
 
+static point point_on_unit_sphere(float u, float v)
+{
+  float z = 1.f - 2.f*u;
+  float r = std::sqrt(std::max(0.f, 1.f - z*z));
+  float phi = two_pi * v;
+  float x = r * std::cos(phi);
+  float y = r * std::sin(phi);
+
+  return point(x,y,z);
+} // end point_on_unit_sphere()
+
+
 triangle_mesh sphere::triangulate() const
 {
   size_t u_divisions = 100;
@@ -43,22 +55,22 @@ triangle_mesh sphere::triangulate() const
     float u = 0;
     for(size_t i = 0; i != v_divisions; ++i, u += u_del, vertex_idx += 4)
     {
-      UnitSquareToSphere::evaluate(u, v, p);
+      point p = point_on_unit_sphere(u, v);
       points[vertex_idx + 0]      = p;
       parametrics[vertex_idx + 0] = parametric(u,v);
       normals[vertex_idx + 0]     = normal(p.x, p.y, p.z);
 
-      UnitSquareToSphere::evaluate(u + u_del, v, p);
+      p = point_on_unit_sphere(u + u_del, v);
       points[vertex_idx + 1]      = p;
       parametrics[vertex_idx + 1] = parametric(u + u_del,v);
       normals[vertex_idx + 1]     = normal(p.x, p.y, p.z);
 
-      UnitSquareToSphere::evaluate(u + u_del, v + v_del, p);
+      p = point_on_unit_sphere(u + u_del, v + v_del);
       points[vertex_idx + 2]      = p;
       parametrics[vertex_idx + 2] = parametric(u + u_del, v + v_del);
       normals[vertex_idx + 2]     = normal(p.x, p.y, p.z);
 
-      UnitSquareToSphere::evaluate(u, v + v_del, p);
+      p = point_on_unit_sphere(u, v + v_del);
       points[vertex_idx + 3]      = p;
       parametrics[vertex_idx + 3] = parametric(u,v + v_del);
       normals[vertex_idx + 3]     = normal(p.x, p.y, p.z);
@@ -187,6 +199,12 @@ float sphere::area() const
 {
   return 4.f * pi * radius() * radius();
 } // end area()
+
+
+point sphere::point_on_surface(const parametric& uv) const
+{
+  return center() + radius() * point_on_unit_sphere(uv.x, uv.y);
+} // end area::point_on_surface()
 
 
 } // end igloo

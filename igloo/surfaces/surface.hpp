@@ -28,6 +28,10 @@ class surface
     /*! \return The surface area of this surface.
      */
     virtual float area() const = 0;
+
+    /*! \return The point on the surface at parametric coordinates uv.
+     */
+    virtual point point_on_surface(const parametric& uv) const = 0;
 }; // end surface
 
 
