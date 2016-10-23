@@ -251,6 +251,18 @@ template<typename Derived, typename T, std::size_t N>
       return value_type(2) * dot(v) * (*this) - v;
     }
 
+    inline Derived abs() const
+    {
+      Derived result = *this;
+
+      for(size_type i = 0; i < static_size; ++i)
+      {
+        result[i] = std::abs(result[i]);
+      }
+
+      return result;
+    }
+
   private:
     inline Derived &derived()
     {
