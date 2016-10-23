@@ -4,17 +4,17 @@ namespace igloo
 {
 
 
-optional<intersection> scene::intersect(const ray& r) const
+optional<scene::intersection> scene::intersect(const ray& r) const
 {
-  optional<intersection> result;
+  optional<scene::intersection> result;
 
   for(const auto& surface : *this)
   {
-    auto intersection = surface.intersect(r);
+    auto i = surface.intersect(r);
 
-    if(!result || intersection->ray_parameter() < result->ray_parameter())
+    if(i && (!result || i->ray_parameter() < result->ray_parameter()))
     {
-      result = intersection;
+      result.emplace(*i, surface);
     }
   }
 

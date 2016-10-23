@@ -42,30 +42,29 @@ void debug_renderer::render(const float4x4 &modelview, render_progress &progress
     {
       ray r(eye, sample_with_basis(perspective, right, up, look, u, v));
 
-      for(auto &prim : m_scene)
+      auto intersection = m_scene.intersect(r);
+      if(intersection)
       {
-        auto intersection = prim.intersect(r);
-        if(intersection)
-        {
-          const differential_geometry &dg = intersection->differential_geometry();
-          const normal& n = dg.normal();
+        const differential_geometry &dg = intersection->differential_geometry();
+        const normal& n = dg.normal();
 
-          vector wo = -normalize(r.direction());
+        vector wo = -normalize(r.direction());
 
-          // transform wo into dg's local coordinate system
-          wo = dg.localize(wo);
+        // transform wo into dg's local coordinate system
+        wo = dg.localize(wo);
 
-          vector wi = wo;
+        vector wi = wo;
 
-          scattering_distribution_function f = prim.get_material().evaluate_scattering(dg);
-          scattering_distribution_function e = prim.get_material().evaluate_emission(dg);
+        const surface_primitive& surface = intersection->surface();
 
-          // XXX we should rotate wo into the basis of the shading point, and then evaluate these functions
-          //     to do that, we need a tangent and normal vector
-          
-          m_image.raster(col, row) = f(wo,wi) * dg.abs_cos_theta(wi) + e(wo);
-        } // end if
-      } // end for surf
+        scattering_distribution_function f = surface.get_material().evaluate_scattering(dg);
+        scattering_distribution_function e = surface.get_material().evaluate_emission(dg);
+
+        // XXX we should rotate wo into the basis of the shading point, and then evaluate these functions
+        //     to do that, we need a tangent and normal vector
+        
+        m_image.raster(col, row) = f(wo,wi) * dg.abs_cos_theta(wi) + e(wo);
+      } // end if
 
       progress++;
     } // end for col
