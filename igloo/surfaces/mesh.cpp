@@ -23,16 +23,33 @@ static std::vector<normal> face_normals(const std::vector<point> &points,
 } // end face_normals()
 
 
+struct area_of_triangle
+{
+  const triangle_mesh& self;
+
+  float operator()(const triangle_mesh::triangle& tri) const
+  {
+    return self.surface_area(tri);
+  }
+};
+
+
+mesh::mesh(triangle_mesh&& triangle_mesh)
+  : m_triangle_mesh(std::move(triangle_mesh)),
+    area_weighted_probability_density_function_(m_triangle_mesh.triangles(), area_of_triangle{m_triangle_mesh})
+{} 
+
+
 mesh::mesh(const std::vector<point> &points,
            const std::vector<uint3> &triangles)
-  : m_triangle_mesh(points, triangles, face_normals(points, triangles))
+  : mesh(triangle_mesh(points, triangles, face_normals(points, triangles)))
 {}
 
 
 mesh::mesh(const std::vector<point> &points,
            const std::vector<parametric> &parametrics,
            const std::vector<uint3> &triangles)
-  : m_triangle_mesh(points, parametrics, triangles, face_normals(points, triangles))
+  : mesh(triangle_mesh(points, parametrics, triangles, face_normals(points, triangles)))
 {}
 
 
@@ -40,7 +57,7 @@ mesh::mesh(const std::vector<point> &points,
            const std::vector<parametric> &parametrics,
            const std::vector<normal> &normals,
            const std::vector<uint3> &triangles)
-  : m_triangle_mesh(points, parametrics, normals, triangles)
+  : mesh(triangle_mesh(points, parametrics, normals, triangles))
 {}
 
 
@@ -76,9 +93,11 @@ float mesh::area() const
 
 point mesh::point_on_surface(const igloo::parametric& uv) const
 {
-  auto tri = m_triangle_mesh.triangles().begin();
+  // select a triangle
+  auto triangle_and_probability = area_weighted_probability_density_function_(0);
 
-  return m_triangle_mesh.point_at(tri, triangle_mesh::barycentric(uv.x, uv.y));
+  // select a point on the surface of the triangle
+  return m_triangle_mesh.point_at(triangle_and_probability.first, triangle_mesh::barycentric(uv.x, uv.y));
 } // end mesh::area()
 
 

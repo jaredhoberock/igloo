@@ -6,6 +6,7 @@
 #include <igloo/geometry/normal.hpp>
 #include <igloo/geometry/triangle_mesh.hpp>
 #include <igloo/utility/optional.hpp>
+#include <igloo/utility/alias_table.hpp>
 
 namespace igloo
 {
@@ -67,7 +68,10 @@ class mesh : public surface
     virtual point point_on_surface(const parametric& uv) const;
 
   private:
+    mesh(triangle_mesh&& triangle_mesh);
+
     triangle_mesh m_triangle_mesh;
+    alias_table<const triangle_mesh::triangle> area_weighted_probability_density_function_;
 }; // end mesh
 
 
