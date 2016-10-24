@@ -56,8 +56,8 @@ void debug_renderer::render(const float4x4 &modelview, render_progress &progress
 
         const surface_primitive& surface = intersection->surface();
 
-        scattering_distribution_function f = surface.get_material().evaluate_scattering(dg);
-        scattering_distribution_function e = surface.get_material().evaluate_emission(dg);
+        scattering_distribution_function f = surface.material().evaluate_scattering(dg);
+        scattering_distribution_function e = surface.material().evaluate_emission(dg);
 
         // XXX we should rotate wo into the basis of the shading point, and then evaluate these functions
         //     to do that, we need a tangent and normal vector

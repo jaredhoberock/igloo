@@ -56,7 +56,7 @@ void direct_lighting_renderer::render(const float4x4 &modelview, render_progress
 
         // begin with emission from the hit point
         const differential_geometry &dg = intersection->differential_geometry();
-        scattering_distribution_function e = surface.get_material().evaluate_emission(dg);
+        scattering_distribution_function e = surface.material().evaluate_emission(dg);
         m_image.raster(col, row) += e(wo);
 
         const point& x = r(intersection->ray_parameter());
@@ -64,7 +64,7 @@ void direct_lighting_renderer::render(const float4x4 &modelview, render_progress
         // transform wo into dg's local coordinate system
         wo = dg.localize(wo);
   
-        scattering_distribution_function f = surface.get_material().evaluate_scattering(dg);
+        scattering_distribution_function f = surface.material().evaluate_scattering(dg);
 
         // sum the contribution of each emitter
         for(const auto& emitter : m_scene.emitters())

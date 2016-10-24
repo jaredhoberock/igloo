@@ -17,15 +17,15 @@ class surface_primitive
      *  \param m A material for this surface_primitive.
      */
     inline surface_primitive(std::unique_ptr<surface> &&surf, const material &m)
-      : m_surface(std::move(surf)),
-        m_material(m)
+      : surface_(std::move(surf)),
+        material_(m)
     {}
 
     /*! \return A triangle_mesh approximating this surface_primitive.
      */
     inline triangle_mesh triangulate() const
     {
-      return m_surface->triangulate();
+      return surface_->triangulate();
     } // end triangulate();
 
     /*! Tests for intersection between a ray and this surface_primitive and returns the details of the intersection, if it exists.
@@ -34,7 +34,7 @@ class surface_primitive
      */
     inline optional<intersection> intersect(const ray &r) const
     {
-      return m_surface->intersect(r);
+      return surface_->intersect(r);
     } // end intersect()
 
     /*! Tests for intersection between a ray and this surface_primitive.
@@ -43,26 +43,26 @@ class surface_primitive
      */
     inline bool is_intersected(const ray& r) const
     {
-      return m_surface->is_intersected(r);
+      return surface_->is_intersected(r);
     } // end is_intersected()
 
     /*! \return This surface_primitive's material.
      */
-    inline const material &get_material() const
+    inline const igloo::material &material() const
     {
-      return m_material;
+      return material_;
     }
 
     /*! \return The point on the surface at coordinates (u0, u1, u2).
      */
     inline point point_on_surface(float u0, float u1, float u2) const
     {
-      return m_surface->point_on_surface(u0, u1, u2);
+      return surface_->point_on_surface(u0, u1, u2);
     }
 
   private:
-    std::unique_ptr<igloo::surface> m_surface;
-    const material &m_material;
+    std::unique_ptr<igloo::surface> surface_;
+    const igloo::material &material_;
 }; // end surface_primitive
 
 

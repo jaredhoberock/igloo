@@ -101,7 +101,7 @@ void scene_viewer::draw()
     glPushAttrib(GL_CURRENT_BIT | GL_ENABLE_BIT);
 
     // color lights yellow and turn off lighting
-    if(s.get_material().is_emitter())
+    if(s.material().is_emitter())
     {
       glDisable(GL_LIGHTING);
       glColor3f(1,1,0);

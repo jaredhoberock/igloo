@@ -82,7 +82,7 @@ class scene : public std::vector<surface_primitive>
         {
           bool operator()(const surface_primitive& surface) const
           {
-            return surface.get_material().is_emitter();
+            return surface.material().is_emitter();
           }
         };
 
