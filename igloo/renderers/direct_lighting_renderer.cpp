@@ -4,6 +4,7 @@
 #include <igloo/surfaces/mesh.hpp>
 #include <igloo/shading/perspective_sensor.hpp>
 #include <igloo/shading/scattering_distribution_function.hpp>
+#include <array>
 
 namespace igloo
 {
@@ -64,18 +65,24 @@ void direct_lighting_renderer::render(const float4x4 &modelview, render_progress
         // sum the contribution of each emitter
         for(const auto& emitter : m_scene.emitters())
         {
-          auto light_p = emitter.point_on_surface({0.5,0.5});
+          std::array<parametric,4> sample_points = {{{0,0}, {0,0.5}, {0.5,0}, {0.5,0.5}}};
+          float sample_weight = 1.f / sample_points.size();
 
-          // construct a ray between x and the point on the light
-          ray to_light(x, light_p);
-
-          if(!m_scene.is_intersected(to_light))
+          for(auto uv : sample_points)
           {
-            // get the direction to the light in dg's local coordinate system
-            vector wi = dg.localize(normalize(to_light.direction()));
+            auto light_p = emitter.point_on_surface(uv);
 
-            // XXX need to evaluate emission function
-            m_image.raster(col, row) += f(wo,wi) * dg.abs_cos_theta(wi);
+            // construct a ray between x and the point on the light
+            ray to_light(x, light_p);
+
+            if(!m_scene.is_intersected(to_light))
+            {
+              // get the direction to the light in dg's local coordinate system
+              vector wi = dg.localize(normalize(to_light.direction()));
+
+              // XXX need to evaluate emission function
+              m_image.raster(col, row) += sample_weight * f(wo,wi) * dg.abs_cos_theta(wi);
+            }
           }
         }
       } // end if
