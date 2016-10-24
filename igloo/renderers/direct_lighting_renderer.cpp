@@ -5,6 +5,7 @@
 #include <igloo/shading/perspective_sensor.hpp>
 #include <igloo/shading/scattering_distribution_function.hpp>
 #include <array>
+#include <random>
 
 namespace igloo
 {
@@ -32,6 +33,9 @@ void direct_lighting_renderer::render(const float4x4 &modelview, render_progress
   float fovy_radians = fovy * (3.1428 / 180.0);
 
   perspective_sensor perspective(fovy_radians, 1.f);
+
+  std::default_random_engine rng;
+  std::uniform_real_distribution<float> u01;
 
   float v_spacing = 1.f / m_image.height();
   float v = v_spacing / 2;
@@ -65,12 +69,12 @@ void direct_lighting_renderer::render(const float4x4 &modelview, render_progress
         // sum the contribution of each emitter
         for(const auto& emitter : m_scene.emitters())
         {
-          std::array<parametric,4> sample_points = {{{0,0}, {0,0.5}, {0.5,0}, {0.5,0.5}}};
-          float sample_weight = 1.f / sample_points.size();
+          int num_sample_points = 4;
+          float sample_weight = 1.f / num_sample_points;
 
-          for(auto uv : sample_points)
+          for(int i = 0; i < num_sample_points; ++i)
           {
-            auto light_p = emitter.point_on_surface(uv);
+            auto light_p = emitter.point_on_surface(u01(rng), u01(rng), u01(rng));
 
             // construct a ray between x and the point on the light
             ray to_light(x, light_p);
