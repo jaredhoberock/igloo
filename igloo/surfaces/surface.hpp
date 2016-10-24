@@ -32,6 +32,10 @@ class surface
     /*! \return The point on the surface at parametric coordinates uv.
      */
     virtual point point_on_surface(const parametric& uv) const = 0;
+
+    /*! \return true if the given ray is intersected by this surface.
+     */
+    virtual bool is_intersected(const ray& r) const;
 }; // end surface
 
 
