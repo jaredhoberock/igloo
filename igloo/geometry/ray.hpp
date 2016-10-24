@@ -22,7 +22,7 @@ class ray
     inline ray(const point &origin, const point &end)
       : m_origin(origin),
         m_direction(end - origin),
-        m_interval(epsilon(), 1)
+        m_interval(epsilon(), 1.f - epsilon())
     {}
 
     inline ray(const point &origin, const vector &direction, float max_t)
@@ -54,6 +54,11 @@ class ray
     inline void end(float t)
     {
       m_interval.y = t;
+    }
+
+    inline bool within_interval(float t) const
+    {
+      return !(t < interval()[0] || t > interval()[1]);
     }
 
   private:
