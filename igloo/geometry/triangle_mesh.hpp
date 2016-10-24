@@ -386,6 +386,12 @@ class triangle_mesh
       // compute t
       float t = inv_divisor * dot(e2,s2);
 
+      // t must lie within valid interval
+      if(!r.within_interval(t))
+      {
+        return nullopt;
+      } // end if
+
       return std::make_pair(t, barycentric(b0,b1));
     } // end intersect()
 
