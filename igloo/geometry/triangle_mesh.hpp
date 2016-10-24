@@ -224,20 +224,12 @@ class triangle_mesh
 
 
     /*! \return The number of normals.
-     *  \note This is either 0, or equal to vertices_size() or triangles_size().
+     *  \note This is either 0, or equal to vertices_size() or triangles().size().
      */
     inline std::size_t normals_size() const
     {
       return m_normals.size();
     } // end normals_size()
-
-
-    /*! \return The number of triangles.
-     */
-    inline std::size_t triangles_size() const
-    {
-      return m_triangles.size();
-    } // end triangles_size()
 
 
     /*! \return An iterator pointing to the beginning of the collection of points.
@@ -303,18 +295,33 @@ class triangle_mesh
       return m_normals.data();
     }
 
-    /*! \return A iterator pointing to the beginning of the collection of triangles.
-     */
-    inline triangle_iterator triangles_begin() const
+  private:
+    struct triangles_view
     {
-      return m_triangles.begin();
-    }
+      triangle_iterator begin() const
+      {
+        return begin_;
+      }
 
-    /*! \return A iterator pointing to the end of the collection of triangles.
+      triangle_iterator end() const
+      {
+        return end_;
+      }
+
+      size_t size() const
+      {
+        return end() - begin();
+      }
+
+      triangle_iterator begin_, end_;
+    };
+
+  public:
+    /*! \return A view of the collection of triangles
      */
-    inline triangle_iterator triangles_end() const
+    inline triangles_view triangles() const
     {
-      return m_triangles.end();
+      return triangles_view{m_triangles.begin(), m_triangles.end()};
     }
 
     /*! \return A pointer pointing to the array of triangles.
@@ -338,7 +345,7 @@ class triangle_mesh
      */
     inline float surface_area() const
     {
-      return std::accumulate(triangles_begin(), triangles_end(), 0.f, [this](float partial_area, const triangle& tri)
+      return std::accumulate(triangles().begin(), triangles().end(), 0.f, [this](float partial_area, const triangle& tri)
       {
         return partial_area + surface_area(tri);
       });
@@ -409,9 +416,7 @@ class triangle_mesh
 
       // XXX this is really a reduction
       //     it requires something like transform_min_element
-      for(auto tri_iter = triangles_begin();
-          tri_iter != triangles_end();
-          ++tri_iter)
+      for(auto tri_iter = triangles().begin(); tri_iter != triangles().end(); ++tri_iter)
       {
         auto this_result = intersect(r, *tri_iter);
         if(this_result)
@@ -449,7 +454,7 @@ class triangle_mesh
       // XXX might want to create a face normal instead
       if(!has_normals()) return igloo::normal(0.f);
 
-      return has_vertex_normals() ? interpolate_normal(*tri, b) : m_normals[tri - triangles_begin()];
+      return has_vertex_normals() ? interpolate_normal(*tri, b) : m_normals[tri - triangles().begin()];
     } // end normal_at()
 
 

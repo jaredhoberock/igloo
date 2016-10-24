@@ -27,12 +27,8 @@ void draw_mesh(const triangle_mesh &mesh)
   glBegin(GL_TRIANGLES);
   if(mesh.has_vertex_normals())
   {
-    for(auto iter = mesh.triangles_begin();
-        iter != mesh.triangles_end();
-        ++iter)
+    for(const triangle_mesh::triangle& tri : mesh.triangles())
     {
-      const triangle_mesh::triangle &tri = *iter;
-
       glNormal3fv(normals[tri[0]]);
       if(mesh.has_parametrics())
       {
@@ -58,7 +54,7 @@ void draw_mesh(const triangle_mesh &mesh)
   else
   {
     for(size_t i = 0;
-        i != mesh.triangles_size();
+        i != mesh.triangles().size();
         ++i)
     {
       const triangle_mesh::triangle &tri = mesh.triangles_data()[i];

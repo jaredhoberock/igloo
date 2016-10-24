@@ -76,7 +76,7 @@ float mesh::area() const
 
 point mesh::point_on_surface(const igloo::parametric& uv) const
 {
-  auto tri = m_triangle_mesh.triangles_begin();
+  auto tri = m_triangle_mesh.triangles().begin();
 
   return m_triangle_mesh.point_at(tri, triangle_mesh::barycentric(uv.x, uv.y));
 } // end mesh::area()
