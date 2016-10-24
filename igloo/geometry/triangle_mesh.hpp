@@ -435,9 +435,15 @@ class triangle_mesh
     } // end intersect()
 
 
+    inline point point_at(const triangle& tri, const barycentric &b) const
+    {
+      return interpolate_point(tri,b);
+    } // end point_at()
+
+
     inline point point_at(triangle_iterator tri, const barycentric &b) const
     {
-      return interpolate_point(*tri,b);
+      return point_at(*tri,b);
     } // end point_at()
 
 
