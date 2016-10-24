@@ -28,7 +28,7 @@ class surface_primitive
       return m_surface->triangulate();
     } // end triangulate();
 
-    /*! Tests for intersection between a ray and this surface_primitive.
+    /*! Tests for intersection between a ray and this surface_primitive and returns the details of the intersection, if it exists.
      *  \param r The ray of interest.
      *  \param nullopt if no intersection exists, otherwise the details of the intersection.
      */
@@ -36,6 +36,15 @@ class surface_primitive
     {
       return m_surface->intersect(r);
     } // end intersect()
+
+    /*! Tests for intersection between a ray and this surface_primitive.
+     *  \param r The ray of interest.
+     *  \return false if no intersection exists; true, otherwise.
+     */
+    inline bool is_intersected(const ray& r) const
+    {
+      return m_surface->is_intersected(r);
+    } // end is_intersected()
 
     /*! \return This surface_primitive's material.
      */

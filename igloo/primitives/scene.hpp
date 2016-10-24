@@ -33,11 +33,17 @@ class scene : public std::vector<surface_primitive>
         const surface_primitive& surface_;
     };
 
-    /*! Tests for intersection between a ray and this scene.
+    /*! Tests for intersection between a ray and this scene and returns the details of the intersection if it exists.
      *  \param r The ray of interest.
-     *  \param nullopt if no interest exists, otherwise the details of the intersection.
+     *  \param nullopt if no intersection exists; otherwise, the details of the intersection.
      */
     optional<intersection> intersect(const ray &r) const;
+
+    /*! Tests for intersection between a ray and this scene.
+     *  \param r The ray of interest.
+     *  \return false if no intersection exists; true, otherwise.
+     */
+    bool is_intersected(const ray& r) const;
 
     class surfaces_view
     {
