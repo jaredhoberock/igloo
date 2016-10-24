@@ -9,6 +9,7 @@ namespace igloo
 class light : public material
 {
   public:
+    // \param radiosity The radiosity of the light (i.e., power/area or Watts/meter^2)
     light(const color& radiosity);
 
     light(float r, float g, float b);

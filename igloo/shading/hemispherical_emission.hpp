@@ -1,6 +1,7 @@
 #pragma once
 
 #include <igloo/shading/color.hpp>
+#include <igloo/geometry/pi.hpp>
 
 namespace igloo
 {
@@ -9,8 +10,8 @@ namespace igloo
 class hemispherical_emission
 {
   public:
-    inline hemispherical_emission(const color& radiosity)
-      : radiance_(radiosity / 3.14159265359f)
+    inline hemispherical_emission(const color& radiance)
+      : radiance_(radiance)
     {}
 
     inline color operator()(const vector& wo) const

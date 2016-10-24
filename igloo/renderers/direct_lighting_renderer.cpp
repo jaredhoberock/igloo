@@ -45,6 +45,8 @@ void direct_lighting_renderer::render(const float4x4 &modelview, render_progress
     float u = u_spacing / 2;
     for(image::size_type col = 0; col < m_image.width(); ++col, u += u_spacing)
     {
+      color result = color::black();
+
       ray r(eye, sample_with_basis(perspective, right, up, look, u, v));
 
       auto intersection = m_scene.intersect(r);
@@ -57,7 +59,7 @@ void direct_lighting_renderer::render(const float4x4 &modelview, render_progress
         // begin with emission from the hit point
         const differential_geometry &dg = intersection->differential_geometry();
         scattering_distribution_function e = surface.material().evaluate_emission(dg);
-        m_image.raster(col, row) += e(wo);
+        result = e(wo);
 
         const point& x = r(intersection->ray_parameter());
 
@@ -74,6 +76,8 @@ void direct_lighting_renderer::render(const float4x4 &modelview, render_progress
 
           for(int i = 0; i < num_sample_points; ++i)
           {
+            // XXX need to sample complete differential geometry here
+            //     because we need to evaluate an emission function
             auto light_p = emitter.point_on_surface(u01(rng), u01(rng), u01(rng));
 
             // construct a ray between x and the point on the light
@@ -85,11 +89,13 @@ void direct_lighting_renderer::render(const float4x4 &modelview, render_progress
               vector wi = dg.localize(normalize(to_light.direction()));
 
               // XXX need to evaluate emission function
-              m_image.raster(col, row) += sample_weight * f(wo,wi) * dg.abs_cos_theta(wi);
+              result += sample_weight * f(wo,wi) * dg.abs_cos_theta(wi);
             }
           }
         }
       } // end if
+
+      m_image.raster(col, row) = result;
 
       progress++;
     } // end for col

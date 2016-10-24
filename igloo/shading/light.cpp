@@ -1,12 +1,13 @@
 #include <igloo/shading/light.hpp>
 #include <igloo/shading/hemispherical_emission.hpp>
+#include <igloo/geometry/pi.hpp>
 
 namespace igloo
 {
 
 
 light::light(const color& radiosity)
-  : emission_(radiosity)
+  : emission_(radiosity / pi) // convert radiosity (W * meter-2) to radiance (W * steradian-1 * meter-2)
 {}
 
 light::light(float r, float g, float b)
