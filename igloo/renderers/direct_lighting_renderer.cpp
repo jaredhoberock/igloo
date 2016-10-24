@@ -71,6 +71,7 @@ void direct_lighting_renderer::render(const float4x4 &modelview, render_progress
 
           if(!m_scene.is_intersected(to_light))
           {
+            // get the direction to the light in dg's local coordinate system
             vector wi = dg.localize(normalize(to_light.direction()));
 
             // XXX need to evaluate emission function
