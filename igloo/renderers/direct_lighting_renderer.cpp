@@ -64,14 +64,18 @@ void direct_lighting_renderer::render(const float4x4 &modelview, render_progress
         // sum the contribution of each emitter
         for(const auto& emitter : m_scene.emitters())
         {
-          // XXX need to evaluate emission function
-
           auto light_p = emitter.point_on_surface({0.5,0.5});
 
-          vector wi = normalize(light_p - x);
-          wi = dg.localize(wi);
-          
-          m_image.raster(col, row) += f(wo,wi) * dg.abs_cos_theta(wi);
+          // construct a ray between x and the point on the light
+          ray to_light(x, light_p);
+
+          if(!m_scene.is_intersected(to_light))
+          {
+            vector wi = dg.localize(normalize(to_light.direction()));
+
+            // XXX need to evaluate emission function
+            m_image.raster(col, row) += f(wo,wi) * dg.abs_cos_theta(wi);
+          }
         }
       } // end if
 
