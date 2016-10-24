@@ -56,9 +56,9 @@ class sphere : public surface
      */
     virtual float area() const;
 
-    /*! \return The point on the surface at parametric coordinates uv.
+    /*! \return The point on the surface at coordinates (u0,u1,u2).
      */
-    virtual point point_on_surface(const parametric& uv) const;
+    virtual point point_on_surface(float u0, float u1, float u2) const;
 
   private:
     static std::pair<float,float> solve_quadratic(float a, float b, float c);

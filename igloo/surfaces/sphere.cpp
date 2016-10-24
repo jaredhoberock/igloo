@@ -201,9 +201,9 @@ float sphere::area() const
 } // end area()
 
 
-point sphere::point_on_surface(const parametric& uv) const
+point sphere::point_on_surface(float u0, float u1, float) const
 {
-  return center() + radius() * point_on_unit_sphere(uv.x, uv.y);
+  return center() + radius() * point_on_unit_sphere(u0, u1);
 } // end area::point_on_surface()
 
 

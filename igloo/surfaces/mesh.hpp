@@ -63,9 +63,9 @@ class mesh : public surface
      */
     virtual float area() const;
 
-    /*! \return The point on the mesh at parametric coordinates uv.
+    /*! \return The point on the mesh at coordinates (u0, u1, u2).
      */
-    virtual point point_on_surface(const parametric& uv) const;
+    virtual point point_on_surface(float u0, float u1, float u2) const;
 
   private:
     mesh(triangle_mesh&& triangle_mesh);

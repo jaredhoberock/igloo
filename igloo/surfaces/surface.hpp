@@ -29,9 +29,9 @@ class surface
      */
     virtual float area() const = 0;
 
-    /*! \return The point on the surface at parametric coordinates uv.
+    /*! \return The point on the surface at coordinates (u0,u1,u2).
      */
-    virtual point point_on_surface(const parametric& uv) const = 0;
+    virtual point point_on_surface(float u0, float u1, float u2) const = 0;
 
     /*! \return true if the given ray is intersected by this surface.
      */

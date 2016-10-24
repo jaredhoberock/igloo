@@ -91,13 +91,19 @@ float mesh::area() const
 } // end mesh::area()
 
 
-point mesh::point_on_surface(const igloo::parametric& uv) const
+static std::uint8_t most_significant_byte(std::uint64_t x)
+{
+  return static_cast<std::uint8_t>(x >> (64 - 8));
+}
+
+
+point mesh::point_on_surface(float u0, float u1, float u2) const
 {
   // select a triangle
-  auto triangle_and_probability = area_weighted_probability_density_function_(0);
+  auto triangle_and_probability = area_weighted_probability_density_function_(u0);
 
   // select a point on the surface of the triangle
-  return m_triangle_mesh.point_at(triangle_and_probability.first, triangle_mesh::barycentric(uv.x, uv.y));
+  return m_triangle_mesh.point_at(triangle_and_probability.first, triangle_mesh::barycentric(u1, u2));
 } // end mesh::area()
 
 

@@ -53,11 +53,11 @@ class surface_primitive
       return m_material;
     }
 
-    /*! \return The point on the surface at parametric coordinates uv.
+    /*! \return The point on the surface at coordinates (u0, u1, u2).
      */
-    inline point point_on_surface(const parametric& uv) const
+    inline point point_on_surface(float u0, float u1, float u2) const
     {
-      return m_surface->point_on_surface(uv);
+      return m_surface->point_on_surface(u0, u1, u2);
     }
 
   private:
