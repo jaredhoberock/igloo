@@ -466,12 +466,16 @@ class triangle_mesh
 
     inline normal normal_at(const triangle& tri, const barycentric &b) const
     {
-      // XXX this implementation is inconsistent with the overload that takes a triangle_iterator
-
       // XXX might want to create a face normal instead
-      if(!has_vertex_normals()) return igloo::normal(0.f);
+      if(!has_normals()) return igloo::normal(0.f);
 
-      return interpolate_normal(tri, b);
+      // XXX this is dangerous because it assumes that tri is an element of triangles(),
+      //     and there's no guarantee that's true
+      auto tri_index = &tri - &*triangles().begin();
+
+      auto tri_iter = triangles().begin() + tri_index;
+
+      return has_vertex_normals() ? interpolate_normal(*tri_iter, b) : m_normals[tri_iter - triangles().begin()];
     } // end normal_at()
 
 
