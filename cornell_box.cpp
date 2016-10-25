@@ -39,11 +39,16 @@ int main()
   unsigned int unit_square_tris[] = { 0, 1,  3,
                                       1, 2,  3};
 
+  color light_power(20,20,20);
+
+  float light_surface_area = 0.5f * 0.5f; 
+  color light_radiosity = light_power / light_surface_area;
+
   // create four materials
   renderer.material(std::make_unique<igloo::matte>(0.8, 0.1, 0.1), "red");
   renderer.material(std::make_unique<igloo::matte>(0.1, 0.8, 0.1), "green");
   renderer.material(std::make_unique<igloo::matte>(0.8, 0.8, 0.8), "white");
-  renderer.material(std::make_unique<igloo::light>(20, 20, 20), "light");
+  renderer.material(std::make_unique<igloo::light>(light_radiosity), "light");
 
   // back wall
   renderer.attribute("material", "white");
