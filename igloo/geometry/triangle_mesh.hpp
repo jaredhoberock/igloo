@@ -464,21 +464,6 @@ class triangle_mesh
     } // end normal_at()
 
 
-    inline normal normal_at(const triangle& tri, const barycentric &b) const
-    {
-      // XXX might want to create a face normal instead
-      if(!has_normals()) return igloo::normal(0.f);
-
-      // XXX this is dangerous because it assumes that tri is an element of triangles(),
-      //     and there's no guarantee that's true
-      auto tri_index = &tri - &*triangles().begin();
-
-      auto tri_iter = triangles().begin() + tri_index;
-
-      return has_vertex_normals() ? interpolate_normal(*tri_iter, b) : m_normals[tri_iter - triangles().begin()];
-    } // end normal_at()
-
-
     inline std::pair<vector,vector> parameteric_derivatives(triangle_iterator tri) const
     {
       const point& p1 = m_points[tri->x];

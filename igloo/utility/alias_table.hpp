@@ -2,17 +2,16 @@
 
 #include <vector>
 #include <map>
-#include <functional>
 
 namespace igloo
 {
 
 
-template<class T>
+template<class Iterator>
 class alias_table
 {
   public:
-    template<class Iterator, class Function>
+    template<class Function>
     alias_table(Iterator values_begin, Iterator values_end, Function weight_function)
     {
       float sum_of_weights = 0;
@@ -23,7 +22,7 @@ class alias_table
       {
         float weight = weight_function(*i);
 
-        table_entry new_entry{*i, *i, weight, weight, weight};
+        table_entry new_entry{i, i, weight, weight, weight};
         table_.emplace_back(new_entry);
 
         sum_of_weights += weight;
@@ -98,7 +97,7 @@ class alias_table
     // samples this alias_table's distribution
     // \param u A uniform random variable in [0,1).
     // \return The randomly selected element and the probability of selecting that element.
-    std::pair<T&,float> operator()(float u) const
+    std::pair<Iterator,float> operator()(float u) const
     {
       float q = float(table_.size()) * u;
       size_t index_of_selected_entry = static_cast<size_t>(q);
@@ -114,7 +113,7 @@ class alias_table
     }
 
     /// \return The probability of selecting value.
-    float probability_of(const T& value) const
+    float probability_of(Iterator value) const
     {
       float result = 0;
 
@@ -130,23 +129,23 @@ class alias_table
   private:
     struct table_entry
     {
-      std::reference_wrapper<T> value;
-      std::reference_wrapper<T> alias;
+      Iterator value;
+      Iterator alias;
       float divide;
       float value_probability;
       float alias_probability;
     };
 
-    struct compare_reference_wrappers
-    {
-      bool operator()(std::reference_wrapper<const T> lhs, std::reference_wrapper<const T> rhs) const
-      {
-        return lhs.get() < rhs.get();
-      }
-    };
+    //struct indirect_compare
+    //{
+    //  bool operator()(std::reference_wrapper<const T> lhs, std::reference_wrapper<const T> rhs) const
+    //  {
+    //    return lhs.get() < rhs.get();
+    //  }
+    //};
 
     std::vector<table_entry> table_;
-    std::map<std::reference_wrapper<const T>,float,compare_reference_wrappers> inverse_map_;
+    std::map<Iterator,float> inverse_map_;
 };
 
 
