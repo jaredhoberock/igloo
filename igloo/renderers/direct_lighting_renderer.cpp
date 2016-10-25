@@ -78,10 +78,10 @@ void direct_lighting_renderer::render(const float4x4 &modelview, render_progress
           {
             // XXX need to sample complete differential geometry here
             //     because we need to evaluate an emission function
-            auto light_p = emitter.point_on_surface(u01(rng), u01(rng), u01(rng));
+            auto light_dg = emitter.sample_surface(u01(rng), u01(rng), u01(rng));
 
             // construct a ray between x and the point on the light
-            ray to_light(x, light_p);
+            ray to_light(x, light_dg.point());
 
             if(!m_scene.is_intersected(to_light))
             {

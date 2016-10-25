@@ -1,5 +1,6 @@
 #pragma once
 
+#include <igloo/geometry/point.hpp>
 #include <igloo/geometry/parametric.hpp>
 #include <igloo/geometry/normal.hpp>
 
@@ -10,12 +11,18 @@ namespace igloo
 class differential_geometry
 {
   public:
-    inline differential_geometry(const parametric& p, const vector& dpdu, const vector& dpdv, const normal& n)
-      : parametric_coordinates_(p),
+    inline differential_geometry(const igloo::point& p, const parametric& uv, const vector& dpdu, const vector& dpdv, const normal& n)
+      : point_(p),
+        parametric_coordinates_(uv),
         dpdu_(dpdu),
         dpdv_(dpdv),
         normal_(n)
     {}
+
+    inline const igloo::point& point() const
+    {
+      return point_;
+    }
 
     inline const igloo::parametric& parametric_coordinates() const
     {
@@ -48,7 +55,8 @@ class differential_geometry
     }
 
   private:
-    parametric parametric_coordinates_;
+    igloo::point  point_;
+    parametric    parametric_coordinates_;
     vector        dpdu_;
     vector        dpdv_;
     igloo::normal normal_;

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <igloo/geometry/triangle_mesh.hpp>
+#include <igloo/geometry/differential_geometry.hpp>
 #include <igloo/surfaces/intersection.hpp>
 #include <igloo/utility/optional.hpp>
 
@@ -29,9 +30,9 @@ class surface
      */
     virtual float area() const = 0;
 
-    /*! \return The point on the surface at coordinates (u0,u1,u2).
+    /*! \return The differential_geometry of the surface at coordinates (u0,u1,u2).
      */
-    virtual point point_on_surface(float u0, float u1, float u2) const = 0;
+    virtual differential_geometry sample_surface(float u0, float u1, float u2) const = 0;
 
     /*! \return true if the given ray is intersected by this surface.
      */

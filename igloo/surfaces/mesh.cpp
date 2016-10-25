@@ -78,7 +78,7 @@ optional<intersection>
     vector dpdu, dpdv;
     std::tie(dpdu, dpdv) = m_triangle_mesh.parameteric_derivatives(tri);
 
-    return intersection(t, differential_geometry(parm, dpdu, dpdv, n));
+    return intersection(t, differential_geometry(r(t), parm, dpdu, dpdv, n));
   } // end if
 
   return nullopt;
@@ -97,13 +97,23 @@ static std::uint8_t most_significant_byte(std::uint64_t x)
 }
 
 
-point mesh::point_on_surface(float u0, float u1, float u2) const
+differential_geometry mesh::sample_surface(float u0, float u1, float u2) const
 {
   // select a triangle
   auto triangle_and_probability = area_weighted_probability_density_function_(u0);
 
+  // XXX u1 and u2 are not barycentric coordinates, so this use is incorrect
+  //     we need to transform from the unit square to the unit triangle first
+  triangle_mesh::barycentric barycentric_coordinates(u1, u2);
+
   // select a point on the surface of the triangle
-  return m_triangle_mesh.point_at(triangle_and_probability.first, triangle_mesh::barycentric(u1, u2));
+  auto p = m_triangle_mesh.point_at(triangle_and_probability.first, barycentric_coordinates);
+
+  // get the normal there as well
+  auto n = m_triangle_mesh.normal_at(triangle_and_probability.first, barycentric_coordinates);
+
+  // XXX need to generate parametric, dpdu, and dpdv
+  return differential_geometry(p, parametric(0), vector(0), vector(0), n);
 } // end mesh::area()
 
 

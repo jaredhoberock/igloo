@@ -95,6 +95,29 @@ triangle_mesh sphere::triangulate() const
 } // end sphere::triangulate()
 
 
+std::tuple<parametric, vector, vector> sphere::parametric_geometry_at(const point& p, const normal& n) const
+{
+  // compute parametric location
+  float phi = std::atan2(n.y, n.x);
+  if(phi < 0) phi += two_pi;
+
+  float theta = std::acos(n.z);
+
+  parametric uv(phi / max_phi, (theta - min_theta) / (max_theta - min_theta));
+
+  float z_radius = std::sqrt(p[0]*p[0] + p[1]*p[1]);
+  float inv_z_radius = 1.f / z_radius;
+
+  float cos_phi = p[0] * inv_z_radius;
+  float sin_phi = p[1] * inv_z_radius;
+
+  vector dpdu(-max_phi * p[1], max_phi * p[0], 0);
+  vector dpdv = (max_theta - min_theta) * vector(p[2] * cos_phi, p[2] * sin_phi, -radius() * std::sin(theta));
+
+  return std::make_tuple(uv, dpdu, dpdv);
+}
+
+
 optional<intersection> sphere::intersect(const ray &r) const
 {
   vector diff = r.origin() - center();
@@ -136,28 +159,11 @@ optional<intersection> sphere::intersect(const ray &r) const
   // compute the normal at the hit point
   normal n = normalize(x - center());
 
-  const float max_phi = two_pi;
-  const float min_theta = 0;
-  const float max_theta = pi;
+  parametric uv;
+  vector dpdu, dpdv;
+  std::tie(uv, dpdu, dpdv) = parametric_geometry_at(x, n);
 
-  // compute parametric location
-  float phi = std::atan2(n.y, n.x);
-  if(phi < 0) phi += two_pi;
-
-  float theta = std::acos(n.z);
-
-  parametric parm(phi / max_phi, (theta - min_theta) / (max_theta - min_theta));
-
-  float z_radius = std::sqrt(x[0]*x[0] + x[1]*x[1]);
-  float inv_z_radius = 1.f / z_radius;
-
-  float cos_phi = x[0] * inv_z_radius;
-  float sin_phi = x[1] * inv_z_radius;
-
-  vector dpdu(-max_phi * x[1], max_phi * x[0], 0);
-  vector dpdv = (max_theta - min_theta) * vector(x[2] * cos_phi, x[2] * sin_phi, -radius() * std::sin(theta));
-
-  return intersection(t,differential_geometry(parm,dpdu,dpdv,n));
+  return intersection(t,differential_geometry(x,uv,dpdu,dpdv,n));
 } // end sphere::intersect()
 
 
@@ -201,9 +207,16 @@ float sphere::area() const
 } // end area()
 
 
-point sphere::point_on_surface(float u0, float u1, float) const
+differential_geometry sphere::sample_surface(float u0, float u1, float) const
 {
-  return center() + radius() * point_on_unit_sphere(u0, u1);
+  vector n = point_on_unit_sphere(u0, u1);
+  point p = center() + radius() * n;
+
+  parametric uv;
+  vector dpdu, dpdv;
+  std::tie(uv, dpdu, dpdv) = parametric_geometry_at(p,n);
+  
+  return differential_geometry(p, uv, dpdu, dpdv, normal(n));
 } // end area::point_on_surface()
 
 

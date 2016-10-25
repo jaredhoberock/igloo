@@ -5,7 +5,9 @@
 #include <igloo/geometry/normal.hpp>
 #include <igloo/geometry/triangle_mesh.hpp>
 #include <igloo/geometry/ray.hpp>
+#include <igloo/geometry/pi.hpp>
 #include <igloo/utility/optional.hpp>
+#include <tuple>
 
 namespace igloo
 {
@@ -56,14 +58,23 @@ class sphere : public surface
      */
     virtual float area() const;
 
-    /*! \return The point on the surface at coordinates (u0,u1,u2).
+    /*! \return The differential_geometry of the sphere at coordinates (u0,u1,u2).
      */
-    virtual point point_on_surface(float u0, float u1, float u2) const;
+    virtual differential_geometry sample_surface(float u0, float u1, float u2) const;
 
   private:
     static std::pair<float,float> solve_quadratic(float a, float b, float c);
+    static parametric parametric_coordinates_at(const normal& n);
+
+    // returns (uv, dpdu, dpdv) at the point p on the sphere with normal n
+    std::tuple<parametric,vector,vector> parametric_geometry_at(const point& p, const normal& n) const;
+
     point m_center;
     float m_radius;
+
+    static constexpr float max_phi = two_pi;
+    static constexpr float min_theta = 0;
+    static constexpr float max_theta = pi;
 }; // end sphere
 
 
