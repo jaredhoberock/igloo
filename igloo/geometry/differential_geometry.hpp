@@ -63,5 +63,17 @@ class differential_geometry
 };
 
 
+inline float distance(const differential_geometry& a, const differential_geometry& b)
+{
+  return distance(a.point(), b.point());
+}
+
+
+inline float distance_squared(const differential_geometry& a, const differential_geometry& b)
+{
+  return distance_squared(a.point(), b.point());
+}
+
+
 } // end igloo
 
