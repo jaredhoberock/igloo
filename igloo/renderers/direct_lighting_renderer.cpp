@@ -98,8 +98,11 @@ void direct_lighting_renderer::render(const float4x4 &modelview, render_progress
               // localize we to emitter_dg's coordinate system
               we = emitter_dg.localize(we);
 
-              // XXX need to divide by the pdf here
-              result += sample_weight * f(wo,wi) * dg.abs_cos_theta(wi) * e(we);
+              // compute geometric term
+              float g = emitter_dg.abs_cos_theta(we) / (distance_squared(dg, emitter_dg));
+
+              // accumulate sample
+              result += sample_weight * f(wo,wi) * dg.abs_cos_theta(wi) * g * e(we) / emitter.pdf(emitter_dg);
             }
           }
         }
@@ -114,5 +117,4 @@ void direct_lighting_renderer::render(const float4x4 &modelview, render_progress
 
 
 } // end igloo
-
 
