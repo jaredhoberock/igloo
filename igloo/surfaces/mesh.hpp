@@ -72,6 +72,8 @@ class mesh : public surface
 
     triangle_mesh m_triangle_mesh;
     alias_table<triangle_mesh::triangle_iterator> area_weighted_probability_density_function_;
+
+    float area_;
 }; // end mesh
 
 

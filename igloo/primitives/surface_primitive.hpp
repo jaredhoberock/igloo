@@ -60,6 +60,13 @@ class surface_primitive
       return surface_->sample_surface(u0, u1, u2);
     }
 
+    /*! \return The value of the probability density function at the given surface location.
+     */
+    inline float pdf(const differential_geometry& dg) const
+    {
+      return surface_->pdf(dg);
+    }
+
   private:
     std::unique_ptr<igloo::surface> surface_;
     const igloo::material &material_;

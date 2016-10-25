@@ -36,7 +36,8 @@ struct area_of_triangle
 
 mesh::mesh(triangle_mesh&& triangle_mesh)
   : m_triangle_mesh(std::move(triangle_mesh)),
-    area_weighted_probability_density_function_(m_triangle_mesh.triangles(), area_of_triangle{m_triangle_mesh})
+    area_weighted_probability_density_function_(m_triangle_mesh.triangles(), area_of_triangle{m_triangle_mesh}),
+    area_(m_triangle_mesh.surface_area())
 {} 
 
 
@@ -87,7 +88,7 @@ optional<intersection>
 
 float mesh::area() const
 {
-  return m_triangle_mesh.surface_area();
+  return area_;
 } // end mesh::area()
 
 

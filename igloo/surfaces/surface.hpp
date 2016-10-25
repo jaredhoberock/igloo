@@ -37,6 +37,10 @@ class surface
     /*! \return true if the given ray is intersected by this surface.
      */
     virtual bool is_intersected(const ray& r) const;
+
+    /*! \return The value of the probability density function at the given surface point.
+     */
+    virtual float pdf(const differential_geometry& dg) const;
 }; // end surface
 
 
