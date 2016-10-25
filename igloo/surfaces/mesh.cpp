@@ -72,13 +72,13 @@ optional<intersection>
     triangle_mesh::barycentric b;
     std::tie(tri, t, b) = *hit;
 
-    parametric parm = m_triangle_mesh.parametric_at(tri, b);
+    parametric uv = m_triangle_mesh.parametric_at(tri, b);
     normal n = m_triangle_mesh.normal_at(tri, b);
 
     vector dpdu, dpdv;
     std::tie(dpdu, dpdv) = m_triangle_mesh.parameteric_derivatives(tri);
 
-    return intersection(t, differential_geometry(r(t), parm, dpdu, dpdv, n));
+    return intersection(t, differential_geometry(r(t), uv, dpdu, dpdv, n));
   } // end if
 
   return nullopt;
