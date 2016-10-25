@@ -88,6 +88,18 @@ class point : vector
 }; // end point
 
 
+inline float distance_squared(const point& a, const point& b)
+{
+  return (a - b).norm2();
+}
+
+
+inline float distance(const point& a, const point& b)
+{
+  return std::sqrt(distance_squared(a,b));
+}
+
+
 /*! Scalar multiply for points. 
  *  \param s Scale factor.
  *  \param x The point to scale.
