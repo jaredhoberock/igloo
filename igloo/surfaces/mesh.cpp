@@ -97,23 +97,27 @@ static std::uint8_t most_significant_byte(std::uint64_t x)
 }
 
 
+static triangle_mesh::barycentric unit_square_to_barycentric_coordinates(float u0, float u1)
+{
+  float su = std::sqrt(u0);
+  return triangle_mesh::barycentric(1.f - su, u1 * su);
+}
+
+
 differential_geometry mesh::sample_surface(float u0, float u1, float u2) const
 {
   // select a triangle
   auto triangle_and_probability = area_weighted_probability_density_function_(u0);
 
-  // XXX u1 and u2 are not barycentric coordinates, so this use is incorrect
-  //     we need to transform from the unit square to the unit triangle first
-  triangle_mesh::barycentric barycentric_coordinates(u1, u2);
+  // transform the unit square to barycentric coordinates
+  auto barycentric_coordinates = unit_square_to_barycentric_coordinates(u1, u2);
 
-  // select a point on the surface of the triangle
-  auto p = m_triangle_mesh.point_at(triangle_and_probability.first, barycentric_coordinates);
+  point p = m_triangle_mesh.point_at(triangle_and_probability.first, barycentric_coordinates);
+  normal n = m_triangle_mesh.normal_at(triangle_and_probability.first, barycentric_coordinates);
+  parametric uv = m_triangle_mesh.parametric_at(triangle_and_probability.first, barycentric_coordinates);
 
-  // get the normal there as well
-  auto n = m_triangle_mesh.normal_at(triangle_and_probability.first, barycentric_coordinates);
-
-  // XXX need to generate parametric, dpdu, and dpdv
-  return differential_geometry(p, parametric(0), vector(0), vector(0), n);
+  // XXX need to generate dpdu and dpdv
+  return differential_geometry(p, uv, vector(0), vector(0), n);
 } // end mesh::area()
 
 
