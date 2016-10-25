@@ -76,20 +76,30 @@ void direct_lighting_renderer::render(const float4x4 &modelview, render_progress
 
           for(int i = 0; i < num_sample_points; ++i)
           {
-            // XXX need to sample complete differential geometry here
-            //     because we need to evaluate an emission function
-            auto light_dg = emitter.sample_surface(u01(rng), u01(rng), u01(rng));
+            auto emitter_dg = emitter.sample_surface(u01(rng), u01(rng), u01(rng));
 
-            // construct a ray between x and the point on the light
-            ray to_light(x, light_dg.point());
+            // construct a ray between x and the point on the emitter
+            ray to_emitter(x, emitter_dg.point());
 
-            if(!m_scene.is_intersected(to_light))
+            if(!m_scene.is_intersected(to_emitter))
             {
-              // get the direction to the light in dg's local coordinate system
-              vector wi = dg.localize(normalize(to_light.direction()));
+              // evaluate the emitter's material
+              scattering_distribution_function e = emitter.material().evaluate_emission(emitter_dg);
 
-              // XXX need to evaluate emission function
-              result += sample_weight * f(wo,wi) * dg.abs_cos_theta(wi);
+              // get the direction to the emitter
+              vector wi = normalize(to_emitter.direction());
+
+              // get the direction from the emitter
+              vector we = -wi;
+
+              // localize wi to dg's coordinate system
+              wi = dg.localize(wi);
+
+              // localize we to emitter_dg's coordinate system
+              we = emitter_dg.localize(we);
+
+              // XXX need to divide by the pdf here
+              result += sample_weight * f(wo,wi) * dg.abs_cos_theta(wi) * e(we);
             }
           }
         }
