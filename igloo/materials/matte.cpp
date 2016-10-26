@@ -17,11 +17,6 @@ matte::matte(const std::map<std::string,any>& parameters)
   : matte(std::experimental::fundamentals_v1::any_cast<color>(parameters.at("albedo")))
 {}
 
-const char* matte::name() const
-{
-  return "matte";
-}
-
 scattering_distribution_function matte::evaluate_scattering(const differential_geometry&) const
 {
   return bsdf_;

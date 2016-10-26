@@ -3,10 +3,12 @@
 #include <igloo/geometry/differential_geometry.hpp>
 #include <igloo/scattering/scattering_distribution_function.hpp>
 #include <igloo/utility/any.hpp>
+#include <igloo/utility/demangle.hpp>
 #include <string>
 #include <memory>
 #include <map>
 #include <functional>
+#include <typeinfo>
 
 
 namespace igloo
@@ -16,10 +18,6 @@ namespace igloo
 class material
 {
   public:
-    /*! \return A string containing the name of this material.
-     */
-    virtual const char *name() const = 0;
-
     /*! \return true if this material is emissive; false, otherwise.
      */
     virtual bool is_emitter() const;
@@ -103,7 +101,7 @@ struct registered_material : public material
 // the reason we do this is to cause side effects through the call register_material()
 template<class DerivedMaterial>
 bool registered_material<DerivedMaterial>::registered = detail::get_material_factories().register_material(
-  DerivedMaterial().name(),
+  type_name(typeid(DerivedMaterial)),
   registered_material<DerivedMaterial>::factory{}
 );
 

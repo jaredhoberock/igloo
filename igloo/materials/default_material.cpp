@@ -4,12 +4,6 @@ namespace igloo
 {
 
 
-const char *default_material::name() const
-{
-  return "default";
-} // end default_material::name()
-
-
 scattering_distribution_function default_material::evaluate_scattering(const differential_geometry&) const
 {
   return lambertian(color(1));

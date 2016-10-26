@@ -10,12 +10,6 @@ glass::glass(const std::map<std::string,any>& parameters)
           std::experimental::fundamentals_v1::any_cast<color>(parameters.at("transmittance")))
 {}
 
-
-const char* glass::name() const
-{
-  return "glass";
-}
-
 scattering_distribution_function glass::evaluate_scattering(const differential_geometry&) const
 {
   return bsdf_;

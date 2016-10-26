@@ -14,11 +14,6 @@ light::light(const std::map<std::string, any>& parameters)
   : light(std::experimental::fundamentals_v1::any_cast<color>(parameters.at("radiosity")))
 {}
 
-const char* light::name() const
-{
-  return "light";
-}
-
 bool light::is_emitter() const
 {
   return true;

@@ -19,8 +19,6 @@ class glass : public registered_material<glass>
 
     glass(const std::map<std::string, any>& parameters);
 
-    virtual const char *name() const;
-
     virtual scattering_distribution_function evaluate_scattering(const differential_geometry& dg) const;
 
   private:

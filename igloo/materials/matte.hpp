@@ -11,15 +11,11 @@ namespace igloo
 class matte : public registered_material<matte>
 {
   public:
-    inline matte() : registered_material<matte>() {}
-
     matte(const color& albedo);
 
     matte(float r, float g, float b);
 
     matte(const std::map<std::string,any>& parameters);
-
-    virtual const char *name() const;
 
     virtual scattering_distribution_function evaluate_scattering(const differential_geometry& dg) const;
 
