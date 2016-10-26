@@ -1,9 +1,10 @@
 #pragma once
 
 #include <igloo/scattering/color.hpp>
-#include <igloo/scattering/lambertian.hpp>
 #include <igloo/scattering/hemispherical_emission.hpp>
+#include <igloo/scattering/lambertian.hpp>
 #include <igloo/scattering/perfect_absorber.hpp>
+#include <igloo/scattering/specular_reflection.hpp>
 #include <igloo/geometry/vector.hpp>
 #include <igloo/utility/variant.hpp>
 #include <type_traits>
@@ -15,7 +16,12 @@ namespace igloo
 class scattering_distribution_function
 {
   private:
-    using variant_type = std::experimental::variant<lambertian, hemispherical_emission, perfect_absorber>;
+    using variant_type = std::experimental::variant<
+      lambertian,
+      hemispherical_emission,
+      specular_reflection,
+      perfect_absorber
+    >;
 
   public:
     template<class BSDF,
