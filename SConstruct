@@ -2,6 +2,7 @@ import sys
 
 env = Environment()
 
+env['CXX'] = 'clang'
 env.Append(CPPPATH = ['.', 'dependencies'])
 env.Append(CPPFLAGS = ['-O3', '-std=c++14'])
 
@@ -26,5 +27,5 @@ if sys.platform == "darwin":
   env.AppendUnique(FRAMEWORKS=Split('OpenGL GLUT'))
   env.Program('cornell_box', sources, LIBS = ['GLEW', 'pthread'])
 else:
-  env.Program('cornell_box', sources, LIBS = ['GL', 'GLU', 'glut', 'GLEW', 'pthread'])
+  env.Program('cornell_box', sources, LIBS = ['GL', 'GLU', 'glut', 'GLEW', 'pthread', 'stdc++', 'm'])
 
