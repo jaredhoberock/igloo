@@ -1,0 +1,231 @@
+#pragma once
+
+#include <memory>
+#include <vector>
+#include <cstdint>
+#include <type_traits>
+
+namespace std
+{
+namespace experimental
+{
+namespace fundamentals_v1
+{
+
+
+class bad_any_cast : public bad_cast
+{
+  public:
+    inline virtual const char *what() const noexcept
+    {
+      return "bad_any_cast";
+    }
+};
+
+
+class any
+{
+  private:
+    struct storage_base
+    {
+      inline virtual ~storage_base() {}
+      virtual const std::type_info& type() const = 0;
+      virtual storage_base* clone() const = 0;
+    };
+
+    template<class ValueType>
+    class storage : public storage_base
+    {
+      public:
+        storage(const ValueType& value)
+          : value_(value)
+        {}
+
+        virtual const std::type_info& type() const
+        {
+          return typeid(ValueType);
+        }
+
+        virtual storage* clone() const
+        {
+          return new storage(value_);
+        }
+
+        ValueType& value()
+        {
+          return value_;
+        }
+
+        const ValueType& value() const
+        {
+          return value_;
+        }
+
+      private:
+        ValueType value_;
+    };
+
+  public:
+    inline any()
+      : storage_()
+    {}
+
+    inline any(const any& other)
+      : storage_(!other.empty() ? other.storage_->clone() : nullptr)
+    {}
+
+    inline any(any&& other)
+      : storage_(std::move(other.storage_))
+    {}
+
+    template<class ValueType>
+    any(ValueType&& value,
+        typename enable_if<
+          !is_same<
+            typename decay<ValueType>::type,
+            any
+          >::value
+        >::type * = 0)
+      : storage_(new storage<typename decay<ValueType>::type>(std::forward<ValueType>(value)))
+    {}
+
+    inline ~any()
+    {
+      clear();
+    }
+
+    inline any& operator=(const any& rhs)
+    {
+      any(rhs).swap(*this);
+      return *this;
+    }
+
+    inline any& operator=(any&& rhs)
+    {
+      any(std::move(rhs)).swap(*this);
+      return *this;
+    }
+
+    template<class ValueType>
+    typename enable_if<
+      !is_same<
+        typename decay<ValueType>::type,
+        any
+      >::value,
+      any &
+    >::type
+      operator=(ValueType&& rhs)
+    {
+      any tmp(std::forward<ValueType>(rhs));
+      tmp.swap(*this);
+      return *this;
+    }
+
+    inline void clear()
+    {
+      storage_.reset();
+    }
+
+    inline void swap(any& other)
+    {
+      std::swap(storage_, other.storage_);
+    }
+
+    inline bool empty() const
+    {
+      return !storage_;
+    }
+
+    inline const type_info& type() const
+    {
+      return empty() ? typeid(void) : storage_->type();
+    }
+
+  private:
+    std::unique_ptr<storage_base> storage_;
+
+    template<class U>
+    const U *get() const
+    {
+      return &static_cast<const storage<U>*>(storage_.get())->value();
+    }
+
+    template<class U>
+    U *get()
+    {
+      return &static_cast<storage<U>*>(storage_.get())->value();
+    }
+
+    template<class U> friend const U* any_cast(const any* operand);
+    template<class U> friend U* any_cast(any* operand);
+};
+
+
+inline void swap(any& x, any& y)
+{
+  x.swap(y);
+}
+
+
+template<class ValueType>
+const ValueType* any_cast(const any* operand)
+{
+  return (operand == nullptr || operand->type() != typeid(ValueType)) ? nullptr : operand->template get<ValueType>();
+}
+
+
+template<class ValueType>
+ValueType* any_cast(any* operand)
+{
+  return (operand == nullptr || operand->type() != typeid(ValueType)) ? nullptr : operand->template get<ValueType>();
+}
+
+
+template<class ValueType>
+ValueType any_cast(const any& operand)
+{
+  if(operand.type() != typeid(typename remove_reference<ValueType>::type))
+  {
+    throw bad_any_cast();
+  }
+
+  typedef typename add_const<
+    typename remove_reference<ValueType>::type
+  >::type T;
+
+  return *any_cast<T>(&operand);
+}
+
+
+template<class ValueType>
+ValueType any_cast(any& operand)
+{
+  if(operand.type() != typeid(typename remove_reference<ValueType>::type))
+  {
+    throw bad_any_cast();
+  }
+
+  typedef typename remove_reference<ValueType>::type T;
+
+  return *any_cast<T>(&operand);
+}
+
+
+template<class ValueType>
+ValueType any_cast(any&& operand)
+{
+  if(operand.type() != typeid(typename remove_reference<ValueType>::type))
+  {
+    throw bad_any_cast();
+  }
+
+  typedef typename remove_reference<ValueType>::type T;
+
+  return *any_cast<T>(&operand);
+}
+
+
+}
+}
+} // end std
+
