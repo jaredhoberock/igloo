@@ -3,7 +3,6 @@
 #include <igloo/records/image.hpp>
 #include <igloo/surfaces/sphere.hpp>
 #include <igloo/surfaces/mesh.hpp>
-#include <igloo/materials/default_material.hpp>
 #include <igloo/renderers/debug_renderer.hpp>
 #include <igloo/renderers/direct_lighting_renderer.hpp>
 #include <iostream>
@@ -20,7 +19,7 @@ context::context()
   : m_transform_stack(std::deque<transform>(1)),
     m_attributes_stack(std::deque<attributes_map>(1, default_attributes()))
 {
-  material(std::make_unique<default_material>(), "default");
+  material(make_material("default_material", {}), "default");
 }
 
 
