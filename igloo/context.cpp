@@ -19,7 +19,7 @@ context::context()
   : m_transform_stack(std::deque<transform>(1)),
     m_attributes_stack(std::deque<attributes_map>(1, default_attributes()))
 {
-  material(make_material("default_material", {}), "default");
+  material(make_material("igloo::default_material", {}), "default");
 }
 
 

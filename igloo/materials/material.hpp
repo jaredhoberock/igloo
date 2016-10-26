@@ -101,7 +101,7 @@ struct registered_material : public material
 // the reason we do this is to cause side effects through the call register_material()
 template<class DerivedMaterial>
 bool registered_material<DerivedMaterial>::registered = detail::get_material_factories().register_material(
-  type_name(typeid(DerivedMaterial)),
+  demangle(typeid(DerivedMaterial).name()),
   registered_material<DerivedMaterial>::factory{}
 );
 
