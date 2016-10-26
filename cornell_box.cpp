@@ -46,9 +46,9 @@ int main()
   color light_radiosity = light_power / light_surface_area;
 
   // create some materials
-  renderer.material(std::make_unique<igloo::matte>(0.8, 0.1, 0.1), "red");
-  renderer.material(std::make_unique<igloo::matte>(0.1, 0.8, 0.1), "green");
-  renderer.material(std::make_unique<igloo::matte>(0.8, 0.8, 0.8), "white");
+  renderer.material(make_material("matte", {{"albedo", color(0.8, 0.1, 0.1)}}), "red");
+  renderer.material(make_material("matte", {{"albedo", color(0.1, 0.8, 0.1)}}), "green");
+  renderer.material(make_material("matte", {{"albedo", color(0.8, 0.8, 0.8)}}), "white");
   renderer.material(std::make_unique<igloo::glass>(1.5f, color(1.0, 1.0, 1.0), color(1.0, 1.0, 1.0)), "glass");
   renderer.material(std::make_unique<igloo::light>(light_radiosity), "light");
 
