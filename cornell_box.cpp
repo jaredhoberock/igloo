@@ -1,4 +1,5 @@
 #include <igloo/context.hpp>
+#include <igloo/materials/glass.hpp>
 #include <igloo/materials/matte.hpp>
 #include <igloo/materials/light.hpp>
 #include <igloo/utility/math_vector.hpp>
@@ -44,10 +45,11 @@ int main()
   float light_surface_area = 0.5f * 0.5f; 
   color light_radiosity = light_power / light_surface_area;
 
-  // create four materials
+  // create some materials
   renderer.material(std::make_unique<igloo::matte>(0.8, 0.1, 0.1), "red");
   renderer.material(std::make_unique<igloo::matte>(0.1, 0.8, 0.1), "green");
   renderer.material(std::make_unique<igloo::matte>(0.8, 0.8, 0.8), "white");
+  renderer.material(std::make_unique<igloo::glass>(1.5f, color(1.0, 1.0, 1.0), color(1.0, 1.0, 1.0)), "glass");
   renderer.material(std::make_unique<igloo::light>(light_radiosity), "light");
 
   // back wall
@@ -99,7 +101,7 @@ int main()
   renderer.sphere(-0.4, -0.66, -0.15, 0.33);
 
   // glass ball
-  renderer.attribute("material", "default");
+  renderer.attribute("material", "glass");
   renderer.sphere(0.4, -0.66, 0.25, 0.33);
 
   // ceiling light
