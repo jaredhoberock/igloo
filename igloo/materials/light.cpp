@@ -10,8 +10,8 @@ light::light(const color& radiosity)
   : emission_(radiosity / pi) // convert radiosity (W * meter-2) to radiance (W * steradian-1 * meter-2)
 {}
 
-light::light(float r, float g, float b)
-  : light(color(r,g,b))
+light::light(const std::map<std::string, any>& parameters)
+  : light(std::experimental::fundamentals_v1::any_cast<color>(parameters.at("radiosity")))
 {}
 
 const char* light::name() const

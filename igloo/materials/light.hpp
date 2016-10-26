@@ -6,13 +6,15 @@ namespace igloo
 {
 
 
-class light : public material
+class light : public registered_material<light>
 {
   public:
+    inline light() : light(color::white()) {}
+
     // \param radiosity The radiosity of the light (i.e., power/area or Watts/meter^2)
     light(const color& radiosity);
 
-    light(float r, float g, float b);
+    light(const std::map<std::string,any>& parameters);
 
     virtual const char* name() const;
 
