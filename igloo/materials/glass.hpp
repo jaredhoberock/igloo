@@ -12,8 +12,8 @@ class glass : public material
 {
   public:
     inline glass(float eta = 1.5f,
-          const color& reflectance = color::white(),
-          const color& transmittance = color::white())
+                 const color& reflectance = color::white(),
+                 const color& transmittance = color::white())
       : bsdf_(reflectance, transmittance, 1.f, eta)
     {}
 
