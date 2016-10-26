@@ -14,13 +14,7 @@ scattering_distribution_function default_material::evaluate_scattering(const dif
 {
   return lambertian(color(1));
 } // end default_material::evaluate_scattering()
-
-
-scattering_distribution_function default_material::evaluate_emission(const differential_geometry&) const
-{
-  return hemispherical_emission(color::black());
-} // end default_material::evaluate_scattering()
-  
+ 
 
 } // end igloo
 
