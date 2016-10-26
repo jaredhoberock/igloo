@@ -17,8 +17,6 @@ class matte : public material
 
     virtual scattering_distribution_function evaluate_scattering(const differential_geometry& dg) const;
 
-    virtual scattering_distribution_function evaluate_emission(const differential_geometry& dg) const;
-
   private:
     const lambertian color_;
 }; // end default_material

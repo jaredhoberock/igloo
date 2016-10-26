@@ -22,9 +22,9 @@ class material
      */
     virtual bool is_sensor() const;
 
-    virtual scattering_distribution_function evaluate_scattering(const differential_geometry& dg) const = 0;
+    virtual scattering_distribution_function evaluate_scattering(const differential_geometry& dg) const;
 
-    virtual scattering_distribution_function evaluate_emission(const differential_geometry& dg) const = 0;
+    virtual scattering_distribution_function evaluate_emission(const differential_geometry& dg) const;
 }; // end material
 
 

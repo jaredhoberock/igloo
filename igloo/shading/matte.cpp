@@ -23,11 +23,6 @@ scattering_distribution_function matte::evaluate_scattering(const differential_g
   return color_;
 }
 
-scattering_distribution_function matte::evaluate_emission(const differential_geometry&) const
-{
-  return hemispherical_emission(color::black());
-}
-
 
 } // end igloo
 
