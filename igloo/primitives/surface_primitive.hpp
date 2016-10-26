@@ -2,7 +2,7 @@
 
 #include <memory>
 #include <igloo/surfaces/surface.hpp>
-#include <igloo/shading/material.hpp>
+#include <igloo/materials/material.hpp>
 #include <igloo/utility/optional.hpp>
 
 namespace igloo

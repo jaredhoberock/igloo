@@ -1,5 +1,5 @@
-#include <igloo/shading/light.hpp>
-#include <igloo/shading/hemispherical_emission.hpp>
+#include <igloo/materials/light.hpp>
+#include <igloo/scattering/hemispherical_emission.hpp>
 #include <igloo/geometry/pi.hpp>
 
 namespace igloo

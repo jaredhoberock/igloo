@@ -3,6 +3,7 @@
 #include <igloo/records/image.hpp>
 #include <igloo/surfaces/sphere.hpp>
 #include <igloo/surfaces/mesh.hpp>
+#include <igloo/materials/default_material.hpp>
 #include <igloo/renderers/debug_renderer.hpp>
 #include <igloo/renderers/direct_lighting_renderer.hpp>
 #include <iostream>

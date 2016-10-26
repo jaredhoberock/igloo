@@ -1,5 +1,5 @@
-#include <igloo/shading/material.hpp>
-#include <igloo/shading/perfect_absorber.hpp>
+#include <igloo/materials/material.hpp>
+#include <igloo/scattering/perfect_absorber.hpp>
 
 namespace igloo
 {

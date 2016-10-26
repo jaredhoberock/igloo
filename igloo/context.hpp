@@ -8,7 +8,6 @@
 #include <igloo/primitives/scene.hpp>
 #include <igloo/primitives/surface_primitive.hpp>
 #include <igloo/geometry/transform.hpp>
-#include <igloo/shading/default_material.hpp>
 
 namespace igloo
 {

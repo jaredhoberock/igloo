@@ -1,4 +1,4 @@
-#include <igloo/shading/material.hpp>
+#include <igloo/materials/material.hpp>
 #include <igloo/geometry/differential_geometry.hpp>
 
 namespace igloo

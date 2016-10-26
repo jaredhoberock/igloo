@@ -1,6 +1,6 @@
 #pragma once
 
-#include <igloo/shading/color.hpp>
+#include <igloo/scattering/color.hpp>
 
 namespace igloo
 {

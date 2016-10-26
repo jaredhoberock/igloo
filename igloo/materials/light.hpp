@@ -1,6 +1,6 @@
-#include <igloo/shading/material.hpp>
-#include <igloo/shading/color.hpp>
-#include <igloo/shading/hemispherical_emission.hpp>
+#include <igloo/materials/material.hpp>
+#include <igloo/scattering/color.hpp>
+#include <igloo/scattering/hemispherical_emission.hpp>
 
 namespace igloo
 {

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <igloo/geometry/vector.hpp>
-#include <igloo/shading/color.hpp>
+#include <igloo/scattering/color.hpp>
 
 namespace igloo
 {

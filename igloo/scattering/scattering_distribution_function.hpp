@@ -1,10 +1,10 @@
 #pragma once
 
-#include <igloo/shading/lambertian.hpp>
-#include <igloo/shading/hemispherical_emission.hpp>
-#include <igloo/shading/perfect_absorber.hpp>
+#include <igloo/scattering/color.hpp>
+#include <igloo/scattering/lambertian.hpp>
+#include <igloo/scattering/hemispherical_emission.hpp>
+#include <igloo/scattering/perfect_absorber.hpp>
 #include <igloo/geometry/vector.hpp>
-#include <igloo/shading/color.hpp>
 #include <igloo/utility/variant.hpp>
 #include <type_traits>
 

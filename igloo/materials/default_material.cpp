@@ -1,4 +1,4 @@
-#include <igloo/shading/default_material.hpp>
+#include <igloo/materials/default_material.hpp>
 
 namespace igloo
 {

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <igloo/geometry/differential_geometry.hpp>
-#include <igloo/shading/scattering_distribution_function.hpp>
+#include <igloo/scattering/scattering_distribution_function.hpp>
 
 namespace igloo
 {

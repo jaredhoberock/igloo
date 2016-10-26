@@ -1,6 +1,6 @@
-#include <igloo/shading/material.hpp>
-#include <igloo/shading/color.hpp>
-#include <igloo/shading/lambertian.hpp>
+#include <igloo/materials/material.hpp>
+#include <igloo/scattering/color.hpp>
+#include <igloo/scattering/lambertian.hpp>
 
 namespace igloo
 {

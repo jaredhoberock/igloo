@@ -1,5 +1,5 @@
-#include <igloo/shading/matte.hpp>
-#include <igloo/shading/hemispherical_emission.hpp>
+#include <igloo/materials/matte.hpp>
+#include <igloo/scattering/hemispherical_emission.hpp>
 
 namespace igloo
 {

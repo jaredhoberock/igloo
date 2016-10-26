@@ -1,6 +1,6 @@
 #include <igloo/context.hpp>
-#include <igloo/shading/matte.hpp>
-#include <igloo/shading/light.hpp>
+#include <igloo/materials/matte.hpp>
+#include <igloo/materials/light.hpp>
 #include <igloo/utility/math_vector.hpp>
 #include <igloo/utility/matrix.hpp>
 #include <memory>

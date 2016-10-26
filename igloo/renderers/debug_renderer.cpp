@@ -2,8 +2,7 @@
 #include <igloo/primitives/scene.hpp>
 #include <igloo/surfaces/sphere.hpp>
 #include <igloo/surfaces/mesh.hpp>
-#include <igloo/shading/perspective_sensor.hpp>
-#include <igloo/shading/scattering_distribution_function.hpp>
+#include <igloo/scattering/perspective_sensor.hpp>
 
 namespace igloo
 {
