@@ -8,7 +8,7 @@ namespace igloo
 {
 
 
-class glass : public material
+class glass : public registered_material<glass>
 {
   public:
     inline glass(float eta = 1.5f,
@@ -16,6 +16,8 @@ class glass : public material
                  const color& transmittance = color::white())
       : bsdf_(reflectance, transmittance, 1.f, eta)
     {}
+
+    glass(const std::map<std::string, any>& parameters);
 
     virtual const char *name() const;
 
