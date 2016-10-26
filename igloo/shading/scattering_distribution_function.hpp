@@ -2,9 +2,11 @@
 
 #include <igloo/shading/lambertian.hpp>
 #include <igloo/shading/hemispherical_emission.hpp>
+#include <igloo/shading/perfect_absorber.hpp>
 #include <igloo/geometry/vector.hpp>
 #include <igloo/shading/color.hpp>
 #include <igloo/utility/variant.hpp>
+#include <type_traits>
 
 namespace igloo
 {
@@ -12,12 +14,15 @@ namespace igloo
 
 class scattering_distribution_function
 {
-  public:
-    inline scattering_distribution_function(const lambertian& other)
-      : m_impl(other)
-    {}
+  private:
+    using variant_type = std::experimental::variant<lambertian, hemispherical_emission, perfect_absorber>;
 
-    inline scattering_distribution_function(const hemispherical_emission& other)
+  public:
+    template<class BSDF,
+             class = typename std::enable_if<
+               std::is_constructible<variant_type,BSDF>::value
+             >::type>
+    inline scattering_distribution_function(const BSDF& other)
       : m_impl(other)
     {}
 
@@ -59,7 +64,7 @@ class scattering_distribution_function
     }
 
   private:
-    std::experimental::variant<lambertian, hemispherical_emission> m_impl;
+    variant_type m_impl;
 }; // end scattering_distribution_function
 
 

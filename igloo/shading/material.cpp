@@ -1,4 +1,5 @@
 #include <igloo/shading/material.hpp>
+#include <igloo/shading/perfect_absorber.hpp>
 
 namespace igloo
 {
@@ -18,14 +19,12 @@ bool material::is_sensor() const
 
 scattering_distribution_function material::evaluate_scattering(const differential_geometry& dg) const
 {
-  // XXX might prefer to return some sort of null function here that requires no storage
-  return lambertian(color::black());
+  return perfect_absorber();
 } // end material::evaluate_scattering()
 
 scattering_distribution_function material::evaluate_emission(const differential_geometry& dg) const
 {
-  // XXX might prefer to return some sort of null function here that requires no storage
-  return hemispherical_emission(color::black());
+  return perfect_absorber();
 } // end material::evaluate_emission()
 
 
