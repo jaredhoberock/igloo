@@ -14,6 +14,7 @@ scene_viewer::scene_viewer(const scene &s,
     m_modelview(modelview)
 {
   resize(512, 512);
+  startAnimation();
 }
 
 

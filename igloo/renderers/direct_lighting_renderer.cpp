@@ -69,7 +69,7 @@ void direct_lighting_renderer::render(const float4x4 &modelview, render_progress
         // sum the contribution of each emitter
         for(const auto& emitter : m_scene.emitters())
         {
-          int num_sample_points = 4;
+          int num_sample_points = 128;
           float sample_weight = 1.f / num_sample_points;
 
           for(int i = 0; i < num_sample_points; ++i)

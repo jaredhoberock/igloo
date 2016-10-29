@@ -10,6 +10,7 @@
 #include <algorithm>
 #include <cstdlib>
 #include <stdexcept>
+#include <future>
 
 namespace igloo
 {
@@ -313,7 +314,11 @@ void context::render()
   progress_snapshot progress(im);
 
   auto renderer = make_renderer(m_attributes_stack.top()["renderer"], m_scene, im);
-  renderer->render(m, progress);
+
+  auto render_task = std::async(std::launch::async, [&]
+  {
+    renderer->render(m, progress);
+  });
 
   test_viewer v(progress, m_scene, m);
   v.setWindowTitle("Hello, world!");
@@ -321,6 +326,8 @@ void context::render()
   float fovy_radians = 60 * (3.1428 / 180.0);
   v.camera()->setFieldOfView(fovy_radians);
   v.show();
+
+  render_task.wait();
 } // end context::render()
 
 
