@@ -1,6 +1,5 @@
 #include <igloo/surfaces/sphere.hpp>
 #include <igloo/geometry.hpp>
-#include <dependencies/2dmapping/UnitSquareToSphere.h>
 #include <vector>
 #include <algorithm>
 #include <cmath>

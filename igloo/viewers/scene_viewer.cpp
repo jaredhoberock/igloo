@@ -1,6 +1,5 @@
 #include <igloo/viewers/scene_viewer.hpp>
 #include <dependencies/glutviewer/GlutViewerInstance.h>
-#include <dependencies/2dmapping/UnitSquareToSphere.h>
 #include <igloo/geometry/triangle_mesh.hpp>
 #include <iostream>
 #include <algorithm>
