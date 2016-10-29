@@ -1,0 +1,3 @@
+[submodule "dependencies/distribution2d"]
+	path = dependencies/distribution2d
+	url = git@github.com:jaredhoberock/distribution2d
