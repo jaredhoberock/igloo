@@ -1,5 +1,6 @@
 #include <igloo/surfaces/sphere.hpp>
 #include <igloo/geometry.hpp>
+#include <distribution2d/distribution2d/unit_sphere_distribution.hpp>
 #include <vector>
 #include <algorithm>
 #include <cmath>
@@ -18,18 +19,6 @@ sphere::sphere(float cx, float cy, float cz, float r)
 {} // end sphere::sphere()
 
 
-static point unit_square_to_unit_sphere(float u0, float u1)
-{
-  float z = 1.f - 2.f*u0;
-  float r = std::sqrt(std::max(0.f, 1.f - z*z));
-  float phi = two_pi * u1;
-  float x = r * std::cos(phi);
-  float y = r * std::sin(phi);
-
-  return point(x,y,z);
-} // end unit_square_to_unit_sphere()
-
-
 triangle_mesh sphere::triangulate() const
 {
   size_t u_divisions = 100;
@@ -46,6 +35,7 @@ triangle_mesh sphere::triangulate() const
 
   // XXX this method creates lots of redundant data
   // XXX we should try to make this watertight
+  dist2d::unit_sphere_distribution<point> unit_sphere;
   point p;
   float v = 0;
   unsigned int vertex_idx = 0;
@@ -54,22 +44,22 @@ triangle_mesh sphere::triangulate() const
     float u = 0;
     for(size_t i = 0; i != v_divisions; ++i, u += u_del, vertex_idx += 4)
     {
-      point p = unit_square_to_unit_sphere(u, v);
+      point p = unit_sphere(u, v);
       points[vertex_idx + 0]      = p;
       parametrics[vertex_idx + 0] = parametric(u,v);
       normals[vertex_idx + 0]     = normal(p.x, p.y, p.z);
 
-      p = unit_square_to_unit_sphere(u + u_del, v);
+      p = unit_sphere(u + u_del, v);
       points[vertex_idx + 1]      = p;
       parametrics[vertex_idx + 1] = parametric(u + u_del,v);
       normals[vertex_idx + 1]     = normal(p.x, p.y, p.z);
 
-      p = unit_square_to_unit_sphere(u + u_del, v + v_del);
+      p = unit_sphere(u + u_del, v + v_del);
       points[vertex_idx + 2]      = p;
       parametrics[vertex_idx + 2] = parametric(u + u_del, v + v_del);
       normals[vertex_idx + 2]     = normal(p.x, p.y, p.z);
 
-      p = unit_square_to_unit_sphere(u, v + v_del);
+      p = unit_sphere(u, v + v_del);
       points[vertex_idx + 3]      = p;
       parametrics[vertex_idx + 3] = parametric(u,v + v_del);
       normals[vertex_idx + 3]     = normal(p.x, p.y, p.z);
@@ -208,7 +198,8 @@ float sphere::area() const
 
 differential_geometry sphere::sample_surface(float u0, float u1, float) const
 {
-  vector n = unit_square_to_unit_sphere(u0, u1);
+  dist2d::unit_sphere_distribution<vector> unit_sphere;
+  vector n = unit_sphere(u0, u1);
   point p = center() + radius() * n;
 
   parametric uv;
