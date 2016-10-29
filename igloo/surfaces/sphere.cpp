@@ -196,7 +196,7 @@ float sphere::area() const
 } // end area()
 
 
-differential_geometry sphere::sample_surface(float u0, float u1, float) const
+differential_geometry sphere::sample_surface(std::uint64_t u0, std::uint64_t u1) const
 {
   dist2d::unit_sphere_distribution<vector> unit_sphere;
   vector n = unit_sphere(u0, u1);

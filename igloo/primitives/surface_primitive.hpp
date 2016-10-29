@@ -53,11 +53,11 @@ class surface_primitive
       return material_;
     }
 
-    /*! \return The differential_geometry of the surface at coordinates (u0, u1, u2).
+    /*! \return The differential_geometry of the surface at coordinates (u0, u1).
      */
-    inline differential_geometry sample_surface(float u0, float u1, float u2) const
+    inline differential_geometry sample_surface(std::uint64_t u0, std::uint64_t u1) const
     {
-      return surface_->sample_surface(u0, u1, u2);
+      return surface_->sample_surface(u0, u1);
     }
 
     /*! \return The value of the probability density function at the given surface location.

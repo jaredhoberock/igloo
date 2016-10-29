@@ -33,8 +33,7 @@ void direct_lighting_renderer::render(const float4x4 &modelview, render_progress
 
   perspective_sensor perspective(fovy_radians, 1.f);
 
-  std::default_random_engine rng;
-  std::uniform_real_distribution<float> u01;
+  std::mt19937_64 rng;
 
   float v_spacing = 1.f / m_image.height();
   float v = v_spacing / 2;
@@ -75,7 +74,7 @@ void direct_lighting_renderer::render(const float4x4 &modelview, render_progress
 
           for(int i = 0; i < num_sample_points; ++i)
           {
-            auto emitter_dg = emitter.sample_surface(u01(rng), u01(rng), u01(rng));
+            auto emitter_dg = emitter.sample_surface(rng(), rng());
 
             // construct a ray between x and the point on the emitter
             ray to_emitter(x, emitter_dg.point());

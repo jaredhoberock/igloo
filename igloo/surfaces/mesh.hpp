@@ -63,9 +63,9 @@ class mesh : public surface
      */
     virtual float area() const;
 
-    /*! \return The differential_geometry of the mesh at coordinates (u0,u1,u2).
+    /*! \return The differential_geometry of the mesh at coordinates (u0,u1).
      */
-    virtual differential_geometry sample_surface(float u0, float u1, float u2) const;
+    virtual differential_geometry sample_surface(std::uint64_t u0, std::uint64_t u1) const;
 
   private:
     mesh(triangle_mesh&& triangle_mesh);

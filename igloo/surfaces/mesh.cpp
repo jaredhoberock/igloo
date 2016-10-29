@@ -93,14 +93,14 @@ float mesh::area() const
 } // end mesh::area()
 
 
-differential_geometry mesh::sample_surface(float u0, float u1, float u2) const
+differential_geometry mesh::sample_surface(std::uint64_t u0, std::uint64_t u1) const
 {
   // select a triangle
-  auto triangle_and_probability = area_weighted_probability_density_function_(u0);
+  auto triangle_and_probability = area_weighted_probability_density_function_(float(u0) / std::numeric_limits<std::uint64_t>::max());
 
   // transform the unit square to barycentric coordinates
   dist2d::unit_isoceles_right_triangle_distribution<triangle_mesh::barycentric> unit_triangle;
-  auto barycentric_coordinates = unit_triangle(u1, u2);
+  auto barycentric_coordinates = unit_triangle(u1);
 
   point p = m_triangle_mesh.point_at(triangle_and_probability.first, barycentric_coordinates);
   normal n = m_triangle_mesh.normal_at(triangle_and_probability.first, barycentric_coordinates);
