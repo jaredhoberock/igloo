@@ -1,4 +1,5 @@
 #include <igloo/surfaces/mesh.hpp>
+#include <dependencies/distribution2d/distribution2d/unit_isoceles_right_triangle_distribution.hpp>
 #include <algorithm>
 
 namespace igloo
@@ -92,26 +93,14 @@ float mesh::area() const
 } // end mesh::area()
 
 
-static std::uint8_t most_significant_byte(std::uint64_t x)
-{
-  return static_cast<std::uint8_t>(x >> (64 - 8));
-}
-
-
-static triangle_mesh::barycentric unit_square_to_barycentric_coordinates(float u0, float u1)
-{
-  float su = std::sqrt(u0);
-  return triangle_mesh::barycentric(1.f - su, u1 * su);
-}
-
-
 differential_geometry mesh::sample_surface(float u0, float u1, float u2) const
 {
   // select a triangle
   auto triangle_and_probability = area_weighted_probability_density_function_(u0);
 
   // transform the unit square to barycentric coordinates
-  auto barycentric_coordinates = unit_square_to_barycentric_coordinates(u1, u2);
+  dist2d::unit_isoceles_right_triangle_distribution<triangle_mesh::barycentric> unit_triangle;
+  auto barycentric_coordinates = unit_triangle(u1, u2);
 
   point p = m_triangle_mesh.point_at(triangle_and_probability.first, barycentric_coordinates);
   normal n = m_triangle_mesh.normal_at(triangle_and_probability.first, barycentric_coordinates);
