@@ -5,6 +5,7 @@
 #include <cmath>
 #include <functional>
 #include <iostream>
+#include <tuple>
 
 namespace igloo
 {
@@ -545,4 +546,40 @@ typedef math_vector<float,4> float4;
 
 
 } // end igloo
+
+
+namespace std
+{
+
+
+template<std::size_t I, typename T, std::size_t N>
+struct tuple_element<I, igloo::math_vector<T,N>>
+{
+  using type = T;
+};
+
+template<std::size_t I, typename T, std::size_t N>
+typename std::tuple_element<I, igloo::math_vector<T,N>>::type&
+get(igloo::math_vector<T,N>& vec)
+{
+  return vec[I];
+}
+
+template<std::size_t I, typename T, std::size_t N>
+const typename std::tuple_element<I, igloo::math_vector<T,N>>::type&
+get(const igloo::math_vector<T,N>& vec)
+{
+  return vec[I];
+}
+
+
+template<std::size_t I, typename T, std::size_t N>
+typename std::tuple_element<I, igloo::math_vector<T,N>>::type&&
+get(igloo::math_vector<T,N>&& vec)
+{
+  return vec[I];
+}
+
+
+} // end std
 
