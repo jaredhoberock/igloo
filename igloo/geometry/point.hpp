@@ -113,3 +113,17 @@ inline point operator*(float s, const point &x)
 
 } // end igloo
 
+
+namespace std
+{
+
+
+template<std::size_t I>
+struct tuple_element<I, igloo::point>
+{
+  using type = float;
+};
+
+
+} // end std
+

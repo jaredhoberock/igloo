@@ -73,7 +73,19 @@ inline std::tuple<vector,vector,vector> orthonormal_basis(const vector& v)
 }
 
 
-
-
 } // end igloo
+
+
+namespace std
+{
+
+
+template<std::size_t I>
+struct tuple_element<I, igloo::vector>
+{
+  using type = float;
+};
+
+
+} // end std
 
