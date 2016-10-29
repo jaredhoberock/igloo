@@ -1,4 +1,5 @@
 #include <igloo/surfaces/mesh.hpp>
+#include <dependencies/distribution2d/distribution2d/unit_interval_distribution.hpp>
 #include <dependencies/distribution2d/distribution2d/unit_isoceles_right_triangle_distribution.hpp>
 #include <algorithm>
 
@@ -96,7 +97,8 @@ float mesh::area() const
 differential_geometry mesh::sample_surface(std::uint64_t u0, std::uint64_t u1) const
 {
   // select a triangle
-  auto triangle_and_probability = area_weighted_probability_density_function_(float(u0) / std::numeric_limits<std::uint64_t>::max());
+  float x = dist2d::unit_interval_distribution<>()(u0);
+  auto triangle_and_probability = area_weighted_probability_density_function_(x);
 
   // transform the unit square to barycentric coordinates
   dist2d::unit_isoceles_right_triangle_distribution<triangle_mesh::barycentric> unit_triangle;
