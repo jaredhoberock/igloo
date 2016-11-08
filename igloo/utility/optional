@@ -533,9 +533,6 @@ void swap(experimental::optional<T>& a, experimental::optional<T>& b)
 }
 
 
-template<class>
-struct hash;
-
 template<class T>
 struct hash<experimental::optional<T>>
 {
