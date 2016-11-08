@@ -25,7 +25,7 @@ sources = ['cornell_box.cpp',
 
 if sys.platform == "darwin":
   env.AppendUnique(FRAMEWORKS=Split('OpenGL GLUT'))
-  env.Program('cornell_box', sources, LIBS = ['GLEW', 'pthread'])
+  env.Program('cornell_box', sources, LIBS = ['GLEW', 'pthread', 'libc++'])
 else:
   env.Program('cornell_box', sources, LIBS = ['GL', 'GLU', 'glut', 'GLEW', 'pthread', 'stdc++', 'm'])
 
