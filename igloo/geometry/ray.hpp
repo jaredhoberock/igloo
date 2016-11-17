@@ -51,9 +51,19 @@ class ray
       return origin() + t * direction();
     }
 
+    inline float begin() const
+    {
+      return m_interval.x;
+    }
+
     inline void end(float t)
     {
       m_interval.y = t;
+    }
+
+    inline float end() const
+    {
+      return m_interval.y;
     }
 
     inline bool within_interval(float t) const
