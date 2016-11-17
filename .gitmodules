@@ -1,3 +1,6 @@
 [submodule "dependencies/distribution2d"]
 	path = dependencies/distribution2d
 	url = git@github.com:jaredhoberock/distribution2d
+[submodule "dependencies/bounding_volume_hierarchy"]
+	path = dependencies/bounding_volume_hierarchy
+	url = git@github.com:jaredhoberock/bounding_volume_hierarchy
