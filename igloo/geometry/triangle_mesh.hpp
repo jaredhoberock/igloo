@@ -5,8 +5,10 @@
 #include <utility>
 #include <tuple>
 #include <type_traits>
+#include <dependencies/bounding_box_hierarchy/bounding_box_hierarchy.hpp>
 #include <igloo/utility/requires.hpp>
 #include <igloo/utility/optional.hpp>
+#include <igloo/geometry/bounding_box.hpp>
 #include <igloo/geometry/point.hpp>
 #include <igloo/geometry/parametric.hpp>
 #include <igloo/geometry/normal.hpp>
@@ -18,20 +20,22 @@ namespace igloo
 
 class triangle_mesh
 {
+  private:
+
   public:
     using triangle = uint3;
     using barycentric = float2;
 
+  private:
     using point_container = std::vector<point>;
-    using point_iterator = point_container::const_iterator;
-
     using parametric_container = std::vector<parametric>;
-    using parametric_iterator = parametric_container::const_iterator;
-
     using normal_container = std::vector<normal>;
-    using normal_iterator = normal_container::const_iterator;
-
     using triangle_container = std::vector<triangle>;
+
+  public:
+    using point_iterator = point_container::const_iterator;
+    using parametric_iterator = parametric_container::const_iterator;
+    using normal_iterator = normal_container::const_iterator;
     using triangle_iterator = triangle_container::const_iterator;
 
   private:
@@ -49,7 +53,11 @@ class triangle_mesh
       : m_points(std::forward<Range1>(points)),
         m_parametrics(std::forward<Range2>(parametrics)),
         m_normals(std::forward<Range3>(normals)),
-        m_triangles(std::forward<Range4>(triangles))
+        m_triangles(std::forward<Range4>(triangles)),
+        m_bbh(m_triangles, [this](const triangle& tri)
+        {
+          return bounding_box(tri);
+        })
     {}
 
   public:
@@ -355,14 +363,14 @@ class triangle_mesh
     /// Returns a bounding_box bounding the given triangle.
     /// \param tri The triangle of interest.
     /// \return A bounding_box bounding all the points of tri.
-    //igloo::bounding_box bounding_box(const triangle& tri) const
-    //{
-    //  igloo::bounding_box result;
-    //  result += m_points[tri[0]];
-    //  result += m_points[tri[1]];
-    //  result += m_points[tri[2]];
-    //  return result;
-    //}
+    igloo::bounding_box bounding_box(const triangle& tri) const
+    {
+      igloo::bounding_box result;
+      result += m_points[tri[0]];
+      result += m_points[tri[1]];
+      result += m_points[tri[2]];
+      return result;
+    }
 
     /*! Tests a ray and a triangle for intersection.
      *  \param r The ray of interest.
@@ -421,28 +429,38 @@ class triangle_mesh
      *          otherwise returns the triangle, ray parameter, and barycentric coordinates at the intersection.
      */
     inline optional<std::tuple<triangle_iterator,float,barycentric>>
-      intersect(const ray &r_) const
+      intersect(const ray &r) const
     {
-      optional<std::tuple<triangle_iterator,float,barycentric>> result;
+      using intersection = optional<std::tuple<triangle_iterator,float,barycentric>>;
 
-      ray r = r_;
+      intersection init = nullopt;
 
-      // XXX this is really a reduction
-      //     it requires something like transform_min_element
-      for(auto tri_iter = triangles().begin(); tri_iter != triangles().end(); ++tri_iter)
-      {
-        auto this_result = intersect(r, *tri_iter);
-        if(this_result)
+      point origin = r.origin() + r.begin() * r.direction();
+      float max_t = r.end();
+
+      auto result = m_bbh.intersect(origin, r.direction(), init,
+        [&](const triangle& tri, const point&, const vector&, intersection result)
         {
-          float t;
-          barycentric b;
-          std::tie(t,b) = *this_result;
+          auto this_result = intersect(r, tri);
+          if(this_result)
+          {
+            float t;
+            barycentric b;
+            std::tie(t,b) = *this_result;
 
-          // shorten ray
-          r.end(std::get<0>(*this_result));
-          result = std::make_tuple(tri_iter, t, b);
-        } // end if
-      } // end for
+            if(!result || t < std::get<float>(*result))
+            {
+              result = std::make_tuple(to_iterator(tri), t, b);
+            }
+          }
+
+          return result;
+        },
+        [=](const intersection& i)
+        {
+          return i ? std::get<float>(*i) : max_t;
+        }
+      );
 
       return result;
     } // end intersect()
@@ -527,6 +545,11 @@ class triangle_mesh
 
 
   private:
+    triangle_iterator to_iterator(const triangle& tri) const
+    {
+      return m_triangles.begin() + (&tri - m_triangles.data());
+    }
+
     template<class T>
     static inline T interpolate(const barycentric& b, const T& x0, const T& x1, const T& x2)
     {
@@ -566,10 +589,11 @@ class triangle_mesh
     } // end interpolate_normal()
 
 
-    point_container      m_points;
-    parametric_container m_parametrics;
-    normal_container     m_normals;
-    triangle_container   m_triangles;
+    point_container                  m_points;
+    parametric_container             m_parametrics;
+    normal_container                 m_normals;
+    triangle_container               m_triangles;
+    bounding_box_hierarchy<triangle> m_bbh;
 };
 
 

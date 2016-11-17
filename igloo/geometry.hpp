@@ -1,5 +1,6 @@
 #pragma once
 
+#include <igloo/geometry/bounding_box.hpp>
 #include <igloo/geometry/differential_geometry.hpp>
 #include <igloo/geometry/normal.hpp>
 #include <igloo/geometry/parametric.hpp>
