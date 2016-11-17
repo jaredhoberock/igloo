@@ -4,6 +4,8 @@
 #include <stdexcept>
 #include <utility>
 #include <tuple>
+#include <type_traits>
+#include <igloo/utility/requires.hpp>
 #include <igloo/utility/optional.hpp>
 #include <igloo/geometry/point.hpp>
 #include <igloo/geometry/parametric.hpp>
@@ -17,178 +19,177 @@ namespace igloo
 class triangle_mesh
 {
   public:
-    typedef uint3  triangle;
-    typedef float2 barycentric;
+    using triangle = uint3;
+    using barycentric = float2;
 
-    typedef std::vector<point>::const_iterator      point_iterator;
-    typedef std::vector<parametric>::const_iterator parametric_iterator;
-    typedef std::vector<normal>::const_iterator     normal_iterator;
-    typedef std::vector<triangle>::const_iterator   triangle_iterator;
+    using point_container = std::vector<point>;
+    using point_iterator = point_container::const_iterator;
 
-    inline triangle_mesh(const std::vector<point> &points,
-                         const std::vector<triangle> &triangles)
-      : m_points(points),
-        m_triangles(triangles)
+    using parametric_container = std::vector<parametric>;
+    using parametric_iterator = parametric_container::const_iterator;
+
+    using normal_container = std::vector<normal>;
+    using normal_iterator = normal_container::const_iterator;
+
+    using triangle_container = std::vector<triangle>;
+    using triangle_iterator = triangle_container::const_iterator;
+
+  private:
+    struct construct_privately_t {};
+
+    template<class Range1,
+             class Range2,
+             class Range3,
+             class Range4>
+    inline triangle_mesh(construct_privately_t,
+                         Range1&& points,
+                         Range2&& parametrics,
+                         Range3&& normals,
+                         Range4&& triangles)
+      : m_points(std::forward<Range1>(points)),
+        m_parametrics(std::forward<Range2>(parametrics)),
+        m_normals(std::forward<Range3>(normals)),
+        m_triangles(std::forward<Range4>(triangles))
+    {}
+
+  public:
+    template<class Range1, class Range2,
+             IGLOO_REQUIRES(
+               std::is_constructible<point_container, Range1&&>::value and
+               std::is_constructible<triangle_container, Range2&&>::value
+             )>
+    inline triangle_mesh(Range1&& points,
+                         Range2&& triangles)
+      : triangle_mesh(construct_privately_t{},
+                      std::forward<Range1>(points),
+                      std::vector<parametric>(),
+                      std::vector<normal>(),
+                      std::forward<Range2>(triangles))
     {}
 
 
-    inline triangle_mesh(const std::vector<point> &points,
-                         const std::vector<parametric> &parametrics,
-                         const std::vector<triangle> &triangles)
-      : m_points(points),
-        m_parametrics(parametrics),
-        m_triangles(triangles)
+    template<class Range1, class Range2, class Range3,
+             IGLOO_REQUIRES(
+               std::is_constructible<point_container, Range1&&>::value and
+               std::is_constructible<parametric_container, Range2&&>::value and
+               std::is_constructible<triangle_container, Range3&&>::value
+             )>
+    inline triangle_mesh(Range1&& points,
+                         Range2&& parametrics,
+                         Range3&& triangles)
+      : triangle_mesh(construct_privately_t{},
+                      std::forward<Range1>(points),
+                      std::forward<Range2>(parametrics),
+                      std::vector<normal>(),
+                      std::forward<Range3>(triangles))
     {
       if(m_parametrics.size() != m_points.size())
       {
         throw std::logic_error("triangle_mesh ctor: parametrics.size() != points.size()");
-      } // end if
-    } // end triangle_mesh::triangle_mesh()
+      }
+    }
 
 
-    inline triangle_mesh(const std::vector<point> &points,
-                         const std::vector<normal> &normals,
-                         const std::vector<triangle> &triangles)
-      : m_points(points),
-        m_normals(normals),
-        m_triangles(triangles)
+    template<class Range1, class Range2, class Range3,
+             IGLOO_REQUIRES(
+               std::is_constructible<point_container, Range1&&>::value and
+               std::is_constructible<normal_container, Range2&&>::value and
+               std::is_constructible<triangle_container, Range3&&>::value
+             )>
+    inline triangle_mesh(Range1&& points,
+                         Range2&& normals,
+                         Range3&& triangles)
+      : triangle_mesh(construct_privately_t{},
+                      std::forward<Range1>(points),
+                      std::vector<parametric>(),
+                      std::forward<Range2>(normals),
+                      std::forward<Range3>(triangles))
     {
       if(m_normals.size() != m_points.size())
       {
         throw std::logic_error("triangle_mesh ctor: normals.size() != points.size()");
-      } // end if
-    } // end triangle_mesh::triangle_mesh()
+      }
+    }
 
 
-    inline triangle_mesh(const std::vector<point> &points,
-                         const std::vector<triangle> &triangles,
-                         const std::vector<normal> &normals)
-      : m_points(points),
-        m_normals(normals),
-        m_triangles(triangles)
+    template<class Range1, class Range2, class Range3,
+             IGLOO_REQUIRES(
+                std::is_constructible<point_container, Range1&&>::value and
+                std::is_constructible<triangle_container, Range2&&>::value and
+                std::is_constructible<normal_container, Range3&&>::value
+             )>
+    inline triangle_mesh(Range1&& points,
+                         Range2&& triangles,
+                         Range3&& normals)
+      : triangle_mesh(construct_privately_t{},
+                      std::forward<Range1>(points),
+                      std::vector<parametric>(),
+                      std::forward<Range3>(normals),
+                      std::forward<Range2>(triangles))
     {
       if(m_normals.size() != m_triangles.size())
       {
         throw std::logic_error("triangle_mesh ctor: normals.size() != triangles.size()");
-      } // end if
-    } // end triangle_mesh::triangle_mesh()
+      }
+    }
 
 
-    inline triangle_mesh(const std::vector<point> &points,
-                         const std::vector<parametric> &parametrics,
-                         const std::vector<normal> &normals,
-                         const std::vector<triangle> &triangles)
-      : m_points(points),
-        m_parametrics(parametrics),
-        m_normals(normals),
-        m_triangles(triangles)
+    template<class Range1, class Range2, class Range3, class Range4,
+             IGLOO_REQUIRES(
+               std::is_constructible<point_container, Range1&&>::value and
+               std::is_constructible<parametric_container, Range2&&>::value and
+               std::is_constructible<normal_container, Range3&&>::value and
+               std::is_constructible<triangle_container, Range4&&>::value
+             )>
+    inline triangle_mesh(Range1&& points,
+                         Range2&& parametrics,
+                         Range3&& normals,
+                         Range4&& triangles)
+      : triangle_mesh(construct_privately_t{},
+                      std::forward<Range1>(points),
+                      std::forward<Range2>(parametrics),
+                      std::forward<Range3>(normals),
+                      std::forward<Range4>(triangles))
     {
       if(m_parametrics.size() != m_points.size())
       {
         throw std::logic_error("triangle_mesh ctor: parametrics.size() != points.size()");
-      } // end if
+      }
 
       if(m_normals.size() != m_points.size())
       {
         throw std::logic_error("triangle_mesh ctor: normals.size() != points.size()");
-      } // end if
-    } // end triangle_mesh::triangle_mesh()
+      }
+    }
 
 
-    inline triangle_mesh(const std::vector<point> &points,
-                         const std::vector<parametric> &parametrics,
-                         const std::vector<triangle> &triangles,
-                         const std::vector<normal> &normals)
-      : m_points(points),
-        m_parametrics(parametrics),
-        m_normals(normals),
-        m_triangles(triangles)
+    template<class Range1, class Range2, class Range3, class Range4,
+             IGLOO_REQUIRES(
+               std::is_constructible<point_container, Range1&&>::value and
+               std::is_constructible<parametric_container, Range2&&>::value and
+               std::is_constructible<triangle_container, Range3&&>::value and
+               std::is_constructible<normal_container, Range4&&>::value
+             )>
+    inline triangle_mesh(Range1&& points,
+                         Range2&& parametrics,
+                         Range3&& triangles,
+                         Range4&& normals)
+      : triangle_mesh(construct_privately_t{},
+                      std::forward<Range1>(points),
+                      std::forward<Range2>(parametrics),
+                      std::forward<Range4>(normals),
+                      std::forward<Range3>(triangles))
     {
       if(m_parametrics.size() != m_points.size())
       {
         throw std::logic_error("triangle_mesh ctor: parametrics.size() != points.size()");
-      } // end if
+      }
 
       if(m_normals.size() != m_triangles.size())
       {
         throw std::logic_error("triangle_mesh ctor: normals.size() != triangles.size()");
-      } // end if
-    } // end triangle_mesh::triangle_mesh()
-
-
-    /*! Constructor creates a new triangle_mesh from a list of points and triangles.
-     *  \param points_first The first element in the list of points.
-     *  \param points_last One past the last element in the list of points.
-     *  \param triangles_first The first element in the list of triangles.
-     *  \param triangle_last One past the last element in the list of triangles.
-     */
-    template<typename PointIterator, typename TriangleIterator>
-    triangle_mesh(PointIterator points_first, PointIterator points_last,
-                  TriangleIterator triangles_first, TriangleIterator triangles_last)
-      : m_points(points_first, points_last),
-        m_triangles(triangles_first, triangles_last)
-    {}
-
-
-    /*! Constructor creates a new triangle_mesh from a list of points, parametrics, and triangles.
-     *  \param points_first The first element in the list of points.
-     *  \param points_last One past the last element in the list of points.
-     *  \param parametrics_first The first element in the list of parametrics.
-     *  \param triangles_first The first element in the list of triangles.
-     *  \param triangle_last One past the last element in the list of triangles.
-     *  \note The list of parametrics must be the same size as the list of points.
-     */
-    template<typename PointIterator, typename ParametricIterator, typename TriangleIterator>
-    triangle_mesh(PointIterator points_first, PointIterator points_last,
-                  ParametricIterator parametrics_first,
-                  TriangleIterator triangles_first, TriangleIterator triangles_last)
-      : m_points(points_first, points_last),
-        m_parametrics(parametrics_first, parametrics_first + (points_last - points_first)),
-        m_triangles(triangles_first, triangles_last)
-    {}
-
-
-    /*! Constructor creates a new triangle_mesh from a list of points, parametrics, normals, and triangles.
-     *  \param points_first The first element in the list of points.
-     *  \param points_last One past the last element in the list of points.
-     *  \param parametrics_first The first element in the list of parametrics.
-     *  \param normals_first The first element in the list of normals.
-     *  \param triangles_first The first element in the list of triangles.
-     *  \param triangle_last One past the last element in the list of triangles.
-     *  \note The list of parametrics and the list of normals must be the same size as the list of points.
-     */
-    template<typename PointIterator, typename ParametricIterator, typename NormalIterator, typename TriangleIterator>
-    triangle_mesh(PointIterator points_first, PointIterator points_last,
-                  ParametricIterator parametrics_first,
-                  NormalIterator normals_first,
-                  TriangleIterator triangles_first, TriangleIterator triangles_last)
-      : m_points(points_first, points_last),
-        m_parametrics(parametrics_first, parametrics_first + (points_last - points_first)),
-        m_normals(normals_first, normals_first + (points_last - points_first)),
-        m_triangles(triangles_first, triangles_last)
-    {}
-
-
-    /*! Constructor creates a new triangle_mesh from a list of points, parametrics, triangles, and normals
-     *  \param points_first The first element in the list of points.
-     *  \param points_last One past the last element in the list of points.
-     *  \param parametrics_first The first element in the list of parametrics.
-     *  \param triangles_first The first element in the list of triangles.
-     *  \param normals_first The first element in the list of normals.
-     *  \param triangle_last One past the last element in the list of triangles.
-     *  \note The list of parametrics must be the same size as the list of points.
-     *  \note The list of normals must be the same size as the list of triangles.
-     */
-    template<typename PointIterator, typename ParametricIterator, typename NormalIterator, typename TriangleIterator>
-    triangle_mesh(PointIterator points_first, PointIterator points_last,
-                  ParametricIterator parametrics_first,
-                  TriangleIterator triangles_first, TriangleIterator triangles_last,
-                  NormalIterator normals_first)
-      : m_points(points_first, points_last),
-        m_parametrics(parametrics_first, parametrics_first + (points_last - points_first)),
-        m_normals(normals_first, normals_first + (triangles_first - triangles_last)),
-        m_triangles(triangles_first, triangles_last)
-    {}
+      }
+    }
 
 
     /*! \return normals_size() == vertices_size()
@@ -350,6 +351,18 @@ class triangle_mesh
         return partial_area + surface_area(tri);
       });
     } // end surface_area();
+
+    /// Returns a bounding_box bounding the given triangle.
+    /// \param tri The triangle of interest.
+    /// \return A bounding_box bounding all the points of tri.
+    //igloo::bounding_box bounding_box(const triangle& tri) const
+    //{
+    //  igloo::bounding_box result;
+    //  result += m_points[tri[0]];
+    //  result += m_points[tri[1]];
+    //  result += m_points[tri[2]];
+    //  return result;
+    //}
 
     /*! Tests a ray and a triangle for intersection.
      *  \param r The ray of interest.
@@ -553,10 +566,10 @@ class triangle_mesh
     } // end interpolate_normal()
 
 
-    std::vector<point>      m_points;
-    std::vector<parametric> m_parametrics;
-    std::vector<normal>     m_normals;
-    std::vector<triangle>   m_triangles;
+    point_container      m_points;
+    parametric_container m_parametrics;
+    normal_container     m_normals;
+    triangle_container   m_triangles;
 };
 
 

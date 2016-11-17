@@ -77,10 +77,7 @@ triangle_mesh sphere::triangulate() const
     return (scale * x) + translation;
   });
 
-  return triangle_mesh(points.begin(), points.end(),
-                       parametrics.begin(),
-                       normals.begin(),
-                       triangles.begin(), triangles.end());
+  return triangle_mesh(std::move(points), std::move(parametrics), std::move(normals), std::move(triangles));
 } // end sphere::triangulate()
 
 
