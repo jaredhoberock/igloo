@@ -318,11 +318,15 @@ void context::render()
 
   auto render_task = std::async(std::launch::async, [&]
   {
-    auto start = std::chrono::system_clock::now();
-    renderer->render(m, progress);
-    auto elapsed = std::chrono::system_clock::now() - start;
+    using namespace std::chrono;
 
-    std::cout << "Render time: " << std::chrono::duration_cast<std::chrono::seconds>(elapsed).count() << "s" << std::endl;
+    auto start = system_clock::now();
+    renderer->render(m, progress);
+    auto elapsed = system_clock::now() - start;
+
+    double seconds = double(duration_cast<milliseconds>(elapsed).count()) / 1000;
+
+    std::cout << "Render time: " << seconds << "s" << std::endl;
   });
 
   test_viewer v(progress, m_scene, m);
