@@ -11,6 +11,7 @@
 #include <cstdlib>
 #include <stdexcept>
 #include <future>
+#include <chrono>
 
 namespace igloo
 {
@@ -317,7 +318,11 @@ void context::render()
 
   auto render_task = std::async(std::launch::async, [&]
   {
+    auto start = std::chrono::system_clock::now();
     renderer->render(m, progress);
+    auto elapsed = std::chrono::system_clock::now() - start;
+
+    std::cout << "Render time: " << std::chrono::duration_cast<std::chrono::seconds>(elapsed).count() << "s" << std::endl;
   });
 
   test_viewer v(progress, m_scene, m);
