@@ -4,7 +4,7 @@ env = Environment()
 
 env['CXX'] = 'clang'
 env.Append(CPPPATH = ['.', 'dependencies'])
-env.Append(CPPFLAGS = ['-O3', '-std=c++14'])
+env.Append(CPPFLAGS = ['-Ofast', '-std=c++14'])
 
 sources = ['cornell_box.cpp',
            'igloo/context.cpp',
