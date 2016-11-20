@@ -1,9 +1,5 @@
 #include <igloo/context.hpp>
-#include <igloo/materials/glass.hpp>
-#include <igloo/materials/matte.hpp>
-#include <igloo/materials/light.hpp>
-#include <igloo/utility/math_vector.hpp>
-#include <igloo/utility/matrix.hpp>
+#include <igloo/materials/material.hpp>
 #include <memory>
 
 using namespace igloo;
