@@ -25,6 +25,7 @@ sources = ['cornell_box.cpp',
            'igloo/viewers/test_viewer.cpp']
 
 if sys.platform == "darwin":
+  env['CXX'] = '/usr/local/opt/llvm/bin/clang'
   env.AppendUnique(FRAMEWORKS=Split('OpenGL GLUT'))
   env.Program('cornell_box', sources, LIBS = ['GLEW', 'pthread', 'libc++'])
 else:
