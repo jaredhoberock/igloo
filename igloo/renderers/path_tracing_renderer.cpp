@@ -3,6 +3,7 @@
 #include <igloo/surfaces/sphere.hpp>
 #include <igloo/surfaces/mesh.hpp>
 #include <igloo/scattering/perspective_sensor.hpp>
+#include <dependencies/distribution2d/distribution2d/unit_hemisphere_distribution.hpp>
 #include <iostream>
 #include <array>
 #include <random>
@@ -28,17 +29,17 @@ void path_tracing_renderer::render(const float4x4 &modelview, render_progress &p
 
   image_.fill(color::black());
 
-  point eye(0,0,3);
-  point center(0,0,-1);
-  vector up(0,1,0);
-  vector look = normalize(center - eye);
+  const point eye(0,0,3);
+  const point center(0,0,-1);
+  const vector up(0,1,0);
+  const vector look = normalize(center - eye);
 
-  vector right = cross(look,up);
+  const vector right = cross(look,up);
 
   float fovy = 60;
   float fovy_radians = fovy * (3.1428 / 180.0);
 
-  perspective_sensor perspective(fovy_radians, 1.f);
+  const perspective_sensor perspective(fovy_radians, 1.f);
 
   std::mt19937_64 rng;
 
@@ -52,66 +53,102 @@ void path_tracing_renderer::render(const float4x4 &modelview, render_progress &p
     {
       color result = color::black();
 
-      ray r(eye, sample_with_basis(perspective, right, up, look, u, v));
+      size_t paths_per_pixel = 20;
+      float sample_weight = 1.f / paths_per_pixel;
 
-      auto intersection = scene_.intersect(r);
-      if(intersection)
+      for(int path = 0; path < paths_per_pixel; ++path)
       {
-        vector wo = -normalize(r.direction());
-  
-        const surface_primitive& surface = intersection->surface();
+        color radiance = color::black();
+        color throughput = color::white();
 
-        // begin with emission from the hit point
-        const differential_geometry &dg = intersection->differential_geometry();
-        scattering_distribution_function e = surface.material().evaluate_emission(dg);
-        result = e(wo);
+        point origin = eye;
+        vector direction = sample_with_basis(perspective, right, up, look, u, v);
 
-        const point& x = r(intersection->ray_parameter());
-
-        // transform wo into dg's local coordinate system
-        wo = dg.localize(wo);
-  
-        scattering_distribution_function f = surface.material().evaluate_scattering(dg);
-
-        // sum the contribution of each emitter
-        for(const auto& emitter : scene_.emitters())
+        // the first bounce is considered specular for the purposes of evaluating exitant radiance
+        bool specular_bounce = true;
+        for(int bounce = 2; bounce < max_path_length_; ++bounce)
         {
-          int num_sample_points = 128;
-          float sample_weight = 1.f / num_sample_points;
+          ray r(origin, direction);
 
-          for(int i = 0; i < num_sample_points; ++i)
+          auto intersection = scene_.intersect(r);
+
+          if(intersection)
           {
-            auto emitter_dg = emitter.sample_surface(rng(), rng());
+            vector wo = -r.direction();
+  
+            const surface_primitive& surface = intersection->surface();
 
-            // construct a ray between x and the point on the emitter
-            ray to_emitter(x, emitter_dg.point());
+            // begin with emission from the hit point
+            const differential_geometry &dg = intersection->differential_geometry();
 
-            if(!scene_.is_intersected(to_emitter))
+            // sum exitant radiance at the intersection point only on specular bounces
+            if(specular_bounce)
             {
-              // evaluate the emitter's material
-              scattering_distribution_function e = emitter.material().evaluate_emission(emitter_dg);
-
-              // get the direction to the emitter
-              vector wi = normalize(to_emitter.direction());
-
-              // get the direction from the emitter
-              vector we = -wi;
-
-              // localize wi to dg's coordinate system
-              wi = dg.localize(wi);
-
-              // localize we to emitter_dg's coordinate system
-              we = emitter_dg.localize(we);
-
-              // compute geometric term
-              float g = emitter_dg.abs_cos_theta(we) / (distance_squared(dg, emitter_dg));
-
-              // accumulate sample
-              result += sample_weight * f(wo,wi) * dg.abs_cos_theta(wi) * g * e(we) / emitter.pdf(emitter_dg);
+              scattering_distribution_function e = surface.material().evaluate_emission(dg);
+              radiance += throughput * e(wo);
             }
+
+            const point& x = r(intersection->ray_parameter());
+
+            // transform wo into dg's local coordinate system
+            wo = dg.localize(wo);
+  
+            scattering_distribution_function f = surface.material().evaluate_scattering(dg);
+
+            // sum the contribution of each emitter
+            for(const auto& emitter : scene_.emitters())
+            {
+              auto emitter_dg = emitter.sample_surface(rng(), rng());
+
+              // construct a ray between x and the point on the emitter
+              ray to_emitter(x, emitter_dg.point());
+
+              if(!scene_.is_intersected(to_emitter))
+              {
+                // evaluate the emitter's material
+                scattering_distribution_function e = emitter.material().evaluate_emission(emitter_dg);
+
+                // get the direction to the emitter
+                vector wi = normalize(to_emitter.direction());
+
+                // get the direction from the emitter
+                vector we = -wi;
+
+                // localize wi to dg's coordinate system
+                wi = dg.localize(wi);
+
+                // localize we to emitter_dg's coordinate system
+                we = emitter_dg.localize(we);
+
+                // compute geometric term
+                float g = emitter_dg.abs_cos_theta(we) / (distance_squared(dg, emitter_dg));
+
+                // accumulate sample
+                radiance += throughput * f(wo,wi) * dg.abs_cos_theta(wi) * g * e(we) / emitter.pdf(emitter_dg);
+              } // end if not shadowed
+            } // end for emitter
+
+            // sample next direction
+            dist2d::unit_hemisphere_distribution<vector> hemisphere;
+            vector wi = hemisphere(rng(), rng());
+            float pdf = hemisphere.probability_density(wi);
+            specular_bounce = false;
+
+            // update throughput
+            throughput *= f(wo, wi) * dg.abs_cos_theta(wi) / pdf;
+
+            // update ray
+            origin = dg.point();
+            direction = dg.globalize(wi);
+          } // end if intersection
+          else
+          {
+            break;
           }
-        }
-      } // end if
+        } // end for bounce
+
+        result += sample_weight * radiance;
+      } // end for paths
 
       image_.raster(col, row) = result;
 

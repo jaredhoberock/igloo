@@ -11,7 +11,7 @@ namespace igloo
 class path_tracing_renderer : public renderer
 {
   public:
-    path_tracing_renderer(const scene &s, image &im, std::size_t max_path_length = 3);
+    path_tracing_renderer(const scene &s, image &im, std::size_t max_path_length = 10);
 
     void render(const float4x4 &modelview, render_progress &progress);
 
