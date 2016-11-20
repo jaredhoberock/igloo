@@ -495,7 +495,7 @@ class triangle_mesh
     } // end normal_at()
 
 
-    inline std::pair<vector,vector> parameteric_derivatives(triangle_iterator tri) const
+    inline std::pair<vector,vector> parametric_derivatives(triangle_iterator tri) const
     {
       const point& p1 = m_points[tri->x];
       const point& p2 = m_points[tri->y];
