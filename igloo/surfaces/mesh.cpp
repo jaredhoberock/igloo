@@ -79,7 +79,7 @@ optional<intersection>
     normal n = m_triangle_mesh.normal_at(tri, b);
 
     vector dpdu, dpdv;
-    std::tie(dpdu, dpdv) = m_triangle_mesh.parameteric_derivatives(tri);
+    std::tie(dpdu, dpdv) = m_triangle_mesh.parametric_derivatives(tri);
 
     return intersection(t, differential_geometry(r(t), uv, dpdu, dpdv, n));
   } // end if
@@ -108,8 +108,10 @@ differential_geometry mesh::sample_surface(std::uint64_t u0, std::uint64_t u1) c
   normal n = m_triangle_mesh.normal_at(triangle_and_probability.first, barycentric_coordinates);
   parametric uv = m_triangle_mesh.parametric_at(triangle_and_probability.first, barycentric_coordinates);
 
-  // XXX need to generate dpdu and dpdv
-  return differential_geometry(p, uv, vector(0), vector(0), n);
+  vector dpdu, dpdv;
+  std::tie(dpdu, dpdv) = m_triangle_mesh.parametric_derivatives(triangle_and_probability.first);
+
+  return differential_geometry(p, uv, dpdu, dpdv, n);
 } // end mesh::area()
 
 
