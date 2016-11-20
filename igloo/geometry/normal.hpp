@@ -56,35 +56,55 @@ class normal : vector
     using super_t::y;
     using super_t::z;
 
+    friend inline vector cross(const normal &a, const normal &b)
+    {
+      return igloo::cross(a.as_vector(), b.as_vector());
+    }
+
+    friend inline vector cross(const normal& a, const vector& b)
+    {
+      return igloo::cross(a.as_vector(), b);
+    }
+
+    friend inline vector cross(const vector& a, const normal& b)
+    {
+      return igloo::cross(a, b.as_vector());
+    }
+
     friend inline float dot(const normal &a, const normal &b)
     {
       return igloo::dot(a.as_vector(), b.as_vector());
-    } // end abs_dot()
+    }
 
     friend inline float dot(const vector &a, const normal &b)
     {
       return igloo::dot(a, b.as_vector());
-    } // end abs_dot()
+    }
 
     friend inline float dot(const normal &a, const vector &b)
     {
       return igloo::dot(a.as_vector(), b);
-    } // end abs_dot()
+    }
 
     friend inline float abs_dot(const normal &a, const normal &b)
     {
       return igloo::abs_dot(a.as_vector(), b.as_vector());
-    } // end abs_dot()
+    }
 
     friend inline float abs_dot(const vector &a, const normal &b)
     {
       return igloo::abs_dot(a, b.as_vector());
-    } // end abs_dot()
+    }
 
     friend inline float abs_dot(const normal &a, const vector &b)
     {
       return igloo::abs_dot(a.as_vector(), b);
-    } // end abs_dot()
+    }
+
+    friend inline std::ostream& operator<<(std::ostream& os, const normal& n)
+    {
+      return os << n.as_vector();
+    }
 
   private:
     inline const vector &as_vector() const
@@ -99,11 +119,26 @@ class normal : vector
  *  \param n The normal to scale.
  *  \return n multiplied by x.
  */
-inline normal operator*(float x, const normal &n)
+inline vector operator*(float x, const normal &n)
 {
-  return normal(x * n.x, x * n.y, x * n.z);
+  return vector(x * n.x, x * n.y, x * n.z);
 } // end operator*()
 
 
 } // end igloo
+
+
+namespace std
+{
+
+
+template<std::size_t I>
+struct tuple_element<I, igloo::normal>
+{
+  using type = float;
+};
+
+
+} // end std
+
 
