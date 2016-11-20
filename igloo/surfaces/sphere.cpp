@@ -4,6 +4,7 @@
 #include <vector>
 #include <algorithm>
 #include <cmath>
+#include <cassert>
 
 namespace igloo
 {
@@ -81,13 +82,15 @@ triangle_mesh sphere::triangulate() const
 } // end sphere::triangulate()
 
 
-std::tuple<parametric, vector, vector> sphere::parametric_geometry_at(const point& p, const normal& n) const
+std::tuple<parametric, vector, vector> sphere::parametric_geometry_at(const normal& n) const
 {
+  vector p = radius() * n;
+
   // compute parametric location
   float phi = std::atan2(n.y, n.x);
   if(phi < 0) phi += two_pi;
 
-  float theta = std::acos(n.z);
+  float theta = std::acos(n.x);
 
   parametric uv(phi / max_phi, (theta - min_theta) / (max_theta - min_theta));
 
@@ -147,7 +150,7 @@ optional<intersection> sphere::intersect(const ray &r) const
 
   parametric uv;
   vector dpdu, dpdv;
-  std::tie(uv, dpdu, dpdv) = parametric_geometry_at(x, n);
+  std::tie(uv, dpdu, dpdv) = parametric_geometry_at(n);
 
   return intersection(t,differential_geometry(x,uv,dpdu,dpdv,n));
 } // end sphere::intersect()
@@ -195,15 +198,14 @@ float sphere::area() const
 
 differential_geometry sphere::sample_surface(std::uint64_t u0, std::uint64_t u1) const
 {
-  dist2d::unit_sphere_distribution<vector> unit_sphere;
-  vector n = unit_sphere(u0, u1);
-  point p = center() + radius() * n;
+  dist2d::unit_sphere_distribution<normal> unit_sphere;
+  normal n = unit_sphere(u0, u1);
 
   parametric uv;
   vector dpdu, dpdv;
-  std::tie(uv, dpdu, dpdv) = parametric_geometry_at(p,n);
+  std::tie(uv, dpdu, dpdv) = parametric_geometry_at(n);
   
-  return differential_geometry(p, uv, dpdu, dpdv, normal(n));
+  return differential_geometry(center() + radius() * n, uv, dpdu, dpdv, n);
 } // end area::point_on_surface()
 
 

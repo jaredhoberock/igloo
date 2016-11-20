@@ -66,8 +66,8 @@ class sphere : public surface
     static std::pair<float,float> solve_quadratic(float a, float b, float c);
     static parametric parametric_coordinates_at(const normal& n);
 
-    // returns (uv, dpdu, dpdv) at the point p on the sphere with normal n
-    std::tuple<parametric,vector,vector> parametric_geometry_at(const point& p, const normal& n) const;
+    // returns (uv, dpdu, dpdv) on the sphere at the point with normal n
+    std::tuple<parametric,vector,vector> parametric_geometry_at(const normal& n) const;
 
     point m_center;
     float m_radius;
