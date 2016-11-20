@@ -14,8 +14,8 @@ class differential_geometry
     inline differential_geometry(const igloo::point& p, const parametric& uv, const vector& dpdu, const vector& dpdv, const normal& n)
       : point_(p),
         parametric_coordinates_(uv),
-        dpdu_(dpdu),
-        dpdv_(dpdv),
+        s_(normalize(dpdu)),
+        t_(cross(n, s_)),
         normal_(n)
     {}
 
@@ -29,24 +29,32 @@ class differential_geometry
       return parametric_coordinates_;
     }
 
+    inline const vector& s() const
+    {
+      return s_;
+    }
+
+    inline const vector& t() const
+    {
+      return s_;
+    }
+
     inline const igloo::normal& normal() const
     {
       return normal_;
     }
 
-    inline const igloo::vector& dpdu() const
-    {
-      return dpdu_;
-    }
-
-    inline const igloo::vector& dpdv() const
-    {
-      return dpdv_;
-    }
-
     inline vector localize(const vector& v) const
     {
-      return vector(dot(v,dpdu()), dot(v,dpdv()), dot(v, normal()));
+      return vector(dot(v,s_), dot(v,t_), dot(v, normal()));
+    }
+
+    inline vector globalize(const vector& v) const
+    {
+      // the matrix we multiply here is the transpose of the matrix of localize()
+      return vector(s_[0] * v[0] + t_[0] * v[1] + normal_[0] * v[2],
+                    s_[1] * v[0] + t_[1] * v[1] + normal_[1] * v[2],
+                    s_[2] * v[0] + t_[2] * v[1] + normal_[2] * v[2]);
     }
 
     inline float abs_cos_theta(const vector& w_local) const
@@ -57,8 +65,8 @@ class differential_geometry
   private:
     igloo::point  point_;
     parametric    parametric_coordinates_;
-    vector        dpdu_;
-    vector        dpdv_;
+    vector        s_;
+    vector        t_;
     igloo::normal normal_;
 };
 
