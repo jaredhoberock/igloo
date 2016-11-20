@@ -11,13 +11,14 @@ namespace igloo
 class path_tracing_renderer : public renderer
 {
   public:
-    path_tracing_renderer(const scene &s, image &im);
+    path_tracing_renderer(const scene &s, image &im, std::size_t max_path_length = 3);
 
     void render(const float4x4 &modelview, render_progress &progress);
 
   private:
-    const scene &m_scene;
-    image &m_image;
+    const scene &scene_;
+    image &image_;
+    size_t max_path_length_;
 };
 
 
