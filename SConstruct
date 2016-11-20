@@ -20,6 +20,7 @@ sources = ['cornell_box.cpp',
            'igloo/surfaces/surface.cpp',
            'igloo/renderers/debug_renderer.cpp',
            'igloo/renderers/direct_lighting_renderer.cpp',
+           'igloo/renderers/path_tracing_renderer.cpp',
            'igloo/viewers/scene_viewer.cpp',
            'igloo/viewers/test_viewer.cpp']
 

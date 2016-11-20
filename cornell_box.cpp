@@ -115,6 +115,9 @@ int main()
 
   look_at(renderer, float3(0,0,3), float3(0,0,-1), float3(0,1,0));
 
+  // use path tracing renderer
+  renderer.attribute("renderer", "path_tracing");
+
   renderer.render();
 
   return 0;

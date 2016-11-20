@@ -5,6 +5,7 @@
 #include <igloo/surfaces/mesh.hpp>
 #include <igloo/renderers/debug_renderer.hpp>
 #include <igloo/renderers/direct_lighting_renderer.hpp>
+#include <igloo/renderers/path_tracing_renderer.hpp>
 #include <iostream>
 #include <cmath>
 #include <algorithm>
@@ -297,6 +298,10 @@ static std::unique_ptr<renderer> make_renderer(const std::string& which_renderer
   else if(which_renderer == "direct_lighting")
   {
     result = std::make_unique<direct_lighting_renderer>(s, im);
+  }
+  else if(which_renderer == "path_tracing")
+  {
+    result = std::make_unique<path_tracing_renderer>(s, im);
   }
 
   return result;
