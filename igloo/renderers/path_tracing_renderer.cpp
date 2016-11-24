@@ -131,9 +131,10 @@ void path_tracing_renderer::render(const float4x4 &modelview, render_progress &p
             auto sample = f.sample_hemisphere(rng(), rng(), wo);
 
             // update throughput
-            throughput *= sample.throughput() * dg.abs_cos_theta(sample.wi());
+            throughput *= sample.throughput();
             if(!sample.is_delta_sample())
             {
+              throughput *= dg.abs_cos_theta(sample.wi());
               throughput /= sample.probability_density();
             }
 

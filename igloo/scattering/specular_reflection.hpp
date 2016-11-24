@@ -71,8 +71,9 @@ class specular_reflection
       // compute perfect specular reflection direction
       vector wi = vector(-wo[0], -wo[1], wo[2]);
 
-      // we divide by cosine theta to turn the function into a brdf
-      return sample(wi, fresnel_(wo[2]) * reflectance_ / std::fabs(wi[2])); 
+      // note that we do not divide by cosine theta because we do not multiply
+      // by .abs_cos_theta() for samples from delta distributions
+      return sample(wi, fresnel_(wo[2]) * reflectance_); 
     }
 
   private:
