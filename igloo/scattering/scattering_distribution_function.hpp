@@ -30,7 +30,7 @@ class scattering_distribution_function
                std::is_constructible<variant_type,BSDF>::value
              >::type>
     inline scattering_distribution_function(const BSDF& other)
-      : m_impl(other)
+      : variant_(other)
     {}
 
   private:
@@ -61,13 +61,13 @@ class scattering_distribution_function
     inline color operator()(const vector &wo, const vector &wi) const
     {
       bidirectional_visitor visitor{wo,wi};
-      return std::experimental::visit(visitor, m_impl);
+      return std::experimental::visit(visitor, variant_);
     } // end operator()
 
     inline color operator()(const vector& wo) const
     {
       unidirectional_visitor visitor{wo};
-      return std::experimental::visit(visitor, m_impl);
+      return std::experimental::visit(visitor, variant_);
     }
 
     class sample
@@ -103,15 +103,36 @@ class scattering_distribution_function
         float probability_density_;
     };
 
+  private:
+    struct sample_hemisphere_visitor
+    {
+      std::uint64_t u0, u1;
+      const vector wo;
+
+      template<class Function>
+      sample operator()(const Function& f) const
+      {
+        dist2d::unit_hemisphere_distribution<vector> hemisphere;
+        vector wi = hemisphere(u0, u1);
+        return sample(f(wo,wi), wi, hemisphere.probability_density(wi));
+      }
+
+      sample operator()(const specular_reflection& f) const
+      {
+        auto s = f.sample_hemisphere(u0, u1, wo);
+        return sample{s.throughput(), s.wi(), s.probability_density()};
+      }
+    };
+
+  public:
     inline sample sample_hemisphere(std::uint64_t u0, std::uint64_t u1, const vector& wo) const
     {
-      dist2d::unit_hemisphere_distribution<vector> hemisphere;
-      vector wi = hemisphere(u0, u1);
-      return sample(operator()(wo,wi), wi, hemisphere.probability_density(wi));
+      sample_hemisphere_visitor visitor{u0,u1,wo};
+      return std::experimental::visit(visitor, variant_);
     }
 
   private:
-    variant_type m_impl;
+    variant_type variant_;
 }; // end scattering_distribution_function
 
 
