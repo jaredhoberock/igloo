@@ -7,6 +7,7 @@
 #include <igloo/scattering/specular_reflection.hpp>
 #include <igloo/geometry/vector.hpp>
 #include <igloo/utility/variant.hpp>
+#include <dependencies/distribution2d/distribution2d/unit_hemisphere_distribution.hpp>
 #include <type_traits>
 
 namespace igloo
@@ -67,6 +68,46 @@ class scattering_distribution_function
     {
       unidirectional_visitor visitor{wo};
       return std::experimental::visit(visitor, m_impl);
+    }
+
+    class sample
+    {
+      public:
+        inline sample(const color& throughput, const vector& wi, const float& probability_density)
+          : throughput_(throughput), wi_(wi), probability_density_(probability_density)
+        {}
+
+        inline const color& throughput() const
+        {
+          return throughput_;
+        }
+
+        inline const vector& wi() const
+        {
+          return wi_;
+        }
+
+        inline float probability_density() const
+        {
+          return probability_density_;
+        }
+
+        inline bool is_delta_sample() const
+        {
+          return probability_density_ == 0;
+        }
+
+      private:
+        color throughput_;
+        vector wi_;
+        float probability_density_;
+    };
+
+    inline sample sample_hemisphere(std::uint64_t u0, std::uint64_t u1, const vector& wo) const
+    {
+      dist2d::unit_hemisphere_distribution<vector> hemisphere;
+      vector wi = hemisphere(u0, u1);
+      return sample(operator()(wo,wi), wi, hemisphere.probability_density(wi));
     }
 
   private:

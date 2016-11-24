@@ -3,7 +3,6 @@
 #include <igloo/surfaces/sphere.hpp>
 #include <igloo/surfaces/mesh.hpp>
 #include <igloo/scattering/perspective_sensor.hpp>
-#include <dependencies/distribution2d/distribution2d/unit_hemisphere_distribution.hpp>
 #include <iostream>
 #include <array>
 #include <random>
@@ -64,8 +63,8 @@ void path_tracing_renderer::render(const float4x4 &modelview, render_progress &p
         point origin = eye;
         vector direction = sample_with_basis(perspective, right, up, look, u, v);
 
-        // the first bounce is considered specular for the purposes of evaluating exitant radiance
-        bool specular_bounce = true;
+        // the first bounce is considered to be sampled from a delta distribution
+        bool is_delta_sample = true;
         for(int bounce = 2; bounce < max_path_length_; ++bounce)
         {
           ray r(origin, direction);
@@ -81,8 +80,8 @@ void path_tracing_renderer::render(const float4x4 &modelview, render_progress &p
             // begin with emission from the hit point
             const differential_geometry &dg = intersection->differential_geometry();
 
-            // sum exitant radiance at the intersection point only on specular bounces
-            if(specular_bounce)
+            // sum exitant radiance at the intersection point only on bounces from delta distributions
+            if(is_delta_sample)
             {
               scattering_distribution_function e = surface.material().evaluate_emission(dg);
               radiance += throughput * e(wo);
@@ -129,17 +128,19 @@ void path_tracing_renderer::render(const float4x4 &modelview, render_progress &p
             } // end for emitter
 
             // sample next direction
-            dist2d::unit_hemisphere_distribution<vector> hemisphere;
-            vector wi = hemisphere(rng(), rng());
-            float pdf = hemisphere.probability_density(wi);
-            specular_bounce = false;
+            auto sample = f.sample_hemisphere(rng(), rng(), wo);
 
             // update throughput
-            throughput *= f(wo, wi) * dg.abs_cos_theta(wi) / pdf;
+            throughput *= sample.throughput() * dg.abs_cos_theta(sample.wi());
+            if(!sample.is_delta_sample())
+            {
+              throughput /= sample.probability_density();
+            }
 
             // update ray
             origin = dg.point();
-            direction = dg.globalize(wi);
+            direction = dg.globalize(sample.wi());
+            is_delta_sample = sample.is_delta_sample();
           } // end if intersection
           else
           {
