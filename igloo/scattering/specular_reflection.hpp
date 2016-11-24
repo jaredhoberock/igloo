@@ -1,10 +1,12 @@
 #pragma once
 
 #include <igloo/scattering/color.hpp>
+#include <igloo/scattering/fresnel.hpp>
 #include <igloo/geometry/vector.hpp>
 #include <limits>
 #include <cmath>
 #include <cassert>
+#include <utility>
 
 
 namespace igloo
@@ -14,16 +16,11 @@ namespace igloo
 class specular_reflection
 {
   public:
-    // XXX why does this take transmittance? was this copied from glass?
-    //     perhaps it's a fresnel parameter?
+    template<class Fresnel>
     inline specular_reflection(const color& reflectance,
-                               const color& transmittance,
-                               float eta_i,
-                               float eta_t)
+                               Fresnel&& fresnel)
       : reflectance_(reflectance),
-        transmittance_(transmittance),
-        eta_i_(eta_i),
-        eta_t_(eta_t)
+        fresnel_(std::forward<Fresnel>(fresnel))
     {}
 
     inline color operator()(const vector& wo, const vector& wi) const
@@ -74,18 +71,13 @@ class specular_reflection
       // compute perfect specular reflection direction
       vector wi = vector(-wo[0], -wo[1], wo[2]);
 
-      // XXX need to compute fresnel term here
-
       // we divide by cosine theta to turn the function into a brdf
-
-      return sample(wi, reflectance_ / std::fabs(wi[2])); 
+      return sample(wi, fresnel_(wo[2]) * reflectance_ / std::fabs(wi[2])); 
     }
 
   private:
+    fresnel fresnel_;
     color reflectance_;   
-    color transmittance_;
-    float eta_i_; // XXX these are indices of refraction and could use better names
-    float eta_t_;
 };
 
 

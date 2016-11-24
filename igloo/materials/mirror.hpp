@@ -8,22 +8,18 @@ namespace igloo
 {
 
 
-class glass : public registered_material<glass>
+class mirror : public registered_material<mirror>
 {
   public:
-    inline glass(float eta = 1.5f,
-                 const color& reflectance = color::white(),
-                 const color& transmittance = color::white())
-      : bsdf_(reflectance, transmittance, 1.f, eta)
-    {}
+    mirror(const color& reflectance = color::white(), float eta = 2.485f);
 
-    glass(const std::map<std::string, any>& parameters);
+    mirror(const std::map<std::string, any>& parameters);
 
     virtual scattering_distribution_function evaluate_scattering(const differential_geometry& dg) const;
 
   private:
     specular_reflection bsdf_;
-}; // end glass
+}; // end mirror
 
 
 } // end igloo

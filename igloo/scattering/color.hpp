@@ -1,6 +1,7 @@
 #pragma once
 
 #include <igloo/utility/math_vector.hpp>
+#include <igloo/utility/clamp.hpp>
 #include <type_traits>
 #include <cmath>
 
@@ -84,10 +85,34 @@ class color : public math_vector_facade<color, float, 3>
 }; // end color
 
 
+inline color operator-(const float a, const color& b)
+{
+  return color{a - b[0], a - b[1], a - b[2]};
+} // end operator-()
+
+
 inline color abs(const color &c)
 {
   return c.abs();
 } // end abs()
+
+
+inline color clamp(const color& c, float low, float high)
+{
+  return color{clamp(c[0], low, high), clamp(c[1], low, high), clamp(c[2], low, high)};
+} // end clamp()
+
+
+inline color sqrt(const color& c)
+{
+  return color{std::sqrt(c[0]), std::sqrt(c[1]), std::sqrt(c[2])};
+} // end sqrt()
+
+
+inline color saturate(const color& c)
+{
+  return clamp(c, 0.f, 1.f);
+} // end saturate()
 
 
 } // end igloo

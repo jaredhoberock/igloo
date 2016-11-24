@@ -42,11 +42,11 @@ int main()
   color light_radiosity = light_power / light_surface_area;
 
   // create some materials
-  renderer.material(make_material("igloo::matte", {{"albedo", color(0.8, 0.1, 0.1)}}), "red");
-  renderer.material(make_material("igloo::matte", {{"albedo", color(0.1, 0.8, 0.1)}}), "green");
-  renderer.material(make_material("igloo::matte", {{"albedo", color(0.8, 0.8, 0.8)}}), "white");
-  renderer.material(make_material("igloo::glass", {{"eta", 1.5f}, {"reflectance", color(1.0, 1.0, 1.0)}, {"transmittance", color(1.0, 1.0, 1.0)}}), "glass");
-  renderer.material(make_material("igloo::light", {{"radiosity", light_radiosity}}), "light");
+  renderer.material(make_material("igloo::matte",  {{"albedo", color(0.8, 0.1, 0.1)}}), "red");
+  renderer.material(make_material("igloo::matte",  {{"albedo", color(0.1, 0.8, 0.1)}}), "green");
+  renderer.material(make_material("igloo::matte",  {{"albedo", color(0.8, 0.8, 0.8)}}), "white");
+  renderer.material(make_material("igloo::mirror", {{"reflectance", color(1.0, 1.0, 1.0)}, {"eta", 2.485f}}), "mirror");
+  renderer.material(make_material("igloo::light",  {{"radiosity", light_radiosity}}), "light");
 
   // back wall
   renderer.attribute("material", "white");
@@ -93,11 +93,11 @@ int main()
   renderer.pop_matrix();
 
   // mirror ball
-  renderer.attribute("material", "default");
+  renderer.attribute("material", "mirror");
   renderer.sphere(-0.4, -0.66, -0.15, 0.33);
 
   // glass ball
-  renderer.attribute("material", "glass");
+  renderer.attribute("material", "default");
   renderer.sphere(0.4, -0.66, 0.25, 0.33);
 
   // ceiling light

@@ -43,7 +43,12 @@ material_factories& get_material_factories()
 
 std::unique_ptr<material> material_factories::make(const std::string& name, const std::map<std::string,any>& parameters) const
 {
-  assert(factories_.find(name) != factories_.end());
+  if(factories_.find(name) == factories_.end())
+  {
+    std::string what = std::string("material_factories::make(): Couldn't find factory for material \"") + name + "\".";
+    throw std::runtime_error(what);
+  }
+
   return factories_.at(name)(parameters);
 }
 
