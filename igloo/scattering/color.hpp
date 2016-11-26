@@ -61,6 +61,12 @@ inline color operator/(const color& a, const Number& b)
 }
 
 
+inline float luminance(const color& c)
+{
+  return 0.299f * c[0] + 0.587f * c[1] + 0.114f * c[2];
+}
+
+
 inline color abs(const color &c)
 {
   return c.abs();

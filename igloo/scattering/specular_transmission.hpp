@@ -52,7 +52,7 @@ class specular_transmission
 
         inline float probability_density() const
         {
-          return 0;
+          return 1.f;
         }
 
         inline bool is_delta_sample() const
@@ -65,7 +65,7 @@ class specular_transmission
         color throughput_;
     };
 
-    inline sample sample_direction(std::uint64_t u0, std::uint64_t u1, const vector& wo) const
+    inline sample transmit(const vector& wo) const
     {
       vector wi = fresnel_.refract(wo);
 
@@ -82,7 +82,12 @@ class specular_transmission
         throughput = one_over_eta * one_over_eta * (1.f - fresnel_(cos_theta_o)) * transmittance_;
       }
 
-      return sample(wi, throughput);
+      return {wi, throughput};
+    }
+
+    inline sample sample_direction(std::uint64_t, std::uint64_t, const vector& wo) const
+    {
+      return transmit(wo);
     }
 
   private:

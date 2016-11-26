@@ -53,7 +53,7 @@ class specular_reflection
 
         inline float probability_density() const
         {
-          return 0;
+          return 1.f;
         }
 
         inline bool is_delta_sample() const
@@ -65,6 +65,18 @@ class specular_reflection
         vector wi_;
         color throughput_;
     };
+
+    inline sample reflect(const vector& wo) const
+    {
+      // compute perfect specular reflection direction
+      vector wi = vector(-wo[0], -wo[1], wo[2]);
+
+      // note that we do not divide by cosine theta because we do not multiply
+      // by .abs_cos_theta() for samples from delta distributions
+      color throughput = fresnel_(wo[2]) * reflectance_;
+
+      return {wi, throughput};
+    }
 
     inline sample sample_direction(std::uint64_t u0, std::uint64_t u1, const vector& wo) const
     {

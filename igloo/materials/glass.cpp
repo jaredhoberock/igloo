@@ -3,10 +3,10 @@
 namespace igloo
 {
 
-glass::glass(const color&, 
+glass::glass(const color& reflectance, 
              const color& transmittance,
              float eta)
-  : bsdf_(transmittance, 1.f, eta)
+  : bsdf_(reflectance, transmittance, 1.f, eta)
 {}
 
 

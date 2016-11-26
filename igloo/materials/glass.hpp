@@ -2,7 +2,7 @@
 
 #include <igloo/materials/material.hpp>
 #include <igloo/scattering/color.hpp>
-#include <igloo/scattering/specular_transmission.hpp>
+#include <igloo/scattering/perfect_glass.hpp>
 
 namespace igloo
 {
@@ -20,8 +20,8 @@ class glass : public registered_material<glass>
     virtual scattering_distribution_function evaluate_scattering(const differential_geometry& dg) const;
 
   private:
-    specular_transmission bsdf_;
-}; // end glass
+    perfect_glass bsdf_;
+};
 
 
 } // end igloo

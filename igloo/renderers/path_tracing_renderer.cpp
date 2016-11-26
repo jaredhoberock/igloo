@@ -132,10 +132,10 @@ void path_tracing_renderer::render(const float4x4 &modelview, render_progress &p
 
             // update throughput
             throughput *= sample.throughput();
+            throughput /= sample.probability_density();
             if(!sample.is_delta_sample())
             {
               throughput *= dg.abs_cos_theta(sample.wi());
-              throughput /= sample.probability_density();
             }
 
             // update ray

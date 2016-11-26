@@ -4,6 +4,7 @@
 #include <igloo/scattering/hemispherical_emission.hpp>
 #include <igloo/scattering/lambertian.hpp>
 #include <igloo/scattering/perfect_absorber.hpp>
+#include <igloo/scattering/perfect_glass.hpp>
 #include <igloo/scattering/specular_reflection.hpp>
 #include <igloo/scattering/specular_transmission.hpp>
 #include <igloo/geometry/vector.hpp>
@@ -19,10 +20,11 @@ class scattering_distribution_function
 {
   private:
     using variant_type = std::experimental::variant<
-      lambertian,
       hemispherical_emission,
-      specular_reflection,
+      lambertian,
       perfect_absorber,
+      perfect_glass,
+      specular_reflection,
       specular_transmission
     >;
 
@@ -75,8 +77,12 @@ class scattering_distribution_function
     class sample
     {
       public:
+        inline sample(const color& throughput, const vector& wi, const float& probability_density, bool is_delta_sample)
+          : throughput_(throughput), wi_(wi), probability_density_(probability_density), is_delta_sample_(is_delta_sample)
+        {}
+
         inline sample(const color& throughput, const vector& wi, const float& probability_density)
-          : throughput_(throughput), wi_(wi), probability_density_(probability_density)
+          : sample(throughput, wi, probability_density, false)
         {}
 
         inline const color& throughput() const
@@ -96,13 +102,14 @@ class scattering_distribution_function
 
         inline bool is_delta_sample() const
         {
-          return probability_density_ == 0;
+          return is_delta_sample_;
         }
 
       private:
         color throughput_;
         vector wi_;
         float probability_density_;
+        bool is_delta_sample_;
     };
 
   private:
@@ -123,13 +130,19 @@ class scattering_distribution_function
       sample operator()(const specular_reflection& f) const
       {
         auto s = f.sample_direction(u0, u1, wo);
-        return sample{s.throughput(), s.wi(), s.probability_density()};
+        return sample{s.throughput(), s.wi(), s.probability_density(), true};
       }
 
       sample operator()(const specular_transmission& f) const
       {
         auto s = f.sample_direction(u0, u1, wo);
-        return sample{s.throughput(), s.wi(), s.probability_density()};
+        return sample{s.throughput(), s.wi(), s.probability_density(), true};
+      }
+
+      sample operator()(const perfect_glass& f) const
+      {
+        auto s = f.sample_direction(u0, u1, wo);
+        return sample{s.throughput(), s.wi(), s.probability_density(), true};
       }
     };
 
