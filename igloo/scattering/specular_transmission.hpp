@@ -65,8 +65,7 @@ class specular_transmission
         color throughput_;
     };
 
-    // XXX this should be named sample_direction() i think
-    inline sample sample_hemisphere(std::uint64_t u0, std::uint64_t u1, const vector& wo) const
+    inline sample sample_direction(std::uint64_t u0, std::uint64_t u1, const vector& wo) const
     {
       vector wi = fresnel_.refract(wo);
 

@@ -122,20 +122,19 @@ class scattering_distribution_function
       // XXX this should just be generalized into a constrained function template
       sample operator()(const specular_reflection& f) const
       {
-        auto s = f.sample_hemisphere(u0, u1, wo);
+        auto s = f.sample_direction(u0, u1, wo);
         return sample{s.throughput(), s.wi(), s.probability_density()};
       }
 
       sample operator()(const specular_transmission& f) const
       {
-        auto s = f.sample_hemisphere(u0, u1, wo);
+        auto s = f.sample_direction(u0, u1, wo);
         return sample{s.throughput(), s.wi(), s.probability_density()};
       }
     };
 
   public:
-    // XXX this ought to be named sample_direction()
-    inline sample sample_hemisphere(std::uint64_t u0, std::uint64_t u1, const vector& wo) const
+    inline sample sample_direction(std::uint64_t u0, std::uint64_t u1, const vector& wo) const
     {
       sample_hemisphere_visitor visitor{u0,u1,wo};
       return std::experimental::visit(visitor, variant_);

@@ -128,7 +128,7 @@ void path_tracing_renderer::render(const float4x4 &modelview, render_progress &p
             } // end for emitter
 
             // sample next direction
-            auto sample = f.sample_hemisphere(rng(), rng(), wo);
+            auto sample = f.sample_direction(rng(), rng(), wo);
 
             // update throughput
             throughput *= sample.throughput();
