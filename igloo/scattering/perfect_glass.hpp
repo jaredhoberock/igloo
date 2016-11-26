@@ -69,7 +69,7 @@ class perfect_glass
         float probability_density_;
     };
 
-    inline sample sample_direction(std::uint64_t u0, std::uint64_t u1, const vector& wo) const
+    inline sample sample_direction(std::uint64_t u0, std::uint64_t, const vector& wo) const
     {
       // try both bsdfs
       auto reflected = reflection_.reflect(wo);
@@ -82,8 +82,7 @@ class perfect_glass
       // the probability of selecting the reflected direction is proportional to its importance
       float reflected_probability = reflected_importance / (reflected_importance + transmitted_importance);
 
-      dist2d::unit_interval_distribution<> unit_interval;
-      if(unit_interval(u0) < reflected_probability)
+      if(dist2d::u01f(u0) < reflected_probability)
       {
         return sample(reflected.wi(), reflected.throughput(), reflected_probability);
       }
@@ -92,6 +91,8 @@ class perfect_glass
     }
 
   private:
+    // XXX we could reduce the size of this type a bit if we just kept a single fresnel_dielectric
+    //     that would require some refactoring of both .reflect() & .transmit() into fresnel_dielectric
     specular_reflection reflection_;
     specular_transmission transmission_;
 };
