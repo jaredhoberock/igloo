@@ -88,31 +88,61 @@ class color : public math_vector_facade<color, float, 3>
 inline color operator-(const float a, const color& b)
 {
   return color{a - b[0], a - b[1], a - b[2]};
-} // end operator-()
+}
+
+
+template<class Number,
+         class = typename std::enable_if<
+           std::is_arithmetic<Number>::value
+         >::type>
+inline color operator/(const color& a, const Number& b)
+{
+  return color{a[0] / b, a[1] / b, a[2] / b};
+}
 
 
 inline color abs(const color &c)
 {
   return c.abs();
-} // end abs()
+}
 
 
 inline color clamp(const color& c, float low, float high)
 {
   return color{clamp(c[0], low, high), clamp(c[1], low, high), clamp(c[2], low, high)};
-} // end clamp()
+}
 
 
 inline color sqrt(const color& c)
 {
   return color{std::sqrt(c[0]), std::sqrt(c[1]), std::sqrt(c[2])};
-} // end sqrt()
+}
 
 
 inline color saturate(const color& c)
 {
   return clamp(c, 0.f, 1.f);
-} // end saturate()
+}
+
+
+template<class Number,
+         class = typename std::enable_if<
+           std::is_arithmetic<Number>::value
+         >::type>
+inline color min(const color& a, const Number& b)
+{
+  return color{std::min(a[0], b), std::min(a[1], b), std::min(a[2], b)};
+}
+
+
+template<class Number,
+         class = typename std::enable_if<
+           std::is_arithmetic<Number>::value
+         >::type>
+inline color min(const Number& a, const color& b)
+{
+  return color{std::min(a, b[0]), std::min(a, b[1]), std::min(a, b[2])};
+}
 
 
 } // end igloo
