@@ -46,6 +46,7 @@ int main()
   renderer.material(make_material("igloo::matte",  {{"albedo", color(0.1, 0.8, 0.1)}}), "green");
   renderer.material(make_material("igloo::matte",  {{"albedo", color(0.8, 0.8, 0.8)}}), "white");
   renderer.material(make_material("igloo::mirror", {{"reflectance", color(1.0, 1.0, 1.0)}, {"eta", 2.485f}}), "mirror");
+  renderer.material(make_material("igloo::glass",  {{"reflectance", color(1.0, 1.0, 1.0)}, {"transmittance", color(1.0, 1.0, 1.0)}, {"eta", 1.5f}}), "glass");
   renderer.material(make_material("igloo::light",  {{"radiosity", light_radiosity}}), "light");
 
   // back wall
@@ -97,7 +98,7 @@ int main()
   renderer.sphere(-0.4, -0.66, -0.15, 0.33);
 
   // glass ball
-  renderer.attribute("material", "default");
+  renderer.attribute("material", "glass");
   renderer.sphere(0.4, -0.66, 0.25, 0.33);
 
   // ceiling light

@@ -100,12 +100,12 @@ class fresnel_dielectric
     inline static color evaluate(float cos_theta_i, float eta_i, float eta_t)
     {
       // compute sin theta_t using Snell's Law
-      float sin_theta_t = eta_i/eta_t * std::sqrt(std::max(0.f, 1.f - cos_theta_i*cos_theta_i));
+      float sin_theta_t = eta_i/eta_t * pythagorean_identity(cos_theta_i);
 
       // handle total internal reflection
       if(sin_theta_t > 1.f) return color{1.f};
 
-      float cos_theta_t = std::sqrt(std::max(0.f, 1.f - sin_theta_t*sin_theta_t));
+      float cos_theta_t = pythagorean_identity(sin_theta_t);
 
       return evaluate(std::fabs(cos_theta_i), cos_theta_t, color{eta_i}, color{eta_t});
     }
@@ -120,9 +120,73 @@ class fresnel_dielectric
       return color(evaluate(cos_theta_i, eta_i, eta_t));
     }
 
+    inline static vector refract(const vector& w, float eta)
+    {
+      float sin_theta_i_2 = pythagorean_identity2(cos_theta(w));
+      float sin_theta_t_2 = eta * eta * sin_theta_i_2;
+
+      // handle total internal refraction
+      if(sin_theta_t_2 >= 1) return vector{0};
+
+      float cos_theta_t = std::sqrt(std::max(0.f, 1.f - sin_theta_t_2));
+
+      return vector(eta * -w[0], eta * -w[1], cos_theta_t);
+    }
+
+    inline vector refract(const vector& wo) const
+    {
+      vector result = refract(wo, eta(cos_theta(wo)));
+
+      // if the ray is entering the interface, flip the result 
+      if(entering(wo)) result[2] = -result[2];
+
+      return result;
+    }
+
+    inline float eta(float cos_theta_i) const
+    {
+      // XXX the result of this function ought to be precomputed
+
+      return entering(cos_theta_i) ? (eta_i_ / eta_t_) : (eta_t_ / eta_i_);
+    }
+
+    inline float one_over_eta(float cos_theta_i) const
+    {
+      // XXX the result of this function ought to be precomputed
+
+      return 1.f / eta(cos_theta_i);
+    }
+
   private:
-    float eta_i_;
-    float eta_t_;
+    inline static bool entering(float cos_theta_i)
+    {
+      return cos_theta_i > 0;
+    }
+
+    inline static bool entering(const vector& w)
+    {
+      return entering(w[2]);
+    }
+
+    // XXX this ought to go somewhere general purpose
+    inline static float cos_theta(const vector& w)
+    {
+      return w[2];
+    }
+
+    // XXX this ought to go somewhere general purpose 
+    inline static float pythagorean_identity2(float value)
+    {
+      return std::max(0.f, 1.f - value * value);
+    }
+
+    // XXX this ought to go somewhere general purpose 
+    inline static float pythagorean_identity(float value)
+    {
+      return std::sqrt(pythagorean_identity2(value));
+    }
+
+    float eta_i_, eta_t_;
 };
 
 
