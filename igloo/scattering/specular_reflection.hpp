@@ -66,6 +66,7 @@ class specular_reflection
         color throughput_;
     };
 
+    // XXX this should be named sample_direction() i think
     inline sample sample_hemisphere(std::uint64_t u0, std::uint64_t u1, const vector& wo) const
     {
       // compute perfect specular reflection direction
