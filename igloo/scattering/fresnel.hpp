@@ -82,7 +82,9 @@ class fresnel_dielectric
 {
   public:
     inline fresnel_dielectric(float eta_i, float eta_t)
-      : eta_i_(eta_i), eta_t_(eta_t)
+      : eta_i_(eta_i), eta_t_(eta_t),
+        eta_i_over_eta_t_(eta_i_ / eta_t_),
+        eta_t_over_eta_i_(eta_t_ / eta_i_)
     {}
 
     template<class FloatOrColor>
@@ -145,16 +147,12 @@ class fresnel_dielectric
 
     inline float eta(float cos_theta_i) const
     {
-      // XXX the result of this function ought to be precomputed
-
-      return entering(cos_theta_i) ? (eta_i_ / eta_t_) : (eta_t_ / eta_i_);
+      return entering(cos_theta_i) ? eta_i_over_eta_t_ : eta_t_over_eta_i_;
     }
 
     inline float one_over_eta(float cos_theta_i) const
     {
-      // XXX the result of this function ought to be precomputed
-
-      return 1.f / eta(cos_theta_i);
+      return entering(cos_theta_i) ? eta_t_over_eta_i_ : eta_i_over_eta_t_;
     }
 
   private:
@@ -187,6 +185,8 @@ class fresnel_dielectric
     }
 
     float eta_i_, eta_t_;
+    float eta_i_over_eta_t_;
+    float eta_t_over_eta_i_;
 };
 
 
