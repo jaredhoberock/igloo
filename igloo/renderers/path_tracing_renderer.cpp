@@ -26,7 +26,7 @@ void path_tracing_renderer::render(const float4x4 &modelview, render_progress &p
 {
   progress.reset(image_.width() * image_.height());
 
-  image_.fill(color::black());
+  image_.fill(black);
 
   const point eye(0,0,3);
   const point center(0,0,-1);
@@ -50,15 +50,15 @@ void path_tracing_renderer::render(const float4x4 &modelview, render_progress &p
     float u = u_spacing / 2;
     for(image::size_type col = 0; col < image_.width(); ++col, u += u_spacing)
     {
-      color result = color::black();
+      color result = black;
 
       size_t paths_per_pixel = 20;
       float sample_weight = 1.f / paths_per_pixel;
 
       for(int path = 0; path < paths_per_pixel; ++path)
       {
-        color radiance = color::black();
-        color throughput = color::white();
+        color radiance = black;
+        color throughput = white;
 
         point origin = eye;
         vector direction = sample_with_basis(perspective, right, up, look, u, v);

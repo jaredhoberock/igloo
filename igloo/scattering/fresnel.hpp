@@ -14,7 +14,7 @@ class fresnel_no_op
   public:
     inline color operator()(float) const
     {
-      return color::white();
+      return white;
     }
 };
 
@@ -57,8 +57,8 @@ class fresnel_conductor
       color cos_theta_i_2(c2, c2, c2);
       color tmp = cos_theta_i_2 * (eta*eta + k*k);
       
-      color r_parallel2 = (tmp - (2.f * eta * cos_theta_i) + color::white()) /
-                          (tmp + (2.f * eta * cos_theta_i) + color::white());
+      color r_parallel2 = (tmp - (2.f * eta * cos_theta_i) + white) /
+                          (tmp + (2.f * eta * cos_theta_i) + white);
       color tmp_f = eta*eta + k*k;
       
       color r_perp2 = (tmp_f - (2.f * eta * cos_theta_i) + cos_theta_i_2) /

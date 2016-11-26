@@ -24,7 +24,7 @@ template<typename Derived, typename T, std::size_t N>
     typedef T*       iterator;
     typedef const T* const_iterator;
 
-    math_vector_facade(){}
+    constexpr math_vector_facade(){}
 
     math_vector_facade(const math_vector_facade &other)
     {

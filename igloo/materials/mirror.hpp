@@ -11,7 +11,7 @@ namespace igloo
 class mirror : public registered_material<mirror>
 {
   public:
-    mirror(const color& reflectance = color::white(), float eta = 2.485f);
+    mirror(const color& reflectance = white, float eta = 2.485f);
 
     mirror(const std::map<std::string, any>& parameters);
 

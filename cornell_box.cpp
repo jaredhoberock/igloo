@@ -42,11 +42,11 @@ int main()
   color light_radiosity = light_power / light_surface_area;
 
   // create some materials
-  renderer.material(make_material("igloo::matte",  {{"albedo", color(0.8, 0.1, 0.1)}}), "red");
-  renderer.material(make_material("igloo::matte",  {{"albedo", color(0.1, 0.8, 0.1)}}), "green");
-  renderer.material(make_material("igloo::matte",  {{"albedo", color(0.8, 0.8, 0.8)}}), "white");
-  renderer.material(make_material("igloo::mirror", {{"reflectance", color(1.0, 1.0, 1.0)}, {"eta", 2.485f}}), "mirror");
-  renderer.material(make_material("igloo::glass",  {{"reflectance", color(1.0, 1.0, 1.0)}, {"transmittance", color(1.0, 1.0, 1.0)}, {"eta", 1.5f}}), "glass");
+  renderer.material(make_material("igloo::matte",  {{"albedo", red}}), "red");
+  renderer.material(make_material("igloo::matte",  {{"albedo", green}}), "green");
+  renderer.material(make_material("igloo::matte",  {{"albedo", off_white}}), "white");
+  renderer.material(make_material("igloo::mirror", {{"reflectance", white}, {"eta", 2.485f}}), "mirror");
+  renderer.material(make_material("igloo::glass",  {{"reflectance", white}, {"transmittance", white}, {"eta", 1.5f}}), "glass");
   renderer.material(make_material("igloo::light",  {{"radiosity", light_radiosity}}), "light");
 
   // back wall

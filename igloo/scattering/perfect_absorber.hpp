@@ -11,12 +11,12 @@ class perfect_absorber
   public:
     inline color operator()(const vector&) const
     {
-      return color::black();
+      return black;
     }
 
     inline color operator()(const vector&, const vector) const
     {
-      return color::black();
+      return black;
     }
 };
 

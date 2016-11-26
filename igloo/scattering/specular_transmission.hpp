@@ -25,12 +25,12 @@ class specular_transmission
     inline color operator()(const vector& wo, const vector& wi) const
     {
       // we return black because there is zero probability that wi and wo are reflections
-      return color::black();
+      return black;
     }
 
     inline color operator()(const vector&) const
     {
-      return color::black();
+      return black;
     }
 
     struct sample

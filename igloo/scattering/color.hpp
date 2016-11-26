@@ -29,7 +29,7 @@ class color : public math_vector_facade<color, float, 3>
                      std::is_arithmetic<Number>::value
                    >::type * = 0) : super_t(v) {}
 
-    inline color(float rr, float gg, float bb)
+    inline constexpr color(float rr, float gg, float bb)
       : super_t(),
         r(rr),
         g(gg),
@@ -40,46 +40,6 @@ class color : public math_vector_facade<color, float, 3>
     {
       return color(std::abs(r), std::abs(g), std::abs(b));
     } // end abs()
-
-    inline static color black()
-    {
-      return color(0,0,0);
-    } // end black()
-
-    inline static color blue()
-    {
-      return color(0,0,1);
-    } // end red()
-
-    inline static color green()
-    {
-      return color(0,1,0);
-    } // end red()
-
-    inline static color cyan()
-    {
-      return color(0,1,1);
-    } // end red()
-
-    inline static color red()
-    {
-      return color(1,0,0);
-    } // end red()
-
-    inline static color violet()
-    {
-      return color(1,0,1);
-    } // end red()
-
-    inline static color yellow()
-    {
-      return color(1,1,0);
-    } // end red()
-
-    inline static color white()
-    {
-      return color(1,1,1);
-    } // end black()
 
     float r, g, b;
 }; // end color
@@ -142,6 +102,24 @@ template<class Number,
 inline color min(const Number& a, const color& b)
 {
   return color{std::min(a, b[0]), std::min(a, b[1]), std::min(a, b[2])};
+}
+
+
+// global color variables
+namespace
+{
+
+
+constexpr color black{0,0,0};
+constexpr color blue{0.1, 0.1, 0.8};
+constexpr color green{0.1, 0.8, 0.1};
+constexpr color cyan{0.1, 0.8, 0.8};
+constexpr color red{0.8, 0.1, 0.1};
+constexpr color violet{0.8, 0.1, 0.8};
+constexpr color yellow{0.8, 0.8, 0.1};
+constexpr color white{1,1,1};
+constexpr color off_white{0.8,0.8,0.8};
+
 }
 
 

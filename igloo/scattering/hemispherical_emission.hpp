@@ -22,7 +22,7 @@ class hemispherical_emission
         return radiance_;
       }
 
-      return color::black();
+      return black;
     }
 
     inline color operator()(const vector& wo, const vector&) const

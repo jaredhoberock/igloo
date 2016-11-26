@@ -1,6 +1,7 @@
 #pragma once
 
 #include <igloo/geometry/vector.hpp>
+#include <igloo/geometry/pi.hpp>
 #include <igloo/scattering/color.hpp>
 
 namespace igloo
@@ -14,11 +15,11 @@ class lambertian
      *  \param albedo The color of this function's reflectance.
      */
     inline lambertian(const color& albedo)
-      : m_albedo_over_pi(albedo / 3.14159265359f)
+      : m_albedo_over_pi(albedo / pi)
     {}
 
     inline lambertian()
-      : lambertian(color::white())
+      : lambertian(white)
     {}
 
     inline color operator()(const vector&, const vector&) const
@@ -28,7 +29,7 @@ class lambertian
 
     inline color operator()(const vector&) const
     {
-      return color::black();
+      return black;
     }
 
   private:

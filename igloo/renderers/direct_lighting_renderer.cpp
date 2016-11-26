@@ -19,7 +19,7 @@ void direct_lighting_renderer::render(const float4x4 &modelview, render_progress
 {
   progress.reset(m_image.width() * m_image.height());
 
-  m_image.fill(color::black());
+  m_image.fill(black);
 
   point eye(0,0,3);
   point center(0,0,-1);
@@ -43,7 +43,7 @@ void direct_lighting_renderer::render(const float4x4 &modelview, render_progress
     float u = u_spacing / 2;
     for(image::size_type col = 0; col < m_image.width(); ++col, u += u_spacing)
     {
-      color result = color::black();
+      color result = black;
 
       ray r(eye, sample_with_basis(perspective, right, up, look, u, v));
 

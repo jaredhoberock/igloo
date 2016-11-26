@@ -11,8 +11,8 @@ namespace igloo
 class glass : public registered_material<glass>
 {
   public:
-    glass(const color& reflectance = color::white(),
-          const color& tranmittance = color::white(),
+    glass(const color& reflectance = white,
+          const color& tranmittance = white,
           float eta = 1.5f);
 
     glass(const std::map<std::string, any>& parameters);
