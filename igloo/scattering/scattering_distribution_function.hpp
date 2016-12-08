@@ -9,11 +9,41 @@
 #include <igloo/scattering/specular_transmission.hpp>
 #include <igloo/geometry/vector.hpp>
 #include <igloo/utility/variant.hpp>
+#include <igloo/utility/requires.hpp>
 #include <dependencies/distribution2d/distribution2d/unit_hemisphere_distribution.hpp>
 #include <type_traits>
 
 namespace igloo
 {
+namespace detail
+{
+
+
+template<class T>
+struct has_sample_direction_impl
+{
+  template<class U,
+           class = decltype(
+               std::declval<U>().sample_direction(
+                 std::declval<std::uint64_t>(),
+                 std::declval<std::uint64_t>(),
+                 std::declval<vector>()
+               )
+             )
+          >
+  static std::true_type test(int);
+
+  template<class>
+  static std::false_type test(...);
+
+  using type = decltype(test<T>(0));
+};
+
+template<class T>
+using has_sample_direction = typename has_sample_direction_impl<T>::type;
+
+
+}
 
 
 class scattering_distribution_function
@@ -118,7 +148,10 @@ class scattering_distribution_function
       std::uint64_t u0, u1;
       const vector wo;
 
-      template<class Function>
+      template<class Function,
+               IGLOO_REQUIRES(
+                 !detail::has_sample_direction<Function>::value
+               )>
       sample operator()(const Function& f) const
       {
         dist2d::unit_hemisphere_distribution<vector> hemisphere;
@@ -126,20 +159,11 @@ class scattering_distribution_function
         return sample(f(wo,wi), wi, hemisphere.probability_density(wi));
       }
 
-      // XXX this should just be generalized into a constrained function template
-      sample operator()(const specular_reflection& f) const
-      {
-        auto s = f.sample_direction(u0, u1, wo);
-        return sample{s.throughput(), s.wi(), s.probability_density(), true};
-      }
-
-      sample operator()(const specular_transmission& f) const
-      {
-        auto s = f.sample_direction(u0, u1, wo);
-        return sample{s.throughput(), s.wi(), s.probability_density(), true};
-      }
-
-      sample operator()(const perfect_glass& f) const
+      template<class Function,
+               IGLOO_REQUIRES(
+                 detail::has_sample_direction<Function>::value
+               )>
+      sample operator()(const Function& f) const
       {
         auto s = f.sample_direction(u0, u1, wo);
         return sample{s.throughput(), s.wi(), s.probability_density(), true};
