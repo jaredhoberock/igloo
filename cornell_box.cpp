@@ -36,7 +36,7 @@ int main()
   unsigned int unit_square_tris[] = { 0, 1,  3,
                                       1, 2,  3};
 
-  color light_power(20,20,20);
+  color light_power(10,10,10);
 
   float light_surface_area = 0.5f * 0.5f; 
   color light_radiosity = light_power / light_surface_area;
@@ -101,10 +101,19 @@ int main()
   renderer.attribute("material", "glass");
   renderer.sphere(0.4, -0.66, 0.25, 0.33);
 
-  // ceiling light
+  // left ceiling light
   renderer.attribute("material", "light");
   renderer.push_matrix();
-  renderer.translate(0, 0.95, 0);
+  renderer.translate(-0.5, 0.95, 0);
+  renderer.scale(0.5, 0.5, 0.5);
+  renderer.rotate(180, 1, 0, 0);
+  renderer.mesh(unit_square_points, unit_square_tris);
+  renderer.pop_matrix();
+
+  // right ceiling light
+  renderer.attribute("material", "light");
+  renderer.push_matrix();
+  renderer.translate(0.5, 0.95, 0);
   renderer.scale(0.5, 0.5, 0.5);
   renderer.rotate(180, 1, 0, 0);
   renderer.mesh(unit_square_points, unit_square_tris);
